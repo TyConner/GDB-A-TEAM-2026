@@ -3,13 +3,21 @@ using UnityEngine.UI;
 using UnityEngine;
 using UnityEditor.UIElements;
 using System;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
     [Header("       Initialization        ")]
     [SerializeField] String PlayerTag;
     [SerializeField] String PlayerSpawnTag;
-   
+    [Header("       Match Initialization        ")]
+    [Tooltip("Time in seconds the match lasts")]
+    [Range(0, 300)][SerializeField] int MatchTime = 120;
+    [Tooltip("Goal to reach so the match ends")]
+    [Range(1,10)][SerializeField] int WinGoal = 5;
+    [Tooltip("Match Begin Timer")]
+    [Range(1, 10)][SerializeField] int TimeUntilMatchStarts = 5;
+
 
     [Header("       Menus        ")]
     [SerializeField] GameObject menuActive;
@@ -23,6 +31,7 @@ public class GameManager : MonoBehaviour
     public bool isPaused;
     public TMP_Text gameGoalCountText;
     public TMP_Text RemainingMatchTime;
+    public TMP_Text countdownText;
 
 
     [Header("       Player Variable      ")]
@@ -32,9 +41,9 @@ public class GameManager : MonoBehaviour
 
     [Header("       Player UI      ")]
     public GameObject DamageScreen;
-    
     public GameObject playerCompass;
     public Image playerCompassNeedle;
+    public Image playerCrossHair;
 
 
     [Header("       Player Weapon UI Elements      ")]
@@ -44,28 +53,95 @@ public class GameManager : MonoBehaviour
     public TMP_Text playerAmmoCur;
     public TMP_Text playerAmmoReserve;
 
-   
 
 
+    int matchstarttimer;
     float timeScaleOrig;
-
+    float currenttime;
     int gameGoalCount;
 
     public static GameManager instance;
+    string GetTime() {
+        //remaining minutes
+        int min = (int)currenttime / 60;
+        int sec = (int)currenttime % 60;
+        return min.ToString("D2") + ":" + sec.ToString("D2");
+    }
+    void toggleCrosshair(bool val)
+    {
+        playerCrossHair.enabled = val;
+    }
+    
+   void updateScore()
+    {
+        gameGoalCountText.text = "Score: " + gameGoalCount;
+    }
+    void ismatchOver()
+    {
+        if(currenttime <= 0)
+        {
+            statePause();
+            if(gameGoalCount >= WinGoal)
+            {
+                youWin();
+            }
+            else
+            {
+                youLose();
+            }
+
+        }
+    }
+    IEnumerator countdown()
+    {
+        if(matchstarttimer >= 0)
+        {
+            countdownText.text = matchstarttimer.ToString();
+            yield return new WaitForSecondsRealtime(1);
+            matchstarttimer--;
+            countdownText.text = matchstarttimer.ToString();
+            StartCoroutine(countdown());
+        }
+        else
+        {
+            Time.timeScale = timeScaleOrig;
+            currenttime = MatchTime;
+            countdownText.enabled = false;
+        }
+    }
+    void initalizeMatch()
+    {
+        timeScaleOrig = 1;
+        Time.timeScale = 0;
+        player = GameObject.FindWithTag("Player");
+        playerScript = player.GetComponent<PlayerController>();
+        currenttime = MatchTime;
+        matchstarttimer = TimeUntilMatchStarts;
+        RemainingMatchTime.text = GetTime();
+        countdownText.enabled = true;
+        StartCoroutine(countdown());
+        updateScore();
+    }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         instance = this;
-        timeScaleOrig = Time.timeScale;
-        player = GameObject.FindWithTag("Player");
-        playerScript = player.GetComponent<PlayerController>();
-  
-
+        initalizeMatch();
     }
-
+    void timer()
+    {
+        if(Time.timeScale == timeScaleOrig)
+        {
+            currenttime = currenttime - Time.deltaTime;
+            RemainingMatchTime.text = GetTime();
+        }
+        
+    }
     // Update is called once per frame
     void Update()
     {
+        timer();
+        ismatchOver();
         if (Input.GetButtonDown("Cancel"))
         {
             if (menuActive == null)
@@ -84,6 +160,7 @@ public class GameManager : MonoBehaviour
 
     public void statePause()
     {
+        toggleCrosshair(false);
         isPaused = true;
         Time.timeScale = 0;
         Cursor.visible = true;
@@ -93,6 +170,7 @@ public class GameManager : MonoBehaviour
 
     public void stateUnPause()
     {
+        toggleCrosshair(true);
         isPaused = false;
         Time.timeScale = timeScaleOrig;
         Cursor.visible = false;
@@ -108,10 +186,18 @@ public class GameManager : MonoBehaviour
         menuActive.SetActive(true);
 
     }
+
+    public void youWin()
+    {
+        statePause();
+        menuActive = menuWin;
+        menuActive.SetActive(true);
+
+    }
     public void updateGameGoal(int amount)
     {
         gameGoalCount += amount;
-        gameGoalCountText.text = gameGoalCount.ToString("F0");
+        updateScore();
         if (gameGoalCount <= 0)
         {
             //you win
