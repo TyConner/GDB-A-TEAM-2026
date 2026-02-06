@@ -18,9 +18,14 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
+        if(Time.timeScale == 0f)
+        {
+            return;
+        }
 
-        float mouseX = Input.GetAxis("Mouse X") * sensitivity; //Raw avoids smoothing, we want smoothing
-        float mouseY = Input.GetAxis("Mouse Y") * sensitivity; //multiplying by delta time is inconsistent because mouse get axis is already per frame
+        float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.timeScale; //Raw avoids smoothing, we want smoothing
+        float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.timeScale; //multiplying by delta time is inconsistent because mouse get axis is already per frame
+        //Multiply by time scale so we can get some slow motion if we want it
 
         if (invertY)
         {
