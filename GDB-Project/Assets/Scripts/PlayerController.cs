@@ -18,13 +18,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] int shootDistance = 500;
     [SerializeField] float shootRate = 0.25f;
 
-    [SerializeField] int ammo_reserve = 6;
-    [SerializeField] int ammo_cur = 0;
 
-    [SerializeField] Sprite gunsprite;
-    [SerializeField] Sprite crosshairsprite;
-
-    string GunName = "default";
 
     int jumpCount = 0;
     int startingHP;
@@ -41,7 +35,7 @@ public class PlayerController : MonoBehaviour
         startingHP = HP;
         startingMovespeed = moveSpeed;
         UpdateUI();
-        updateGunUI();
+        //GameManager.instance.updateGunUI(fields);
     }
 
     // Update is called once per frame
@@ -123,7 +117,7 @@ public class PlayerController : MonoBehaviour
     {
         // do stuff
 
-        updateGunUI();
+        
 
     }
     void Shoot()//Gun script will handle shoot implementation
@@ -135,7 +129,7 @@ public class PlayerController : MonoBehaviour
             shootTimer = 0;
 
             //decrement ammo cur
-            updateGunUI();
+            // call GameManager.instance UpdateGunUI(sprite gun, sprite crosshair, name, ammocur, ammoreserve);
 
             RaycastHit hit;
             if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDistance, ~ignoreLayer))
@@ -146,21 +140,7 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-    void updateGunUI()
-    {
-        
-        // change crosshair
-        GameManager.instance.playerGun.sprite = gunsprite;
-        // change gun sprite
-        GameManager.instance.playerCrossHair.sprite = crosshairsprite;
-        // change ammo reserve count
-        GameManager.instance.playerAmmoReserve.text = ammo_reserve.ToString();
-        // change ammo current
-        GameManager.instance.playerAmmoCur.text = ammo_cur.ToString();
-        // change gun name
-        GameManager.instance.playerGunName.text = GunName;
-
-    }
+  
     void UpdateUI()
     {
         GameManager.instance.playerHPBar.fillAmount = (float)HP / 100;

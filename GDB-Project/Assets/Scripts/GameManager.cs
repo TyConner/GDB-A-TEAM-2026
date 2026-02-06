@@ -92,6 +92,21 @@ public class GameManager : MonoBehaviour
 
         }
     }
+    public void updateGunUI(Sprite gunsprite, Sprite crosshairsprite, int ammo_reserve, int ammo_cur, string GunName)
+    {
+
+        // change crosshair
+        playerGun.sprite = gunsprite;
+        // change gun sprite
+        playerCrossHair.sprite = crosshairsprite;
+        // change ammo reserve count
+        playerAmmoReserve.text = ammo_reserve.ToString();
+        // change ammo current
+        playerAmmoCur.text = ammo_cur.ToString();
+        // change gun name
+        playerGunName.text = GunName;
+
+    }
     IEnumerator countdown()
     {
         if(matchstarttimer >= 0)
