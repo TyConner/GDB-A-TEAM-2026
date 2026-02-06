@@ -100,13 +100,19 @@ public class GameManager : MonoBehaviour
         // change gun sprite
         playerCrossHair.sprite = crosshairsprite;
         // change ammo reserve count
-        playerAmmoReserve.text = ammo_reserve.ToString();
-        // change ammo current
-        playerAmmoCur.text = ammo_cur.ToString();
+        updateAmmoUI(ammo_reserve, ammo_cur);
         // change gun name
         playerGunName.text = GunName;
 
     }
+    
+    public void updateAmmoUI(int ammo_reserve, int ammo_cur)
+    {   // change ammo reserve count
+        playerAmmoReserve.text = ammo_reserve.ToString();
+        // change ammo current
+        playerAmmoCur.text = ammo_cur.ToString();
+    }
+    
     IEnumerator countdown()
     {
         if(matchstarttimer >= 0)
