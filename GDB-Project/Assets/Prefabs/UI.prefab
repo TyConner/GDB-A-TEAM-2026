@@ -803,6 +803,7 @@ MonoBehaviour:
   playerCrossHair: {fileID: 8861940708715745370}
   playerHPBar: {fileID: 86756072133016158}
   playerGun: {fileID: 1265283421065882363}
+  playerGunName: {fileID: 8130217824480452793}
   playerAmmoCur: {fileID: 3792443198135517456}
   playerAmmoReserve: {fileID: 8489807552109477439}
 --- !u!1 &1301498763235085759
@@ -2638,7 +2639,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 1
+  m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0

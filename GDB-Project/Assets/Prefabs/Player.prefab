@@ -62,6 +62,10 @@ MonoBehaviour:
   shootDamage: 20
   shootDistance: 500
   shootRate: 0.25
+  ammo_reserve: 6
+  ammo_cur: 0
+  gunsprite: {fileID: 21300000, guid: a60255d482098764684e4e585b389c93, type: 3}
+  crosshairsprite: {fileID: 21300000, guid: 672cb353ed068b54dac2a87051cb15aa, type: 3}
 --- !u!33 &1217274782622763217
 MeshFilter:
   m_ObjectHideFlags: 0
