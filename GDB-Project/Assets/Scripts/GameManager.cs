@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
     [Header("       Player Weapon UI Elements      ")]
     public Image playerHPBar;
     public Image playerGun;
-
+    public TMP_Text playerGunName;
     public TMP_Text playerAmmoCur;
     public TMP_Text playerAmmoReserve;
 

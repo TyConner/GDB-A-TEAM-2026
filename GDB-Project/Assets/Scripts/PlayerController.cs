@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,6 +18,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] int shootDistance = 500;
     [SerializeField] float shootRate = 0.25f;
 
+    [SerializeField] int ammo_reserve = 6;
+    [SerializeField] int ammo_cur = 0;
+
+    [SerializeField] Sprite gunsprite;
+    [SerializeField] Sprite crosshairsprite;
+
+    string GunName = "default";
+
     int jumpCount = 0;
     int startingHP;
     float startingMovespeed;
@@ -31,6 +40,8 @@ public class PlayerController : MonoBehaviour
     {
         startingHP = HP;
         startingMovespeed = moveSpeed;
+        UpdateUI();
+        updateGunUI();
     }
 
     // Update is called once per frame
@@ -96,6 +107,7 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(int amount)
     {
         HP -= Mathf.Clamp(amount, 0, startingHP);
+        UpdateUI();
         if (HP <= 0)
         {
             Die();
@@ -109,9 +121,14 @@ public class PlayerController : MonoBehaviour
 
     void Shoot()//Gun script will handle shoot implementation
     {
+        //check ammo cur see if we have enough bullets to shoot
+
         if (shootTimer >= shootRate) //Gun will handle fire rate
         {
             shootTimer = 0;
+
+            //decrement ammo cur
+
 
             RaycastHit hit;
             if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDistance, ~ignoreLayer))
@@ -121,5 +138,25 @@ public class PlayerController : MonoBehaviour
                 // gun.shoot();
             }
         }
+    }
+    void updateGunUI()
+    {
+        
+        // change crosshair
+        GameManager.instance.playerGun.sprite = gunsprite;
+        // change gun sprite
+        GameManager.instance.playerCrossHair.sprite = crosshairsprite;
+        // change ammo reserve count
+        GameManager.instance.playerAmmoReserve.text = ammo_reserve.ToString();
+        // change ammo current
+        GameManager.instance.playerAmmoCur.text = ammo_cur.ToString();
+        // change gun name
+        GameManager.instance.playerGunName.text = GunName;
+
+    }
+    void UpdateUI()
+    {
+        GameManager.instance.playerHPBar.fillAmount = (float)HP / 100;
+
     }
 }
