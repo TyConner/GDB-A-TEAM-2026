@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     [Header("       Initialization        ")]
     [SerializeField] String PlayerTag;
     [SerializeField] String PlayerSpawnTag;
+    [SerializeField] int MatchTime = 120;
    
 
     [Header("       Menus        ")]
@@ -35,6 +36,7 @@ public class GameManager : MonoBehaviour
     
     public GameObject playerCompass;
     public Image playerCompassNeedle;
+    public Image playerCrossHair;
 
 
     [Header("       Player Weapon UI Elements      ")]
@@ -48,10 +50,20 @@ public class GameManager : MonoBehaviour
 
 
     float timeScaleOrig;
-
+    float currenttime;
     int gameGoalCount;
 
     public static GameManager instance;
+    string GetTime() {
+        //remaining minutes
+        int min = (int)currenttime / 60;
+        int sec = (int)currenttime - min * 60;
+        return min + " : " + sec;
+    }
+    void toggleCrosshair()
+    {
+        playerCrossHair.enabled = !playerCrossHair.enabled;
+    }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -59,13 +71,18 @@ public class GameManager : MonoBehaviour
         timeScaleOrig = Time.timeScale;
         player = GameObject.FindWithTag("Player");
         playerScript = player.GetComponent<PlayerController>();
-  
+        currenttime = MatchTime;
 
     }
-
+    void timer()
+    {
+        currenttime = currenttime - Time.deltaTime;
+        RemainingMatchTime.text = GetTime();
+    }
     // Update is called once per frame
     void Update()
     {
+        timer();
         if (Input.GetButtonDown("Cancel"))
         {
             if (menuActive == null)
@@ -84,6 +101,7 @@ public class GameManager : MonoBehaviour
 
     public void statePause()
     {
+        toggleCrosshair();
         isPaused = true;
         Time.timeScale = 0;
         Cursor.visible = true;
@@ -93,6 +111,7 @@ public class GameManager : MonoBehaviour
 
     public void stateUnPause()
     {
+        toggleCrosshair();
         isPaused = false;
         Time.timeScale = timeScaleOrig;
         Cursor.visible = false;
