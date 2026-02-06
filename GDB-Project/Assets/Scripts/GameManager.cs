@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour
     [Header("       Player Variable      ")]
     public GameObject player;
     public PlayerController playerScript;
-    public GameObject playerSpawnLoc;
+   
 
     [Header("       Player UI      ")]
     public GameObject DamageScreen;
@@ -57,9 +57,9 @@ public class GameManager : MonoBehaviour
     {
         instance = this;
         timeScaleOrig = Time.timeScale;
-        player = GameObject.FindWithTag(PlayerTag.ToString());
+        player = GameObject.FindWithTag("Player");
         playerScript = player.GetComponent<PlayerController>();
-        playerSpawnLoc = GameObject.FindWithTag(PlayerSpawnTag.ToString());
+  
 
     }
 
