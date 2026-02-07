@@ -2,7 +2,7 @@ using UnityEngine;
 
 public interface iFootStep
 {
-    void onStepDetected(Vector3 Pos)
+    public void onStepDetected(Vector3 Pos)
     {
 
     }

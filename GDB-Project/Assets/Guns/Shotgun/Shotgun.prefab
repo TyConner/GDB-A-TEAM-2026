@@ -46,8 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de133f4fe3600b542a95a008f5972b48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Shotgun
-  GunIcon: {fileID: 21300000, guid: 71ada78aea521bc44b4fa5c41b24e1f3, type: 3}
-  CrosshairIcon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  GunIcon: {fileID: 21300000, guid: 47c8e618970c5184a94361472a4bf957, type: 3}
+  CrosshairIcon: {fileID: 21300000, guid: 8eee1bc45dca92345b401100b64e12ff, type: 3}
   GunName: Shotty
   AmmoCur: 3
   AmmoMax: 3
