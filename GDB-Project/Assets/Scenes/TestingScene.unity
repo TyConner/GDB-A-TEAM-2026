@@ -204,6 +204,9 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1942289980213182, guid: 085e53ee40ad24b40a83bd90705ad460, type: 3}
       insertIndex: 1
+      addedObject: {fileID: 994627981}
+    - targetCorrespondingSourceObject: {fileID: 1942289980213182, guid: 085e53ee40ad24b40a83bd90705ad460, type: 3}
+      insertIndex: 2
       addedObject: {fileID: 9930842}
     - targetCorrespondingSourceObject: {fileID: 1942289980213182, guid: 085e53ee40ad24b40a83bd90705ad460, type: 3}
       insertIndex: -1
@@ -421,15 +424,15 @@ MonoBehaviour:
   - {fileID: 40187877}
   - {fileID: 214444395}
   Agent: {fileID: 9930839}
-  controller: {fileID: 0}
-  Ik_Rig: {fileID: 0}
+  controller: {fileID: 994627981}
+  Ik_Rig: {fileID: 994627980}
   Head: {fileID: 888796015}
   Gun: {fileID: 1663686071}
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 9930840}
   AudioConfig: {fileID: 11400000, guid: 14e1974ca8db0e145b54e474d90bee76, type: 2}
   HP: 5
   Item_Drop_Height: 1
-  Config: {fileID: 0}
+  Config: {fileID: 11400000, guid: 60c2adf033086d746b495423d1dc4118, type: 2}
 --- !u!1 &40187877 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1195460164518758, guid: 085e53ee40ad24b40a83bd90705ad460, type: 3}
@@ -1335,6 +1338,18 @@ MonoBehaviour:
   - m_Rig: {fileID: 1015576776}
     m_Active: 1
   m_Effectors: []
+--- !u!114 &994627981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9930835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 946da164c89608c41a99c8e3aadf955b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Animation_State_Controller
 --- !u!1 &1015576775
 GameObject:
   m_ObjectHideFlags: 0
