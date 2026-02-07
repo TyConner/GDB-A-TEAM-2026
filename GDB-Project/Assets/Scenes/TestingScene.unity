@@ -1818,6 +1818,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 5200031966558350982, guid: 097f25c715e342147b79d3641e85b5a1, type: 3}
+      propertyPath: DebugGunPref
+      value: 
+      objectReference: {fileID: 5179717559272968199, guid: 05120d9cc0febf74daf7381600889aa3, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
