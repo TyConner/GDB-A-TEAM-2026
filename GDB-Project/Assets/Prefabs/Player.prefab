@@ -62,10 +62,8 @@ MonoBehaviour:
   shootDamage: 20
   shootDistance: 500
   shootRate: 0.25
-  ammo_reserve: 6
-  ammo_cur: 0
-  gunsprite: {fileID: 21300000, guid: a60255d482098764684e4e585b389c93, type: 3}
-  crosshairsprite: {fileID: 21300000, guid: 672cb353ed068b54dac2a87051cb15aa, type: 3}
+  DebugGunPref: {fileID: 5179717559272968199, guid: 05120d9cc0febf74daf7381600889aa3, type: 3}
+  WeaponHoldPos: {fileID: 3457555769961392228}
 --- !u!33 &1217274782622763217
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -81,8 +79,8 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3583368993927288645}
-  m_Enabled: 1
-  m_CastShadows: 1
+  m_Enabled: 0
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -147,6 +145,37 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &5617846144746351721
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3457555769961392228}
+  m_Layer: 3
+  m_Name: HoldWeaponPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3457555769961392228
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5617846144746351721}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.195, y: -0.127, z: 0.277}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 8146427976770864293}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8101460500454660780
 GameObject:
   m_ObjectHideFlags: 0
@@ -179,7 +208,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.85, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 3457555769961392228}
   m_Father: {fileID: 1465209167060020005}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1010018219412278215
@@ -229,7 +259,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.01
   far clip plane: 1000
   field of view: 60
   orthographic: 0
