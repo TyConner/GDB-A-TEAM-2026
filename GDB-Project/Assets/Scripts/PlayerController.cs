@@ -18,7 +18,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] int shootDistance = 500;
     [SerializeField] float shootRate = 0.25f;
 
-
+    [SerializeField] GameObject DebugGunPref;
+    Gun Gun;
+    [SerializeField] Transform WeaponHoldPos;
 
     int jumpCount = 0;
     int startingHP;
@@ -51,6 +53,19 @@ public class PlayerController : MonoBehaviour
             Shoot();
         }
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * shootDistance, Color.red);
+
+        if(Input.GetButtonDown("DebugGun"))
+        {
+            if(Gun == null)
+            {
+                DebugGiveGun();
+            }
+            else
+            {
+                DropGun();
+            }
+            
+        }
     }
 
     void Movement()
@@ -113,34 +128,45 @@ public class PlayerController : MonoBehaviour
         print("You died");
     }
 
-    void changegun()
-    {
-        // do stuff
-
-        
-
-    }
     void Shoot()//Gun script will handle shoot implementation
     {
-        //check ammo cur see if we have enough bullets to shoot
-
-        if (shootTimer >= shootRate) //Gun will handle fire rate
-        {
-            shootTimer = 0;
-
-            //decrement ammo cur
-            // call GameManager.instance UpdateGunUI(sprite gun, sprite crosshair, name, ammocur, ammoreserve);
-
-            RaycastHit hit;
-            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDistance, ~ignoreLayer))
-            {
-                Debug.Log(hit.collider.name);
-                //TODO: Implement shoot mechanic (this likely will be done in a gun script, not here)
-                // gun.shoot();
-            }
-        }
+        if(Gun == null) { return; }
+        
+        Gun.Shoot();
     }
-  
+
+    void DebugGiveGun()
+    {
+        Gun newGun = Instantiate(DebugGunPref, WeaponHoldPos).GetComponent<Gun>();
+        EquipGun(newGun);
+    }
+
+    void EquipGun(Gun newGun)
+    {
+        if(Gun != null)
+        {
+            Gun.OnUnequip();
+        }
+
+        Gun = newGun;
+        Gun.OnEquip();
+        Gun.transform.SetParent(WeaponHoldPos);
+        Gun.transform.localPosition = Vector3.zero;
+        Gun.transform.localRotation = Quaternion.identity;
+        Gun.transform.localScale = Vector3.one;
+
+
+    }
+
+    void DropGun()
+    {
+        if(Gun == null) return;
+
+        Gun.OnUnequip();
+        Destroy(Gun.gameObject);
+        Gun = null;
+    }
+
     void UpdateUI()
     {
         GameManager.instance.playerHPBar.fillAmount = (float)HP / 100;
