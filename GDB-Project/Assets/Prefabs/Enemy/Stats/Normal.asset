@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3971d58f798ddb4ea1b7376e4cc9859, type: 3}
+  m_Name: Normal
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
+  FOV: 60
+  faceTargetSpeed: 70
+  AgentSprintMod: 2
+  AgentAlertedSearchDistance: 44
+  AgentAlertTime: 60
+  AgentAlertPauseTime: 2
+  RoamDist: 30
+  RoamPauseTime: 5

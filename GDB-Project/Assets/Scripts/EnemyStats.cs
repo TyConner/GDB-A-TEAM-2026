@@ -1,5 +1,7 @@
 using UnityEngine;
 
+[CreateAssetMenu]
+
 public class EnemyStats : ScriptableObject
 {
     [Space(2)][Range(1, 90)][SerializeField] int FOV;
