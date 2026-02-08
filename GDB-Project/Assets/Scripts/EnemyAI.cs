@@ -1,4 +1,5 @@
 using System;
+using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
@@ -27,8 +28,15 @@ public class EnemyAI : MonoBehaviour, iFootStep
     [Space(5)]
     [Space(2)][Range(1, 100)][SerializeField] int HP;
     [Space(2)][SerializeField] float Item_Drop_Height = 1.0f;
+    [Range(1, 10)]
+    [SerializeField] int AnimationTransSpeed = 8;
     [Header("AI Difficulty stats")]
     [Space(2)][SerializeField] EnemyStats Config;
+
+    [Header("------Score and Team-------")]
+    [Space(2)]
+    [SerializeField] MyScore ScoreData;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -45,9 +53,15 @@ public class EnemyAI : MonoBehaviour, iFootStep
         }
     }
 
-
+    void LocoAnim()
+    {
+        controller.SetSpeed(Agent.velocity.normalized.magnitude, AnimationTransSpeed);
+    }
    void AiLogic()
     {
 
+        LocoAnim();
+        Agent.SetDestination(GameManager.instance.player.transform.position);
+        
     }
 }
