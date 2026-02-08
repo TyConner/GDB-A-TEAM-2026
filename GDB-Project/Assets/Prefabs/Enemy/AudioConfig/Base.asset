@@ -12,10 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25f477eac22077545a815e27e784a55e, type: 3}
   m_Name: Base
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAudioConfig
-  hurt: []
+  hurt:
+  - {fileID: 8300000, guid: 3f950a74af5620a42aeaf5610f456c4e, type: 3}
+  - {fileID: 8300000, guid: 57ecbe9f07812a74e8b12fbe6006268e, type: 3}
+  - {fileID: 8300000, guid: 6a2cedd87134fbf43ba7ef90d8a0a5a7, type: 3}
+  - {fileID: 8300000, guid: c70439c7a8e65684c937206dab7ed68e, type: 3}
+  - {fileID: 8300000, guid: 9d71874d83d65b24f85e6d4d42b60bb6, type: 3}
   dying: []
   laugh: []
-  footsteps: []
+  footsteps:
+  - {fileID: 8300000, guid: c1d26bebdf9b28d4c9772f6bfe2d9770, type: 3}
+  - {fileID: 8300000, guid: 6d471a5bf75caf64b934ec48d9003107, type: 3}
+  - {fileID: 8300000, guid: 75c4196ed197676469509782d53db7c6, type: 3}
+  - {fileID: 8300000, guid: 98fc0f7085079c2429ddbafeb2b587e6, type: 3}
+  - {fileID: 8300000, guid: e48475dce1beeb7449d8fcd3ce28b27f, type: 3}
+  - {fileID: 8300000, guid: be88a2083ddb3494a9513c24bb24c3a4, type: 3}
+  - {fileID: 8300000, guid: 3046ed030b10c294c9d3504076952da5, type: 3}
+  - {fileID: 8300000, guid: 9b90ecd7756810540b83535fbfba824d, type: 3}
+  - {fileID: 8300000, guid: b8a3f337e8ed6414c92354aaf6d45811, type: 3}
   hurt_Vol: 0.5
   dying_Vol: 0.5
   laugh_Vol: 0.5

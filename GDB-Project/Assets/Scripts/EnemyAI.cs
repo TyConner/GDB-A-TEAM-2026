@@ -1,10 +1,12 @@
 using System;
+using System.Collections;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
+using static UnityEditor.PlayerSettings;
 
-public class EnemyAI : MonoBehaviour, iFootStep
+public class EnemyAI : MonoBehaviour, iFootStep, iDamage
 {
     [Header("------Dependancies--------")]
 
@@ -19,9 +21,10 @@ public class EnemyAI : MonoBehaviour, iFootStep
 
     [Space(2)][SerializeField] GameObject Gun;
 
+    [Space(2)]
+    [SerializeField] GameObject MuzzleFlash;
+
     [Header("---------Audio Settings--------")]
-    [Space(5)]
-    [Space(2)][SerializeField] AudioSource audioSource;
     [Space(5)]
     [Space(2)][SerializeField] EnemyAudioConfig AudioConfig;
     [Header("---------Enemy Stats--------")]
@@ -36,6 +39,11 @@ public class EnemyAI : MonoBehaviour, iFootStep
     [Header("------Score and Team-------")]
     [Space(2)]
     [SerializeField] MyScore ScoreData;
+
+
+    //testing
+    float shootTimer;
+    float shootRate = 1.1f;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -59,9 +67,67 @@ public class EnemyAI : MonoBehaviour, iFootStep
     }
    void AiLogic()
     {
-
+        shootTimer += Time.deltaTime;
+        Shoot();
         LocoAnim();
         Agent.SetDestination(GameManager.instance.player.transform.position);
         
     }
+
+    void Shoot()
+    {
+        if (shootTimer > shootRate && Gun != null)
+        {
+            shootTimer = 0;
+            Shoot();
+            Transform pos = Gun.transform.Find("ProjectileOrigin");
+            
+            RaycastHit hit;
+            if (Physics.Raycast(pos.position, Gun.transform.forward, out hit, 50))
+            {
+                Debug.Log(hit.collider.name);
+
+                iDamage dmg = hit.collider.GetComponent<iDamage>();
+                if (dmg != null)
+                {
+                    dmg.takeDamage(5);
+                }
+
+            }
+            controller.OnShoot();
+            GameObject flash = Instantiate(MuzzleFlash, pos);
+            Destroy(flash, .05f);
+        }
+       
+    }
+    IEnumerator BodyCleanUp()
+    {
+        yield return new WaitForSeconds(GameManager.instance.BodyCleanUpTime);
+        Destroy(gameObject);
+    }
+    void OnDeath()
+    {
+        Agent.enabled = false;
+        controller.OnDeath();
+        StartCoroutine(BodyCleanUp());
+
+    }
+
+    public void takeDamage(int amount)
+    {
+        HP -= amount;
+        controller.OnHit();
+        if (HP < 0) HP = 0;
+        {
+
+            OnDeath();
+
+        }
+    }
+
+    public void onStepDetected(Vector3 Pos)
+    {
+        AudioSource.PlayClipAtPoint(AudioConfig.footsteps[UnityEngine.Random.Range(0,AudioConfig.footsteps.Length)], Pos, AudioConfig.footsteps_Vol);
+    }
+
 }

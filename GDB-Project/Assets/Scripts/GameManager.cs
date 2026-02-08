@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
     public TMP_Text gameGoalCountText;
     public TMP_Text RemainingMatchTime;
     public TMP_Text countdownText;
-
+    public int BodyCleanUpTime = 3;
 
     [Header("       Player Variable      ")]
     public GameObject player;
@@ -106,6 +106,19 @@ public class GameManager : MonoBehaviour
 
     }
     
+    public void ClearGunUI()
+    {
+      
+        // change crosshair
+        playerGun.sprite = null;
+        // change gun sprite
+        playerCrossHair.sprite = null;
+        // change ammo reserve count
+        updateAmmoUI(0, 0);
+        // change gun name
+        playerGunName.text = "";
+
+    }
     public void updateAmmoUI(int ammo_reserve, int ammo_cur)
     {   // change ammo reserve count
         playerAmmoReserve.text = ammo_reserve.ToString();

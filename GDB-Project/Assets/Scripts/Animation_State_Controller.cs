@@ -10,11 +10,20 @@ public class Animation_State_Controller : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
+    public void OnShoot()
+    {
+        animator.SetTrigger("Shoot");
+    }
     public void OnHit()
     {
         animator.SetTrigger("Hit");
     }
 
+    public void OnDeath()
+    {
+        animator.SetTrigger("Death");
+        animator.SetInteger("RandomDeath", Random.Range(0, 3));
+    }
     public void SetSpeed(float currentSpeed, float TransSpeed)
     {
         float agentSpeedAnim = animator.GetFloat("Speed");

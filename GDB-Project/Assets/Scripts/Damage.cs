@@ -36,13 +36,7 @@ public class Damage : MonoBehaviour
         }
 
     }
-    IEnumerator DamageOverTime(int dmg, iDamage target)
-    {
-
-        yield return new WaitForSeconds(DmgRate);
-        target.takeDamage(dmg);
-
-    }
+ 
     private void OnTriggerEnter(Collider other)
     {
 

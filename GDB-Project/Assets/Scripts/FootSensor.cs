@@ -2,15 +2,15 @@ using UnityEngine;
 
 public class FootSensor : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] GameObject Parent;
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter(Collider other)
     {
-        
+        iFootStep Instagator = Parent.GetComponent<iFootStep>();
+        if (other.CompareTag("Ground") && Instagator != null)
+        {
+            Instagator.onStepDetected(transform.position);
+        }
+
     }
 }

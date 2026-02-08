@@ -21,7 +21,8 @@ public class Gun : MonoBehaviour
 
     public void OnUnequip()
     {
-    // TODO: prob input update gun ui for no gun?
+        // TODO: prob input update gun ui for no gun?
+        GameManager.instance.ClearGunUI();
     }
 
     public void Reload()
