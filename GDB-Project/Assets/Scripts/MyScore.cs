@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MyScore : MonoBehaviour
 {
-   
+    public string PlayerName;
     public enum Team { A , B, FFA}
 
     public Team Assigned_Team;
@@ -16,6 +16,13 @@ public class MyScore : MonoBehaviour
 
     };
 
+    private void Start()
+    {
+        if(PlayerName.Length == 0)
+        {
+            PlayerName = "Player " + transform.root.GetEntityId().ToString();
+        }
+    }
     public void ChangeScore(Category Stat, int amount)
     {
        Scores[Stat] += amount;
