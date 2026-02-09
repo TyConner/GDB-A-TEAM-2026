@@ -53,6 +53,8 @@ MonoBehaviour:
   AmmoMax: 6
   ReloadTime: 1
   FireRate: 0.5
+  Bullet: {fileID: 8805370691394233163, guid: b6dfa4310ac25bf41b48f9acadec0a5e, type: 3}
+  BulletOrigin: {fileID: 8406501744804296752}
 --- !u!1 &8875515426852317402
 GameObject:
   m_ObjectHideFlags: 0
@@ -78,7 +80,7 @@ Transform:
   m_GameObject: {fileID: 8875515426852317402}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.069, z: 0.449}
+  m_LocalPosition: {x: 0, y: 0.069, z: 0.5186}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
