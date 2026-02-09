@@ -11,6 +11,9 @@ public class Gun : MonoBehaviour
     [SerializeField] public float ReloadTime = 1f;
     [SerializeField] public float FireRate = 1f;
 
+    [SerializeField] public GameObject Bullet;
+    [SerializeField] Transform BulletOrigin;
+
     bool bInReload;
     bool bFireCooldown;
     float FireRateTimer;
@@ -59,6 +62,7 @@ public class Gun : MonoBehaviour
         AmmoCur--;
         print("Pew");
         GameManager.instance.updateAmmoUI(AmmoMax, AmmoCur);
+        Instantiate(Bullet, BulletOrigin);
         if(AmmoCur == 0)
         {
             Reload();
