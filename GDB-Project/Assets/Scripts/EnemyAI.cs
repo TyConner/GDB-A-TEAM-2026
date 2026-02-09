@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
 using static UnityEditor.PlayerSettings;
+using static MyScore;
 
 public class EnemyAI : MonoBehaviour, iFootStep, iDamage
 {
@@ -38,7 +39,8 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage
 
     [Header("------Score and Team-------")]
     [Space(2)]
-    [SerializeField] MyScore ScoreData;
+    [SerializeField] MyScore.Team Team;
+
 
 
     //testing
