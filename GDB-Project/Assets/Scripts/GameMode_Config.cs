@@ -11,5 +11,6 @@ public class GameMode_Config : ScriptableObject
     public EnemyStats Difficulty;
     [Range(1,50)]public int GameGoal;
     public MatchType ThisMatch;
+    public int Respawn_Timer;
 
 }
