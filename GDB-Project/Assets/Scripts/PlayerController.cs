@@ -14,10 +14,6 @@ public class PlayerController : MonoBehaviour, iDamage
     [SerializeField] int jumpMax = 1;
     [SerializeField] float gravity = 32f;
 
-    [SerializeField] int shootDamage = 20;
-    [SerializeField] int shootDistance = 500;
-    [SerializeField] float shootRate = 0.25f;
-
     [SerializeField] GameObject DebugGunPref;
     Gun Gun;
     [SerializeField] Transform WeaponHoldPos;
@@ -52,7 +48,6 @@ public class PlayerController : MonoBehaviour, iDamage
         {
             Shoot();
         }
-        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * shootDistance, Color.red);
 
         if(Input.GetButtonDown("DebugGun"))
         {
