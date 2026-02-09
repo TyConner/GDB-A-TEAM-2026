@@ -29,7 +29,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage
     [Space(2)][SerializeField] EnemyAudioConfig AudioConfig;
     [Header("---------Enemy Stats--------")]
     [Space(5)]
-    [Space(2)][Range(1, 100)][SerializeField] int HP;
+    [Space(2)][Range(1, 100)][SerializeField] int HP = 100;
     [Space(2)][SerializeField] float Item_Drop_Height = 1.0f;
     [Range(1, 10)]
     [SerializeField] int AnimationTransSpeed = 8;
@@ -64,7 +64,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage
     // Update is called once per frame
     void Update()
     {
-        if(Config != null)
+        if(Config != null && Agent.enabled)
         {
             AiLogic();
         }
@@ -77,14 +77,12 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage
    void AiLogic()
     {
         shootTimer += Time.deltaTime;
-        Shoot();
-        LocoAnim();
-        if (GameManager.instance != null && GameManager.instance.player != null)
-        {
-            Agent.SetDestination(GameManager.instance.player.transform.position);
-        }
-
-       
+            Shoot();
+            LocoAnim();
+            if (GameManager.instance != null && GameManager.instance.player != null)
+            {
+                Agent.SetDestination(GameManager.instance.player.transform.position);
+            }
         
     }
 
@@ -131,6 +129,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage
     {
         Agent.enabled = false;
         gameObject.GetComponent<CapsuleCollider>().enabled = false;
+        Ik_Rig.Clear();
         AudioSource.PlayClipAtPoint(AudioConfig.dying[UnityEngine.Random.Range(0, AudioConfig.dying.Length)], transform.position, AudioConfig.dying_Vol);
         controller.OnDeath();
         StartCoroutine(BodyCleanUp());
@@ -145,9 +144,11 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage
     public void takeDamage(int amount, GameObject Instagator, GameObject Victim)
     {
         HP -= amount;
+        //Debug.Log("DAMAGE IN AMOUNT: " + amount);
         controller.OnHit();
-        if (HP < 0) HP = 0;
+        if (HP < 0)
         {
+
             MyScore killersScores = Instagator.GetComponent<MyScore>();
             if (killersScores != null)
             {

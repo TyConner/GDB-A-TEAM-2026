@@ -30,7 +30,7 @@ public class Projectile : MonoBehaviour
         iDamage dmg = other.GetComponent<iDamage>();
         if (dmg != null)
         {
-            dmg.takeDamage(DamageAmount);
+            dmg.takeDamage(DamageAmount, transform.root.gameObject, other.gameObject);
         }
 
         if (HitEffect != null)

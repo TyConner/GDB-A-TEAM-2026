@@ -1476,13 +1476,17 @@ PrefabInstance:
       value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 2265620044383494649, guid: 70886b767216ef04a8688369fb03b2eb, type: 3}
+      propertyPath: DefaultWeaponSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 41bc762275d51c04294a69290b4d3772, type: 3}
+    - target: {fileID: 2265620044383494649, guid: 70886b767216ef04a8688369fb03b2eb, type: 3}
       propertyPath: TimeUntilMatchStarts
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2265620044383494649, guid: 70886b767216ef04a8688369fb03b2eb, type: 3}
       propertyPath: DefaultCrossHairSprite
       value: 
-      objectReference: {fileID: 21300000, guid: 44857261924345944863f80d97f0fb1d, type: 3}
+      objectReference: {fileID: 21300000, guid: 7869c0838d9a62040b0c93adf3068bfb, type: 3}
     - target: {fileID: 2463840445194175752, guid: 70886b767216ef04a8688369fb03b2eb, type: 3}
       propertyPath: m_Name
       value: UI
@@ -1928,6 +1932,10 @@ PrefabInstance:
     - target: {fileID: 5683850253024845107, guid: fccd2b20f35a3524da475ec947f569e4, type: 3}
       propertyPath: m_Layer
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5712139830543339458, guid: fccd2b20f35a3524da475ec947f569e4, type: 3}
+      propertyPath: HP
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5726547619387074833, guid: fccd2b20f35a3524da475ec947f569e4, type: 3}
       propertyPath: m_Layer
