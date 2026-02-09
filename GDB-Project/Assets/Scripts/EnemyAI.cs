@@ -49,9 +49,18 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        RandomCharacter();
     }
 
+    void RandomCharacter()
+    {
+        foreach (var character in Characters)
+        {
+            character.SetActive(false);
+
+        }
+        Characters[UnityEngine.Random.Range(0, Characters.Length)].SetActive(true);
+    }
     // Update is called once per frame
     void Update()
     {
@@ -70,7 +79,12 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage
         shootTimer += Time.deltaTime;
         Shoot();
         LocoAnim();
-        Agent.SetDestination(GameManager.instance.player.transform.position);
+        if (GameManager.instance != null && GameManager.instance.player != null)
+        {
+            Agent.SetDestination(GameManager.instance.player.transform.position);
+        }
+
+       
         
     }
 
@@ -80,8 +94,8 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage
         {
             shootTimer = 0;
             Shoot();
+
             Transform pos = Gun.transform.Find("ProjectileOrigin");
-            
             RaycastHit hit;
             if (Physics.Raycast(pos.position, Gun.transform.forward, out hit, 50))
             {
@@ -90,15 +104,23 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage
                 iDamage dmg = hit.collider.GetComponent<iDamage>();
                 if (dmg != null)
                 {
-                    dmg.takeDamage(5);
+                    dmg.takeDamage(30, gameObject, hit.collider.gameObject);
                 }
 
             }
             controller.OnShoot();
-            GameObject flash = Instantiate(MuzzleFlash, pos);
-            Destroy(flash, .05f);
+        
         }
        
+    }
+    public void createBullet()
+    {
+        //called from animation event in clip
+
+        Transform pos = Gun.transform.Find("ProjectileOrigin");
+        GameObject flash = Instantiate(MuzzleFlash, pos);
+        AudioSource.PlayClipAtPoint(AudioConfig.gunshot[0], pos.position, AudioConfig.gunshot_Vol);
+        Destroy(flash, .05f);
     }
     IEnumerator BodyCleanUp()
     {
@@ -108,26 +130,32 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage
     void OnDeath()
     {
         Agent.enabled = false;
+        gameObject.GetComponent<CapsuleCollider>().enabled = false;
+        AudioSource.PlayClipAtPoint(AudioConfig.dying[UnityEngine.Random.Range(0, AudioConfig.dying.Length)], transform.position, AudioConfig.dying_Vol);
         controller.OnDeath();
         StartCoroutine(BodyCleanUp());
 
     }
+    public void onStepDetected(Vector3 Pos)
+    {
+        //Debug.Log("FootStepEvent Detected");
+        AudioSource.PlayClipAtPoint(AudioConfig.footsteps[UnityEngine.Random.Range(0,AudioConfig.footsteps.Length)], Pos, AudioConfig.footsteps_Vol);
+    }
 
-    public void takeDamage(int amount)
+    public void takeDamage(int amount, GameObject Instagator, GameObject Victim)
     {
         HP -= amount;
         controller.OnHit();
         if (HP < 0) HP = 0;
         {
-
+            MyScore killersScores = Instagator.GetComponent<MyScore>();
+            if (killersScores != null)
+            {
+                killersScores.ChangeScore(MyScore.Category.Kills, 1);
+            }
             OnDeath();
+            Debug.Log("Killed by: " + Instagator.name);
 
         }
     }
-
-    public void onStepDetected(Vector3 Pos)
-    {
-        AudioSource.PlayClipAtPoint(AudioConfig.footsteps[UnityEngine.Random.Range(0,AudioConfig.footsteps.Length)], Pos, AudioConfig.footsteps_Vol);
-    }
-
 }

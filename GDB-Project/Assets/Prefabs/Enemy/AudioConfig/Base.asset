@@ -18,7 +18,10 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 6a2cedd87134fbf43ba7ef90d8a0a5a7, type: 3}
   - {fileID: 8300000, guid: c70439c7a8e65684c937206dab7ed68e, type: 3}
   - {fileID: 8300000, guid: 9d71874d83d65b24f85e6d4d42b60bb6, type: 3}
-  dying: []
+  dying:
+  - {fileID: 8300000, guid: defae6eae6d838f48bfc84a5c3787b1b, type: 3}
+  - {fileID: 8300000, guid: 562f8dbb07219454bb6450f58d5da416, type: 3}
+  - {fileID: 8300000, guid: 74f5ab36433cbb5459f3c499afccfff1, type: 3}
   laugh: []
   footsteps:
   - {fileID: 8300000, guid: c1d26bebdf9b28d4c9772f6bfe2d9770, type: 3}
@@ -30,7 +33,10 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 3046ed030b10c294c9d3504076952da5, type: 3}
   - {fileID: 8300000, guid: 9b90ecd7756810540b83535fbfba824d, type: 3}
   - {fileID: 8300000, guid: b8a3f337e8ed6414c92354aaf6d45811, type: 3}
+  gunshot:
+  - {fileID: 8300000, guid: 5c596d3f22a242c459954b2dc9e0d216, type: 3}
   hurt_Vol: 0.5
   dying_Vol: 0.5
   laugh_Vol: 0.5
   footsteps_Vol: 0.3
+  gunshot_Vol: 0.75

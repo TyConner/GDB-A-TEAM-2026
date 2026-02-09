@@ -49,7 +49,7 @@ public class Damage : MonoBehaviour
 
         if (dmg != null && Type != DamageType.DOT)
         {
-            dmg.takeDamage(Dmg);
+            dmg.takeDamage(Dmg, transform.parent.gameObject, other.gameObject);
         }
         if (Type == DamageType.Bullet)
         {
@@ -74,13 +74,13 @@ public class Damage : MonoBehaviour
 
         if (dmg != null && Type == DamageType.DOT && !isDamaging)
         {
-            StartCoroutine(damageOther(dmg));
+            StartCoroutine(damageOther(dmg, other));
         }
     }
-    IEnumerator damageOther(iDamage d)
+    IEnumerator damageOther(iDamage d, Collider other)
     {
         isDamaging = true;
-        d.takeDamage(Dmg);
+        d.takeDamage(Dmg, transform.parent.gameObject, other.gameObject);
         yield return new WaitForSeconds(DmgRate);
         isDamaging = false;
     }

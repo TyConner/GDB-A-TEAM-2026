@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, iDamage
 {
     [SerializeField] LayerMask ignoreLayer;
 
@@ -113,13 +113,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void TakeDamage(int amount)
+    public void takeDamage(int amount, GameObject Instagator, GameObject Victim)
     {
         HP -= Mathf.Clamp(amount, 0, startingHP);
         UpdateUI();
         if (HP <= 0)
         {
             Die();
+            Debug.Log("Killed by: " + Instagator.name);
         }
     }
 
@@ -172,4 +173,6 @@ public class PlayerController : MonoBehaviour
         GameManager.instance.playerHPBar.fillAmount = (float)HP / 100;
 
     }
+
+
 }

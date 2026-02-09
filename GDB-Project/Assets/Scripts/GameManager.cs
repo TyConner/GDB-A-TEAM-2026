@@ -44,6 +44,8 @@ public class GameManager : MonoBehaviour
     public GameObject playerCompass;
     public Image playerCompassNeedle;
     public Image playerCrossHair;
+    [SerializeField] Sprite DefaultCrossHairSprite;
+    [SerializeField] Sprite DefaultWeaponSprite;
 
 
     [Header("       Player Weapon UI Elements      ")]
@@ -110,9 +112,9 @@ public class GameManager : MonoBehaviour
     {
       
         // change crosshair
-        playerGun.sprite = null;
+        playerGun.sprite = DefaultWeaponSprite;
         // change gun sprite
-        playerCrossHair.sprite = null;
+        playerCrossHair.sprite = DefaultCrossHairSprite;
         // change ammo reserve count
         updateAmmoUI(0, 0);
         // change gun name
