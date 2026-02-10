@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour, iDamage
     [SerializeField] float moveSpeed = 5.0f;
     [SerializeField] float sprintModifier = 1.7f;
     [SerializeField] int maxHP = 100;
-    [SerializeField] int startingHP = 80;
+    [SerializeField] int startingHP = 100;
     [SerializeField] int currentHP;
     [SerializeField] int jumpVelocity = 15;
     [SerializeField] int jumpMax = 1;
@@ -31,7 +31,15 @@ public class PlayerController : MonoBehaviour, iDamage
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        currentHP = Mathf.Clamp(startingHP, 0, maxHP);
+        if (RunState.WasRestarted)
+        {
+            currentHP = maxHP;          
+            RunState.WasRestarted = false;
+        }
+        else
+        {
+            currentHP = Mathf.Clamp(startingHP, 0, maxHP); 
+        }
         startingMovespeed = moveSpeed;
         UpdateUI();
         //GameManager.instance.updateGunUI(fields);
@@ -112,7 +120,7 @@ public class PlayerController : MonoBehaviour, iDamage
     public void takeDamage(int amount, GameObject Instagator, GameObject Victim)
     {
         currentHP -= amount;
-        currentHP -= Mathf.Clamp(amount, 0, currentHP);
+        currentHP -= Mathf.Clamp(currentHP, 0, maxHP);
         UpdateUI();
         if (currentHP <= 0)
         {
@@ -123,8 +131,8 @@ public class PlayerController : MonoBehaviour, iDamage
 
     public void addHealth(int amount)
     {
-            maxHP += amount;
-            maxHP = Mathf.Clamp(maxHP, 0, startingHP);
+            currentHP += amount;
+            currentHP = Mathf.Clamp(currentHP, 0, maxHP);
             UpdateUI();
     }
 
@@ -178,6 +186,5 @@ public class PlayerController : MonoBehaviour, iDamage
         if (GameManager.instance.playerHPBar == null) return;
         GameManager.instance.playerHPBar.fillAmount = (float)currentHP / maxHP;
     }
-
 
 }
