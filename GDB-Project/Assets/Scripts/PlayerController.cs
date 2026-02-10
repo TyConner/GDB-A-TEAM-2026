@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour, iDamage
+public class PlayerController : MonoBehaviour, iDamage, iOwner
 {
     [SerializeField] LayerMask ignoreLayer;
 
@@ -26,6 +26,8 @@ public class PlayerController : MonoBehaviour, iDamage
 
     Vector3 moveDir;
     Vector3 playerVelocity;
+
+    public PlayerState MyPlayerState;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -63,6 +65,12 @@ public class PlayerController : MonoBehaviour, iDamage
         }
     }
 
+    public void SetOwningPlayer(PlayerState Player)
+    {
+
+        MyPlayerState = Player;
+
+    }
     void Movement()
     {
         if (characterController.isGrounded)
@@ -108,14 +116,14 @@ public class PlayerController : MonoBehaviour, iDamage
         }
     }
 
-    public void takeDamage(int amount, GameObject Instagator, GameObject Victim)
+    public void takeDamage(int amount, PlayerState Instagator)
     {
         HP -= Mathf.Clamp(amount, 0, startingHP);
         UpdateUI();
         if (HP <= 0)
         {
             Die();
-            Debug.Log("Killed by: " + Instagator.name);
+            Debug.Log("Killed by: " + Instagator.PS_Score.PlayerName);
         }
     }
 
@@ -128,7 +136,7 @@ public class PlayerController : MonoBehaviour, iDamage
     {
         if(Gun == null) { return; }
         
-        Gun.Shoot();
+        Gun.Shoot(MyPlayerState);
     }
 
     void DebugGiveGun()
@@ -169,5 +177,8 @@ public class PlayerController : MonoBehaviour, iDamage
 
     }
 
-
+    public PlayerState OwningPlayer()
+    {
+        return MyPlayerState;
+    }
 }

@@ -17,6 +17,8 @@ public class Gun : MonoBehaviour
     bool bInReload;
     bool bFireCooldown;
     float FireRateTimer;
+
+    PlayerState OwningPlayer;
     public void OnEquip()
     {
         GameManager.instance.updateGunUI(GunIcon, CrosshairIcon, AmmoMax, AmmoCur, GunName);
@@ -55,7 +57,7 @@ public class Gun : MonoBehaviour
     {
     }
 
-    public virtual void Shoot()
+    public virtual void Shoot(PlayerState Instagator)
     {
         if (!GetCanFire()) return;
 
@@ -63,7 +65,9 @@ public class Gun : MonoBehaviour
         AmmoCur--;
         print("Pew");
         GameManager.instance.updateAmmoUI(AmmoMax, AmmoCur);
-        Instantiate(Bullet, BulletOrigin);
+        GameObject abullet = Instantiate(Bullet, BulletOrigin);
+        abullet.GetComponent<Projectile>().MyOwner = Instagator;
+
         if(AmmoCur == 0)
         {
             Reload();
@@ -80,6 +84,7 @@ public class Gun : MonoBehaviour
     {
         AmmoCur = AmmoMax;
         print(AmmoCur);
+        OwningPlayer = transform.root.GetComponent<iOwner>().OwningPlayer();
     }
 
     // Update is called once per frame

@@ -7,7 +7,7 @@ using UnityEngine.Animations.Rigging;
 using static UnityEditor.PlayerSettings;
 using static MyScore;
 
-public class EnemyAI : MonoBehaviour, iFootStep, iDamage
+public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 {
     [Header("------Dependancies--------")]
 
@@ -35,11 +35,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage
     [Range(1, 10)]
     [SerializeField] int AnimationTransSpeed = 8;
     [Header("AI Difficulty stats")]
-    [Space(2)][SerializeField] EnemyStats Config;
+    [Space(2)]public EnemyStats Config;
 
     [Header("------Score and Team-------")]
-    [Space(2)]
-    [SerializeField] MyScore.Team Team;
+    public PlayerState MyPlayerState;
 
 
 
@@ -54,6 +53,12 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage
         RandomCharacter();
     }
 
+    public void SetPlayerStateRef(PlayerState state)
+    {
+
+        MyPlayerState = state;
+
+    }
     void RandomCharacter()
     {
         foreach (var character in Characters)
@@ -83,7 +88,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage
             LocoAnim();
             if (GameManager.instance != null && GameManager.instance.player != null)
             {
-                Agent.SetDestination(GameManager.instance.player.transform.position);
+                //Agent.SetDestination(GameManager.instance.player.transform.position);
             }
         
     }
@@ -93,7 +98,6 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage
         if (shootTimer > shootRate && Gun != null)
         {
             shootTimer = 0;
-            Shoot();
 
             Transform pos = Gun.transform.Find("ProjectileOrigin");
             RaycastHit hit;
@@ -104,7 +108,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage
                 iDamage dmg = hit.collider.GetComponent<iDamage>();
                 if (dmg != null)
                 {
-                    dmg.takeDamage(30, gameObject, hit.collider.gameObject);
+                    dmg.takeDamage(30, MyPlayerState );
                 }
 
             }
@@ -133,6 +137,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage
         gameObject.GetComponent<CapsuleCollider>().enabled = false;
         Ik_Rig.Clear();
         AudioSource.PlayClipAtPoint(AudioConfig.dying[UnityEngine.Random.Range(0, AudioConfig.dying.Length)], transform.position, AudioConfig.dying_Vol);
+        MyPlayerState.updateScore(Category.Deaths, 1);
         controller.OnDeath();
         StartCoroutine(BodyCleanUp());
 
@@ -143,22 +148,27 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage
         AudioSource.PlayClipAtPoint(AudioConfig.footsteps[UnityEngine.Random.Range(0,AudioConfig.footsteps.Length)], Pos, AudioConfig.footsteps_Vol);
     }
 
-    public void takeDamage(int amount, GameObject Instagator, GameObject Victim)
+    public void takeDamage(int amount, PlayerState Instagator)
     {
         HP -= amount;
         //Debug.Log("DAMAGE IN AMOUNT: " + amount);
         controller.OnHit();
         if (HP < 0)
         {
-
-            MyScore killersScores = Instagator.GetComponent<MyScore>();
-            if (killersScores != null)
+            if (Instagator != null)
             {
-                killersScores.ChangeScore(MyScore.Category.Kills, 1);
+                Instagator.updateScore(Category.Kills, 1);
+                Debug.Log(MyPlayerState.PS_Score.PlayerName + " was killed by " + Instagator.PS_Score.PlayerName);
             }
+            
             OnDeath();
-            Debug.Log("Killed by: " + Instagator.name);
+            
 
         }
+    }
+
+    public PlayerState OwningPlayer()
+    {
+        return MyPlayerState;
     }
 }

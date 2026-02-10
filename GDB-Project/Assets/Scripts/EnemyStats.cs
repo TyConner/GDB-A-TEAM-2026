@@ -12,4 +12,17 @@ public class EnemyStats : ScriptableObject
     [Range(1, 10)][SerializeField] int AgentAlertPauseTime = 2;
     [Range(1,150)][SerializeField] int RoamDist;
     [Range(1,10)][SerializeField] int RoamPauseTime;
+
+    public void SetStats(EnemyStats stats)
+    {
+        FOV = stats.FOV;
+        faceTargetSpeed = stats.faceTargetSpeed;
+        AgentSprintMod = stats.AgentSprintMod;
+        AgentAlertedSearchDistance = stats.AgentAlertedSearchDistance;
+        AgentAlertTime = stats.AgentAlertTime;
+        AgentAlertPauseTime = stats.AgentAlertPauseTime;
+        RoamDist = stats.RoamDist;
+        RoamPauseTime = stats.RoamPauseTime;
+
+    }
 }

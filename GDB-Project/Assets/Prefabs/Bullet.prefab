@@ -52,7 +52,7 @@ MonoBehaviour:
   rb: {fileID: 4337354545569716391}
   DamageAmount: 10
   Speed: 100
-  Lifetime: 0
+  Lifetime: 5
   HitEffect: {fileID: 0}
 --- !u!33 &7998447829378858867
 MeshFilter:

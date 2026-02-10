@@ -21,7 +21,12 @@ public class Damage : MonoBehaviour
     [SerializeField] ParticleSystem hitEff;
 
 
+    PlayerState Creator;
 
+    public void SetOwningPlayer(PlayerState player)
+    {
+        Creator = transform.root.GetComponent<iOwner>().OwningPlayer();
+    }
     enum DamageType { DOT, Static, Bullet };
 
     bool isDamaging;
@@ -49,7 +54,7 @@ public class Damage : MonoBehaviour
 
         if (dmg != null && Type != DamageType.DOT)
         {
-            dmg.takeDamage(Dmg, transform.parent.gameObject, other.gameObject);
+            dmg.takeDamage(Dmg, Creator );
         }
         if (Type == DamageType.Bullet)
         {
@@ -80,7 +85,7 @@ public class Damage : MonoBehaviour
     IEnumerator damageOther(iDamage d, Collider other)
     {
         isDamaging = true;
-        d.takeDamage(Dmg, transform.parent.gameObject, other.gameObject);
+        d.takeDamage(Dmg, Creator);
         yield return new WaitForSeconds(DmgRate);
         isDamaging = false;
     }
