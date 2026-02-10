@@ -9,7 +9,9 @@ public class PlayerController : MonoBehaviour, iDamage
     [SerializeField] CameraController cameraController;
     [SerializeField] float moveSpeed = 5.0f;
     [SerializeField] float sprintModifier = 1.7f;
-    [SerializeField] int HP = 100;
+    [SerializeField] int maxHP = 100;
+    [SerializeField] int startingHP = 80;
+    [SerializeField] int currentHP;
     [SerializeField] int jumpVelocity = 15;
     [SerializeField] int jumpMax = 1;
     [SerializeField] float gravity = 32f;
@@ -19,7 +21,6 @@ public class PlayerController : MonoBehaviour, iDamage
     [SerializeField] Transform WeaponHoldPos;
 
     int jumpCount = 0;
-    int startingHP;
     float startingMovespeed;
 
     float shootTimer;
@@ -30,7 +31,7 @@ public class PlayerController : MonoBehaviour, iDamage
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        startingHP = HP;
+        currentHP = Mathf.Clamp(startingHP, 0, maxHP);
         startingMovespeed = moveSpeed;
         UpdateUI();
         //GameManager.instance.updateGunUI(fields);
@@ -110,9 +111,10 @@ public class PlayerController : MonoBehaviour, iDamage
 
     public void takeDamage(int amount, GameObject Instagator, GameObject Victim)
     {
-        HP -= Mathf.Clamp(amount, 0, startingHP);
+        currentHP -= amount;
+        currentHP -= Mathf.Clamp(amount, 0, currentHP);
         UpdateUI();
-        if (HP <= 0)
+        if (currentHP <= 0)
         {
             Die();
             Debug.Log("Killed by: " + Instagator.name);
@@ -121,9 +123,9 @@ public class PlayerController : MonoBehaviour, iDamage
 
     public void addHealth(int amount)
     {
-        HP += amount;
-        HP = Mathf.Clamp(HP, 0, startingHP);
-        UpdateUI();
+            maxHP += amount;
+            maxHP = Mathf.Clamp(maxHP, 0, startingHP);
+            UpdateUI();
     }
 
     void Die()
@@ -172,8 +174,9 @@ public class PlayerController : MonoBehaviour, iDamage
 
     void UpdateUI()
     {
-        GameManager.instance.playerHPBar.fillAmount = (float)HP / 100;
-
+        if (GameManager.instance == null) return;
+        if (GameManager.instance.playerHPBar == null) return;
+        GameManager.instance.playerHPBar.fillAmount = (float)currentHP / maxHP;
     }
 
 
