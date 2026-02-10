@@ -8,23 +8,36 @@ using static GameMode_Config;
 public class GameMode : MonoBehaviour
 {
     public GameMode_Config config;
+    public enum GamePhase { Initialization, PendingStart, Playing, PostMatchScreen, End }
+    public GamePhase Phase;
     public static GameMode instance;
     [SerializeField] GameObject PlayerStatePrefab;
     public List<GameObject> OurPlayersStates;
+    int Team_A;
+    int Team_B;
+    int PlayerCount;
+    public PlayerController Player;
+    public PlayerState Player_PS;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         instance = this;
         InitMatch();
     }
-    void InitMatch()
+
+    public void SetPhase(GamePhase _phase)
+    {
+        Phase = _phase;
+    }
+    void InitBots()
     {
         int botCount = config.bots;
         for (int i = 0; i < botCount; i++)
         {
             GameObject bot = Instantiate(PlayerStatePrefab);
-            PlayerState bot_PS = bot.GetComponent<PlayerState>();
-            if(bot_PS != null)
+            PlayerState bot_PS = bot.GetComponent<iOwner>().OwningPlayer();
+            if (bot_PS != null)
             {
                 bot_PS.botStats = config.Difficulty;
                 bot_PS.PS_Type = PlayerState.PlayerType.bot;
@@ -35,10 +48,12 @@ public class GameMode : MonoBehaviour
                         if (i % 2 == 0)
                         {
                             bot_PS.PS_Score.Assigned_Team = Team.A;
+                            Team_A++;
                         }
                         else
                         {
                             bot_PS.PS_Score.Assigned_Team = Team.B;
+                            Team_B++;
                         }
                         break;
 
@@ -49,20 +64,46 @@ public class GameMode : MonoBehaviour
                 bot.name = bot_PS.name + "_PlayerState_Prefab";
                 OurPlayersStates.Add(bot);
             }
-           
-            
         }
-        GameObject player = Instantiate(PlayerStatePrefab);
-        player.name = "Player_PlayerState_Prefab";
-        PlayerState player_PS = player.GetComponent<PlayerState>();
-        if(player_PS != null)
-        {
-            player_PS.PS_Score.PlayerName = "Player";
-            player_PS.PS_Type = PlayerState.PlayerType.player;
-            OurPlayersStates.Add(player);
-        }
-        int playercount = botCount + 1;
+        PlayerCount = botCount;
+    }
 
+    void InitPlayer()
+    {
+        GameObject player = Instantiate(PlayerStatePrefab);
+        player.name = "Player";
+        PlayerState player_PS = player.GetComponent<iOwner>().OwningPlayer();
+        if (player_PS != null)
+        {
+
+            switch (config.ThisMatch)
+            {
+                case GameMode_Config.MatchType.TDM:
+                    if (Team_A > Team_B)
+                    {
+                        player_PS.PS_Score.Assigned_Team = Team.B;
+                    }
+                    else
+                    {
+                        player_PS.PS_Score.Assigned_Team = Team.A;
+                    }
+                    break;
+                case GameMode_Config.MatchType.FFA:
+                    {
+                        player_PS.PS_Score.Assigned_Team = Team.FFA;
+                        break;
+                    }
+            }
+
+        }
+        PlayerCount++;
+
+    }
+    void InitMatch()
+    {
+        Phase = GamePhase.Initialization;
+        InitBots();
+        InitPlayer();
     }
 
     public bool bHasReachedGoal(PlayerState player)

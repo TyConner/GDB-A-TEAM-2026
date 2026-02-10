@@ -10,11 +10,10 @@ public class GameManager : MonoBehaviour
     [Header("       Initialization        ")]
     [SerializeField] String PlayerTag;
     [SerializeField] String PlayerSpawnTag;
+    
     [Header("       Match Initialization        ")]
-    [Tooltip("Time in seconds the match lasts")]
-    [Range(0, 300)][SerializeField] int MatchTime = 120;
-    [Tooltip("Goal to reach so the match ends")]
-    [Range(1,10)][SerializeField] int WinGoal = 5;
+    GameMode MatchGameMode;
+
     [Tooltip("Match Begin Timer")]
     [Range(1, 10)][SerializeField] int TimeUntilMatchStarts = 5;
 
@@ -24,10 +23,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject menuPause;
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
-    
+
 
 
     [Header("       Game State      ")]
+    int MatchTime;
     public bool isPaused;
     public TMP_Text gameGoalCountText;
     public TMP_Text RemainingMatchTime;
@@ -78,22 +78,7 @@ public class GameManager : MonoBehaviour
     {
         gameGoalCountText.text = "Score: " + gameGoalCount;
     }
-    void ismatchOver()
-    {
-        if(currenttime <= 0)
-        {
-            statePause();
-            if(gameGoalCount >= WinGoal)
-            {
-                youWin();
-            }
-            else
-            {
-                youLose();
-            }
 
-        }
-    }
     public void updateGunUI(Sprite gunsprite, Sprite crosshairsprite, int ammo_reserve, int ammo_cur, string GunName)
     {
 
@@ -149,19 +134,22 @@ public class GameManager : MonoBehaviour
     {
         timeScaleOrig = 1;
         Time.timeScale = 0;
-        player = GameObject.FindWithTag("Player");
-        playerScript = player.GetComponent<PlayerController>();
+        MatchTime = GameMode.instance.config.MatchLength;
+        //player = GameObject.FindWithTag("Player");
+        //playerScript = player.GetComponent<PlayerController>();
         currenttime = MatchTime;
         matchstarttimer = TimeUntilMatchStarts;
         RemainingMatchTime.text = GetTime();
         countdownText.enabled = true;
         StartCoroutine(countdown());
         updateScore();
+
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         instance = this;
+        MatchGameMode = GameMode.instance;
         initalizeMatch();
     }
     void timer()
@@ -177,7 +165,6 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         timer();
-        ismatchOver();
         if (Input.GetButtonDown("Cancel"))
         {
             if (menuActive == null)
