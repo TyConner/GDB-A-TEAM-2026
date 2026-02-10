@@ -119,6 +119,13 @@ public class PlayerController : MonoBehaviour, iDamage
         }
     }
 
+    public void addHealth(int amount)
+    {
+        HP += amount;
+        HP = Mathf.Clamp(HP, 0, startingHP);
+        UpdateUI();
+    }
+
     void Die()
     {
         print("You died");
