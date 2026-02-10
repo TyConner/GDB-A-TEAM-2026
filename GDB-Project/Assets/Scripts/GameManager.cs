@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     GameMode MatchGameMode;
 
     [Tooltip("Match Begin Timer")]
-    [Range(1, 10)][SerializeField] int TimeUntilMatchStarts = 5;
+    [Range(1, 10)][SerializeField] int TimeUntilMatchStarts = 10;
 
 
     [Header("       Menus        ")]
@@ -226,16 +226,9 @@ public class GameManager : MonoBehaviour
     }
     public void updateGameGoal(int amount)
     {
-        gameGoalCount += amount;
+        gameGoalCount = amount;
         updateScore();
-        if (gameGoalCount <= 0)
-        {
-            //you win
-            statePause();
-            menuActive = menuWin;
-            menuActive.SetActive(true);
-
-        }
+       
     }
 }
 

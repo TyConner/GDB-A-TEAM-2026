@@ -57,7 +57,7 @@ public class Gun : MonoBehaviour
     {
     }
 
-    public virtual void Shoot()
+    public virtual void Shoot(PlayerState Instagator)
     {
         if (!GetCanFire()) return;
 
@@ -66,7 +66,7 @@ public class Gun : MonoBehaviour
         print("Pew");
         GameManager.instance.updateAmmoUI(AmmoMax, AmmoCur);
         GameObject abullet = Instantiate(Bullet, BulletOrigin);
-        abullet.GetComponent<Projectile>().SetOwningPlayer(OwningPlayer);
+        abullet.GetComponent<Projectile>().MyOwner = Instagator;
 
         if(AmmoCur == 0)
         {

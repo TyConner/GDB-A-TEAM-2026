@@ -35,7 +35,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     [Range(1, 10)]
     [SerializeField] int AnimationTransSpeed = 8;
     [Header("AI Difficulty stats")]
-    [Space(2)][SerializeField] EnemyStats Config;
+    [Space(2)]public EnemyStats Config;
 
     [Header("------Score and Team-------")]
     public PlayerState MyPlayerState;
@@ -98,7 +98,6 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         if (shootTimer > shootRate && Gun != null)
         {
             shootTimer = 0;
-            Shoot();
 
             Transform pos = Gun.transform.Find("ProjectileOrigin");
             RaycastHit hit;
@@ -156,10 +155,14 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         controller.OnHit();
         if (HP < 0)
         {
-
-            Instagator.updateScore(Category.Kills, 1);
+            if (Instagator != null)
+            {
+                Instagator.updateScore(Category.Kills, 1);
+                Debug.Log(MyPlayerState.PS_Score.PlayerName + " was killed by " + Instagator.PS_Score.PlayerName);
+            }
+            
             OnDeath();
-            Debug.Log(MyPlayerState.PS_Score.PlayerName + " was killed by " + Instagator.PS_Score.PlayerName);
+            
 
         }
     }

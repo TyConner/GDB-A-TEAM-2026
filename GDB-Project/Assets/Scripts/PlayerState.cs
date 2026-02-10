@@ -12,7 +12,7 @@ public class PlayerState : MonoBehaviour
 
     public EnemyStats botStats;
 
-    GameObject EntityRef;
+    public GameObject EntityRef;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -43,12 +43,14 @@ public class PlayerState : MonoBehaviour
             case PlayerType.player:
                 //get pos from GameMode
                 EntityRef = Instantiate(PlayerPrefab, pos, Quaternion.identity, null);
+                EntityRef.GetComponent<PlayerController>().MyPlayerState = this;
 
 
                 break;
             case PlayerType.bot:
                 EntityRef = Instantiate(BotPrefab, pos, Quaternion.identity, null);
-                EntityRef.GetComponent<EnemyStats>().SetStats(botStats);
+                EntityRef.GetComponent<EnemyAI>().Config = botStats;
+                EntityRef.GetComponent<EnemyAI>().MyPlayerState = this;
                 break;
         }
         //respawn player/bot;
@@ -58,10 +60,15 @@ public class PlayerState : MonoBehaviour
 
     public void updateScore(Category cat, int amount)
     {
+        
         PS_Score.ChangeScore(cat, amount);
         if(cat == Category.Kills)
         {
-            if(GameMode.instance.bHasReachedGoal(this)){
+            if (PS_Type == PlayerType.player)
+            {
+                GameManager.instance.updateGameGoal(PS_Score.GetScore(Category.Kills));
+            }
+            if (GameMode.instance.bHasReachedGoal(this)){
                 Debug.Log(PS_Score.PlayerName + " has won!");
             }
         }

@@ -9,12 +9,7 @@ public class Projectile : MonoBehaviour
     [SerializeField] float Lifetime = 0f;
     [SerializeField] ParticleSystem HitEffect;
 
-    PlayerState Creator;
-
-    public void SetOwningPlayer(PlayerState player)
-    {
-        Creator = transform.root.GetComponent<iOwner>().OwningPlayer();
-    }
+    public PlayerState MyOwner;
     void Start()
     {
 
@@ -36,7 +31,7 @@ public class Projectile : MonoBehaviour
         iDamage dmg = other.GetComponent<iDamage>();
         if (dmg != null)
         {
-            dmg.takeDamage(DamageAmount, Creator);
+            dmg.takeDamage(DamageAmount, MyOwner);
         }
 
         if (HitEffect != null)

@@ -27,7 +27,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     Vector3 moveDir;
     Vector3 playerVelocity;
 
-    PlayerState MyPlayerState;
+    public PlayerState MyPlayerState;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -136,7 +136,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     {
         if(Gun == null) { return; }
         
-        Gun.Shoot();
+        Gun.Shoot(MyPlayerState);
     }
 
     void DebugGiveGun()

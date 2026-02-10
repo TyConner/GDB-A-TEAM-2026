@@ -24,8 +24,9 @@ public class GameMode : MonoBehaviour
     void Start()
     {
         instance = this;
+        SpawnLocs = GameObject.FindGameObjectsWithTag("SpawnPos");
         InitMatch();
-        SpawnLocs =  GameObject.FindGameObjectsWithTag("SpawnPos");
+       
     }
 
     public Vector3 GetSpawnLoc()
@@ -43,11 +44,14 @@ public class GameMode : MonoBehaviour
         for (int i = 0; i < botCount; i++)
         {
             GameObject bot = Instantiate(PlayerStatePrefab);
-            PlayerState bot_PS = bot.GetComponent<iOwner>().OwningPlayer();
+
+            PlayerState bot_PS = bot.GetComponent<PlayerState>();
             if (bot_PS != null)
             {
+                
                 bot_PS.botStats = config.Difficulty;
                 bot_PS.PS_Type = PlayerState.PlayerType.bot;
+                //Debug.Log(bot_PS.PS_Score.GetScore(Category.Kills));
                 bot_PS.PS_Score.PlayerName = "Bot " + i;
                 switch (config.ThisMatch)
                 {
@@ -79,7 +83,7 @@ public class GameMode : MonoBehaviour
     {
         GameObject player = Instantiate(PlayerStatePrefab);
         player.name = "Player";
-        PlayerState player_PS = player.GetComponent<iOwner>().OwningPlayer();
+        PlayerState player_PS = player.GetComponent<PlayerState>();
         if (player_PS != null)
         {
 
