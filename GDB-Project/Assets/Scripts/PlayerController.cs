@@ -1,3 +1,4 @@
+using System.ComponentModel.Design.Serialization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -35,6 +36,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         startingHP = HP;
         startingMovespeed = moveSpeed;
         UpdateUI();
+
         //GameManager.instance.updateGunUI(fields);
     }
 
@@ -122,6 +124,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         UpdateUI();
         if (HP <= 0)
         {
+            Instagator.updateScore(MyScore.Category.Kills, 1);
             Die();
             Debug.Log("Killed by: " + Instagator.PS_Score.PlayerName);
         }
@@ -129,11 +132,13 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
 
     void Die()
     {
-        MyPlayerState.Respawn_by_Timer();
-       
-        print("You died");
 
-        Destroy(gameObject);
+        MyPlayerState.OnDeath();
+        //you died ui screen to be called in playerstate
+        print("You died");
+        
+        
+  
     }
 
     void Shoot()//Gun script will handle shoot implementation
@@ -185,6 +190,4 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     {
         return MyPlayerState;
     }
-
- 
 }

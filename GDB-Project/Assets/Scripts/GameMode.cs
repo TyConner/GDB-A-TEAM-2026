@@ -1,10 +1,13 @@
 using NUnit.Framework;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Physics.Authoring;
+using Unity.VisualScripting;
 using UnityEngine;
-using static MyScore;
+using UnityEngine.Rendering;
 using static GameMode_Config;
-using System;
+using static MyScore;
 
 public class GameMode : MonoBehaviour
 {
@@ -18,11 +21,11 @@ public class GameMode : MonoBehaviour
     int Team_B;
     int PlayerCount;
     public PlayerController Player;
-    public PlayerState Player_PS;
+    public PlayerState player_PS;
     public GameObject[] SpawnLocs;
+    GameObject Spectator;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-
-    void Awake()
+    private void Awake()
     {
         instance = this;
     }
@@ -30,6 +33,7 @@ public class GameMode : MonoBehaviour
     {
         
         SpawnLocs = GameObject.FindGameObjectsWithTag("SpawnPos");
+        Spectator = GameObject.FindGameObjectWithTag("SpectatorCam");
         InitMatch();
        
     }
@@ -42,6 +46,11 @@ public class GameMode : MonoBehaviour
     public void SetPhase(GamePhase _phase)
     {
         Phase = _phase;
+    }
+
+    public void ToggleSpectatorCamera(bool val)
+    {
+        Spectator.SetActive(val);
     }
     void InitBots()
     {
@@ -88,7 +97,7 @@ public class GameMode : MonoBehaviour
     {
         GameObject player = Instantiate(PlayerStatePrefab);
         player.name = "Player";
-        PlayerState player_PS = player.GetComponent<PlayerState>();
+        player_PS = player.GetComponent<PlayerState>();
         if (player_PS != null)
         {
 
@@ -116,11 +125,49 @@ public class GameMode : MonoBehaviour
 
     }
 
-    void SpawnPlayers()
+    void Respawn(PlayerState player)
+    {
+        // ask game made to RespawnMe
+        Vector3 pos = GetSpawnLoc();
+
+        switch (player.PS_Type)
+        {
+            case PlayerState.PlayerType.player:
+                player.EntityRef = Instantiate(player.PlayerPrefab, pos, Quaternion.identity, null);
+                player.EntityRef.GetComponent<PlayerController>().MyPlayerState = player;
+                Spectator.SetActive(false);
+
+                break;
+            case PlayerState.PlayerType.bot:
+                player.EntityRef = Instantiate(player.BotPrefab, pos, Quaternion.identity, null);
+                player.EntityRef.GetComponent<EnemyAI>().Config = player.botStats;
+                player.EntityRef.GetComponent<EnemyAI>().MyPlayerState = player;
+                break;
+        }
+    }
+
+    public void TryRespawn(PlayerState player)
+    {
+        if(Phase == GamePhase.Playing)
+        {
+            StartCoroutine(RespawnByTimer(player));
+        }
+    }
+
+
+    IEnumerator RespawnByTimer(PlayerState player)
+    {
+        if (GameMode.instance.Phase == GameMode.GamePhase.Playing)
+        {
+            yield return new WaitForSeconds(GameMode.instance.config.Respawn_Timer);
+            Respawn(player);
+        }
+    }
+    void InitialSpawn()
     {
         foreach (PlayerState var in OurPlayersStates)
         {
-            var.Respawn();
+            Respawn(var);
         }
     }
 
@@ -132,11 +179,15 @@ public class GameMode : MonoBehaviour
         }
     }
 
-    void PlayersDecativate()
+    void DeactivateBots()
     {
         foreach (PlayerState var in OurPlayersStates)
         {
-            var.MatchOver();
+            if(var.PS_Type != PlayerState.PlayerType.player)
+            {
+                var.MatchOver();
+            }
+            
         }
     }
 
@@ -194,7 +245,7 @@ public class GameMode : MonoBehaviour
         {
             case MatchType.FFA:
                 {
-                    if(Player_PS == FFA_ChooseWinner())
+                    if(player_PS == FFA_ChooseWinner())
                     {
                         val = true;
                         break;
@@ -210,7 +261,7 @@ public class GameMode : MonoBehaviour
 
             case MatchType.TDM:
                 {
-                    if(Player_PS.PS_Score.Assigned_Team == TDM_ChooseWinner())
+                    if(player_PS.PS_Score.Assigned_Team == TDM_ChooseWinner())
                     {
                         val = true;
                         break;
@@ -230,7 +281,7 @@ public class GameMode : MonoBehaviour
         Phase = GamePhase.Initialization;
         InitBots();
         InitPlayer();
-        SpawnPlayers();
+        InitialSpawn();
         Phase = GamePhase.PendingStart;
         GameManager.instance.initalizeMatch(config.MatchLength);
     }
@@ -245,7 +296,7 @@ public class GameMode : MonoBehaviour
     public void OnMatchOver()
     {
         Phase = GamePhase.PostMatchScreen;
-        PlayersDecativate();
+        DeactivateBots();
         //GameManager.instance.ScoreBoard;
         if (DidPlayerWin())
         {
@@ -264,14 +315,16 @@ public class GameMode : MonoBehaviour
         {
             if (player.PS_Type == PlayerState.PlayerType.player)
             {
-                GameManager.instance.youWin();
+                //player won
             }
             else
             {
-                GameManager.instance.youLose();
+               //someone won
             }
             //someone Won, end match
-                return true;
+            OnMatchOver();
+            return true;
+            
             
         }
         return false;
