@@ -1,3 +1,4 @@
+using System.ComponentModel.Design.Serialization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -131,12 +132,13 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
 
     void Die()
     {
-<<<<<<< Updated upstream
-=======
-        MyPlayerState.Respawn_by_Timer();
 
->>>>>>> Stashed changes
+        MyPlayerState.OnDeath();
+        //you died ui screen to be called in playerstate
         print("You died");
+        
+        
+  
     }
 
     void Shoot()//Gun script will handle shoot implementation

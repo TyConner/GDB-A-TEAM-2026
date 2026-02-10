@@ -126,20 +126,17 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         AudioSource.PlayClipAtPoint(AudioConfig.gunshot[0], pos.position, AudioConfig.gunshot_Vol);
         Destroy(flash, .05f);
     }
-    IEnumerator BodyCleanUp()
-    {
-        yield return new WaitForSeconds(GameManager.instance.BodyCleanUpTime);
-        Destroy(gameObject);
-    }
+
     void OnDeath()
     {
         Agent.enabled = false;
         gameObject.GetComponent<CapsuleCollider>().enabled = false;
         Ik_Rig.Clear();
         AudioSource.PlayClipAtPoint(AudioConfig.dying[UnityEngine.Random.Range(0, AudioConfig.dying.Length)], transform.position, AudioConfig.dying_Vol);
-        MyPlayerState.updateScore(Category.Deaths, 1);
+        //MyPlayerState.updateScore(Category.Deaths, 1);
         controller.OnDeath();
-        StartCoroutine(BodyCleanUp());
+        MyPlayerState.OnDeath();
+   
 
     }
     public void onStepDetected(Vector3 Pos)

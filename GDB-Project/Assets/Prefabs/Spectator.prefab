@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6290359477445742366}
   m_Layer: 0
   m_Name: Spectator
-  m_TagString: Untagged
+  m_TagString: SpectatorCam
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -41,7 +41,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 290293841605985689}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -92,7 +92,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 290293841605985689}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!114 &6290359477445742366
 MonoBehaviour:
   m_ObjectHideFlags: 0
