@@ -55,15 +55,13 @@ MonoBehaviour:
   cameraController: {fileID: 1010018219412278215}
   moveSpeed: 7
   sprintModifier: 1.7
-  HP: 100
+  HP: 2
   jumpVelocity: 12
   jumpMax: 1
   gravity: 30
-  shootDamage: 20
-  shootDistance: 500
-  shootRate: 0.25
   DebugGunPref: {fileID: 5179717559272968199, guid: 05120d9cc0febf74daf7381600889aa3, type: 3}
   WeaponHoldPos: {fileID: 3457555769961392228}
+  MyPlayerState: {fileID: 0}
 --- !u!33 &1217274782622763217
 MeshFilter:
   m_ObjectHideFlags: 0

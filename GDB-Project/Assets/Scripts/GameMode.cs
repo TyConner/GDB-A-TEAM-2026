@@ -20,11 +20,13 @@ public class GameMode : MonoBehaviour
     public PlayerController Player;
     public PlayerState Player_PS;
     public GameObject[] SpawnLocs;
+    public GameObject Spectator;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         instance = this;
         SpawnLocs = GameObject.FindGameObjectsWithTag("SpawnPos");
+        Spectator = GameObject.FindGameObjectWithTag("SpectatorCam");
         InitMatch();
        
     }
@@ -266,7 +268,9 @@ public class GameMode : MonoBehaviour
                 GameManager.instance.youLose();
             }
             //someone Won, end match
-                return true;
+            OnMatchOver();
+            return true;
+            
             
         }
         return false;

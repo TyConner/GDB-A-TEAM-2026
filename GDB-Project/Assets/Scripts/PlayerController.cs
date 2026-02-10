@@ -35,6 +35,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         startingHP = HP;
         startingMovespeed = moveSpeed;
         UpdateUI();
+
         //GameManager.instance.updateGunUI(fields);
     }
 
@@ -122,6 +123,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         UpdateUI();
         if (HP <= 0)
         {
+            Instagator.updateScore(MyScore.Category.Kills, 1);
             Die();
             Debug.Log("Killed by: " + Instagator.PS_Score.PlayerName);
         }
@@ -129,6 +131,11 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
 
     void Die()
     {
+<<<<<<< Updated upstream
+=======
+        MyPlayerState.Respawn_by_Timer();
+
+>>>>>>> Stashed changes
         print("You died");
     }
 

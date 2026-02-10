@@ -36,6 +36,7 @@ public class PlayerState : MonoBehaviour
     }
     public void Respawn()
     {
+        GameMode.instance.Spectator.SetActive(false); 
         Vector3 pos = GameMode.instance.GetSpawnLoc();
         
         switch (PS_Type)
@@ -74,6 +75,14 @@ public class PlayerState : MonoBehaviour
         }
     }
    
+<<<<<<< Updated upstream
+=======
+    public void Respawn_by_Timer()
+    {
+        GameMode.instance.Spectator.SetActive(true);
+        StartCoroutine(SpawnTimer());
+    }
+>>>>>>> Stashed changes
     IEnumerator SpawnTimer()
     {
         if (GameMode.instance.Phase == GameMode.GamePhase.Playing)
