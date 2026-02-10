@@ -128,16 +128,16 @@ public class GameManager : MonoBehaviour
             Time.timeScale = timeScaleOrig;
             currenttime = MatchTime;
             countdownText.enabled = false;
+            GameMode.instance.OnPlay();
         }
     }
-    void initalizeMatch()
+    public void initalizeMatch(int MatchLength)
     {
         timeScaleOrig = 1;
-        Time.timeScale = 0;
-        MatchTime = GameMode.instance.config.MatchLength;
+        Time.timeScale = timeScaleOrig;
+        currenttime = MatchTime = MatchLength;
         //player = GameObject.FindWithTag("Player");
         //playerScript = player.GetComponent<PlayerController>();
-        currenttime = MatchTime;
         matchstarttimer = TimeUntilMatchStarts;
         RemainingMatchTime.text = GetTime();
         countdownText.enabled = true;
@@ -150,11 +150,11 @@ public class GameManager : MonoBehaviour
     {
         instance = this;
         MatchGameMode = GameMode.instance;
-        initalizeMatch();
+        //initalizeMatch();
     }
     void timer()
     {
-        if(Time.timeScale == timeScaleOrig)
+        if(GameMode.instance.Phase.Equals(GameMode.GamePhase.Playing))
         {
             currenttime = currenttime - Time.deltaTime;
             RemainingMatchTime.text = GetTime();
@@ -164,7 +164,14 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         timer();
+
+        if(currenttime <= 0)
+        {
+            GameMode.instance.OnMatchOver();
+        }
+      
         if (Input.GetButtonDown("Cancel"))
         {
             if (menuActive == null)

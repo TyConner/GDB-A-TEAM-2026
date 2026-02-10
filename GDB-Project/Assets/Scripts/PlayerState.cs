@@ -24,16 +24,26 @@ public class PlayerState : MonoBehaviour
         }
     }
 
+    public void MatchStart()
+    {
+        EntityRef.SetActive(true);
+
+    }
+
+    public void MatchOver()
+    {
+        Destroy(EntityRef);
+    }
     public void Respawn()
     {
-        Vector3 pos = Vector3.zero; // = return func from game mode that gives a spawn location
+        Vector3 pos = GameMode.instance.GetSpawnLoc();
         
         switch (PS_Type)
         {
             case PlayerType.player:
                 //get pos from GameMode
                 EntityRef = Instantiate(PlayerPrefab, pos, Quaternion.identity, null);
-                PlayerController controller = EntityRef.GetComponent<PlayerController>();
+
 
                 break;
             case PlayerType.bot:
@@ -68,13 +78,7 @@ public class PlayerState : MonoBehaviour
         {
 
             Respawn();
-            switch (PS_Type)
-            {
-                case PlayerType.bot:
-                    break;
-                case PlayerType.player:
-                    break;
-            }
+            EntityRef.SetActive(false);
 
         }
 

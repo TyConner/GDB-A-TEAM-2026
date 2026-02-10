@@ -4,6 +4,7 @@ using Unity.Physics.Authoring;
 using UnityEngine;
 using static MyScore;
 using static GameMode_Config;
+using System;
 
 public class GameMode : MonoBehaviour
 {
@@ -12,20 +13,26 @@ public class GameMode : MonoBehaviour
     public GamePhase Phase;
     public static GameMode instance;
     [SerializeField] GameObject PlayerStatePrefab;
-    public List<GameObject> OurPlayersStates;
+    public List<PlayerState> OurPlayersStates;
     int Team_A;
     int Team_B;
     int PlayerCount;
     public PlayerController Player;
     public PlayerState Player_PS;
-
+    public GameObject[] SpawnLocs;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         instance = this;
         InitMatch();
+        SpawnLocs =  GameObject.FindGameObjectsWithTag("SpawnPos");
     }
 
+    public Vector3 GetSpawnLoc()
+    {
+
+        return SpawnLocs[UnityEngine.Random.Range(0, SpawnLocs.Length)].transform.position;
+    }
     public void SetPhase(GamePhase _phase)
     {
         Phase = _phase;
@@ -62,7 +69,7 @@ public class GameMode : MonoBehaviour
                         break;
                 }
                 bot.name = bot_PS.name + "_PlayerState_Prefab";
-                OurPlayersStates.Add(bot);
+                OurPlayersStates.Add(bot_PS);
             }
         }
         PlayerCount = botCount;
@@ -94,17 +101,153 @@ public class GameMode : MonoBehaviour
                         break;
                     }
             }
-
+            OurPlayersStates.Add(player_PS);
         }
         PlayerCount++;
 
+    }
+
+    void SpawnPlayers()
+    {
+        foreach (PlayerState var in OurPlayersStates)
+        {
+            var.Respawn();
+        }
+    }
+
+    void PlayersActivate()
+    {
+        foreach (PlayerState var in OurPlayersStates)
+        {
+            var.MatchStart();
+        }
+    }
+
+    void PlayersDecativate()
+    {
+        foreach (PlayerState var in OurPlayersStates)
+        {
+            var.MatchOver();
+        }
+    }
+
+    private PlayerState FFA_ChooseWinner()
+    {
+        PlayerState Winner = null;
+        foreach (PlayerState var in OurPlayersStates)
+        {
+            if (Winner == null)
+            {
+                Winner = var;
+            }
+            else
+            {
+                if (Winner.PS_Score.GetScore(Category.Kills) < var.PS_Score.GetScore(Category.Kills))
+                {
+                    Winner = var;
+                }
+            }
+        }
+        return Winner;
+    }
+    private Team TDM_ChooseWinner()
+    {
+        Team WinningTeam;
+        int A_Team_Score = 0;
+        int B_Team_Score = 0;
+        foreach (PlayerState var in OurPlayersStates)
+        {
+            switch (var.PS_Score.Assigned_Team)
+            {
+                case Team.A:
+                    {
+                        A_Team_Score += var.PS_Score.GetScore(Category.Kills);
+                        break;
+                    }
+                case Team.B:
+                    {
+                        B_Team_Score += var.PS_Score.GetScore(Category.Kills);
+                        break;
+                    }
+            }
+        }
+        if (A_Team_Score > B_Team_Score)
+        {
+            WinningTeam = Team.A;
+        }
+        else { WinningTeam = Team.B; }
+        return WinningTeam;
+    }
+    bool DidPlayerWin()
+    {
+        bool val = false;
+        switch (config.ThisMatch)
+        {
+            case MatchType.FFA:
+                {
+                    if(Player_PS == FFA_ChooseWinner())
+                    {
+                        val = true;
+                        break;
+                        
+                    }
+                    else
+                    {
+                        val = false;
+                        break;
+                    }
+                        
+                }
+
+            case MatchType.TDM:
+                {
+                    if(Player_PS.PS_Score.Assigned_Team == TDM_ChooseWinner())
+                    {
+                        val = true;
+                        break;
+                    }
+                    else
+                    {
+                        val = false;
+                        break;
+                    }
+                    
+                }
+        }
+        return val;
     }
     void InitMatch()
     {
         Phase = GamePhase.Initialization;
         InitBots();
         InitPlayer();
+        SpawnPlayers();
+        Phase = GamePhase.PendingStart;
+        GameManager.instance.initalizeMatch(config.MatchLength);
     }
+
+    public void OnPlay()
+    {
+        Phase = GamePhase.Playing;
+        PlayersActivate();
+
+    }
+
+    public void OnMatchOver()
+    {
+        Phase = GamePhase.PostMatchScreen;
+        PlayersDecativate();
+        //GameManager.instance.ScoreBoard;
+        if (DidPlayerWin())
+        {
+            GameManager.instance.youWin();
+        }
+        else
+        {
+            GameManager.instance.youLose();
+        }
+    }
+
 
     public bool bHasReachedGoal(PlayerState player)
     {
