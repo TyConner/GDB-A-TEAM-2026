@@ -129,7 +129,11 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
 
     void Die()
     {
+        MyPlayerState.Respawn_by_Timer();
+       
         print("You died");
+
+        Destroy(gameObject);
     }
 
     void Shoot()//Gun script will handle shoot implementation
@@ -181,4 +185,6 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     {
         return MyPlayerState;
     }
+
+ 
 }

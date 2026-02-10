@@ -74,6 +74,10 @@ public class PlayerState : MonoBehaviour
         }
     }
    
+    public void Respawn_by_Timer()
+    {
+        StartCoroutine(SpawnTimer());
+    }
     IEnumerator SpawnTimer()
     {
         if (GameMode.instance.Phase == GameMode.GamePhase.Playing)

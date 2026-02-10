@@ -139,6 +139,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         AudioSource.PlayClipAtPoint(AudioConfig.dying[UnityEngine.Random.Range(0, AudioConfig.dying.Length)], transform.position, AudioConfig.dying_Vol);
         MyPlayerState.updateScore(Category.Deaths, 1);
         controller.OnDeath();
+        MyPlayerState.Respawn_by_Timer();
         StartCoroutine(BodyCleanUp());
 
     }
