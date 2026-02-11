@@ -248,6 +248,53 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         
     }
    
+    GameObject ClosestObject(GameObject obj, GameObject obj2)
+    {
+        
+        GameObject CloserObject = null;
+        if(obj == null && obj2 != null)
+        {
+            return obj;
+        }
+        else if(obj2 == null && obj != null) 
+        {
+            return obj2;
+        }
+
+        if ((obj.transform.position - transform.position).magnitude > (obj2.transform.position - transform.position).magnitude)
+        {
+            CloserObject = obj;
+        }
+        else
+        {
+            CloserObject = obj2;
+        }
+        return CloserObject;
+    }
+    GameObject AssessClosestThreat()
+    {
+        GameObject target = null;
+        if (NearbyEnemyPlayers.Count > 0)
+        {
+            foreach (GameObject enemy in NearbyEnemyPlayers)
+            {
+                if (target == null)
+                {
+                    target = enemy;
+                }
+                else
+                {
+                    GameObject result = ClosestObject(enemy, target);
+                    if (result != null)
+                    {
+                        target = result;
+                    }
+                }
+            }
+        }
+        return target;
+
+    }
     bool CanSeeTarget(GameObject target)
     {
         return false;
