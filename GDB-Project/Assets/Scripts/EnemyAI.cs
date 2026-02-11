@@ -88,13 +88,22 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     Behaviors CurrentState;
 
     Vector3 SpawningLocation;
-    Vector3 TargetLastKnownLoc;
+    struct TargetInfo{
+        public Vector3 TargetLastKnownLoc;
+        public Vector3 TargetDir;
+        public float TargetAngleToMe;
+    }
+
+    TargetInfo MyTarget;
+    
 
     float RoamTimer;
 
     float SearchTimer;
 
     float targetTimer;
+
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -103,6 +112,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         NearbyEnemyPlayers = new List<GameObject>();
         NearbyAllyPlayers = new List<GameObject>();
         orig = Characters[CharacterIndex].GetComponent<SkinnedMeshRenderer>().material.color;
+        SpawningLocation = transform.position;
     }
 
  
@@ -160,7 +170,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                     SearchTimer = 0;
                     Agent.stoppingDistance = 0;
                     Vector3 ranpos = UnityEngine.Random.insideUnitSphere * Config.get_AgentAlertedSearchDistance();
-                    ranpos += TargetLastKnownLoc;
+                    ranpos += MyTarget.TargetLastKnownLoc;
                     NavMeshHit hit;
                     NavMesh.SamplePosition(ranpos, out hit, Config.get_AgentAlertedSearchDistance(), 1);
                     Agent.SetDestination(hit.position);
@@ -271,8 +281,9 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         }
         return CloserObject;
     }
-    GameObject AssessClosestThreat()
+    GameObject ReturnClosestThreat()
     {
+
         GameObject target = null;
         if (NearbyEnemyPlayers.Count > 0)
         {
