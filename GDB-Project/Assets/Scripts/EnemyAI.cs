@@ -84,7 +84,9 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     Color orig;
 
-    enum Behaviors { Fight, Flee, Search, Assist, Roam };
+    enum Behaviors { Fight, Flee, Search, Assist, Roam, Dead};
+
+    Behaviors CurrentState;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -129,6 +131,32 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         
     }
 
+    void BehaviorTree(Behaviors state)
+    {
+        switch (state)
+        {
+            case Behaviors.Roam:
+                {
+                    break;
+                }
+            case Behaviors.Search:
+                {
+                    break;
+                }
+            case Behaviors.Assist:
+                {
+                    break;
+                }
+            case Behaviors.Fight:
+                {
+                    break;
+                }
+            case Behaviors.Dead:
+                {
+                    break;
+                }
+        }
+    }
     void faceTarget(GameObject target)
     {
         Vector3 TargetPos = target.transform.position;
