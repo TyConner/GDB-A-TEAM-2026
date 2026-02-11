@@ -15,6 +15,12 @@ public class PlayerState : MonoBehaviour
 
     public GameObject EntityRef;
 
+    public float Item_Drop_Height = 1.0f;
+
+    public GameObject Item_Drop;
+
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -29,6 +35,12 @@ public class PlayerState : MonoBehaviour
     {
         updateScore(Category.Deaths, 1);
         Debug.Log(PS_Type.ToString());
+        if(Item_Drop != null)
+        {
+            Vector3 pos = transform.position + new Vector3(0, Item_Drop_Height, 0);
+            GameObject dropped_Item = Instantiate(Item_Drop, pos, Quaternion.identity);
+
+        }
         switch (PS_Type)
         {
             case PlayerType.player:

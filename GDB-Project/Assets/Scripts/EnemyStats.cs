@@ -25,4 +25,12 @@ public class EnemyStats : ScriptableObject
         RoamPauseTime = stats.RoamPauseTime;
 
     }
+
+    public int get_FOV() { return FOV; }
+    public int get_faceTargetSpeed() {  return faceTargetSpeed; }
+    public int get_AgentAlertTime() { return AgentAlertTime; }
+    public int get_AgentAlertPauseTime() { return AgentAlertPauseTime; }  
+    public int get_RoamDist() { return RoamDist; }
+    public int get_RoamPauseTime() { return RoamPauseTime; }
+
 }
