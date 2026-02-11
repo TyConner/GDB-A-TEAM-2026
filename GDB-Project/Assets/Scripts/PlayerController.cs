@@ -35,6 +35,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     {
         startingHP = HP;
         startingMovespeed = moveSpeed;
+        GameManager.instance.player = this.gameObject;
         UpdateUI();
 
         //GameManager.instance.updateGunUI(fields);
@@ -189,5 +190,12 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     public PlayerState OwningPlayer()
     {
         return MyPlayerState;
+    }
+
+
+
+    public void takeDamage(int amount, PlayerState Instigator, bool Headshot)
+    {
+        //
     }
 }

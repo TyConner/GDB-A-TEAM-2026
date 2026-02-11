@@ -12,13 +12,14 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     [Header("------Dependancies--------")]
 
     [Space(5)][SerializeField] GameObject[] Characters;
+    int CharacterIndex;
 
     [Space(2)][SerializeField] NavMeshAgent Agent;
 
     [Space(2)][SerializeField] Animation_State_Controller controller;
     [SerializeField] RigBuilder Ik_Rig;
 
-    [Space(2)][SerializeField] Collider Head;
+    [Space(2)][SerializeField] Collider[] CharacterColliders;
 
     [Space(2)][SerializeField] GameObject Gun;
 
@@ -40,6 +41,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     [Header("------Score and Team-------")]
     public PlayerState MyPlayerState;
 
+    bool isFlashingRed;
 
 
     //testing
@@ -66,7 +68,8 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
             character.SetActive(false);
 
         }
-        Characters[UnityEngine.Random.Range(0, Characters.Length)].SetActive(true);
+        CharacterIndex = UnityEngine.Random.Range(0, Characters.Length);
+        Characters[CharacterIndex].SetActive(true);
     }
     // Update is called once per frame
     void Update()
@@ -103,7 +106,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
             RaycastHit hit;
             if (Physics.Raycast(pos.position, Gun.transform.forward, out hit, 50))
             {
-                Debug.Log(hit.collider.name);
+                //Debug.Log(hit.collider.name);
 
                 iDamage dmg = hit.collider.GetComponent<iDamage>();
                 if (dmg != null)
@@ -145,12 +148,27 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         AudioSource.PlayClipAtPoint(AudioConfig.footsteps[UnityEngine.Random.Range(0,AudioConfig.footsteps.Length)], Pos, AudioConfig.footsteps_Vol);
     }
 
+    IEnumerator flashred()
+    {
+        if (!isFlashingRed)
+        {
+            isFlashingRed = true;
+            Color orig = Characters[CharacterIndex].GetComponent<SkinnedMeshRenderer>().material.color;
+            Characters[CharacterIndex].GetComponent<SkinnedMeshRenderer>().material.color = Color.red;
+            yield return new WaitForSeconds(.1f);
+            Characters[CharacterIndex].GetComponent<SkinnedMeshRenderer>().material.color = orig;
+            isFlashingRed = false;
+        }
+        
+    }
     public void takeDamage(int amount, PlayerState Instagator)
     {
         HP -= amount;
+        
         //Debug.Log("DAMAGE IN AMOUNT: " + amount);
         controller.OnHit();
-        if (HP < 0)
+        StartCoroutine(flashred());
+        if (HP <= 0)
         {
             if (Instagator != null)
             {
@@ -167,5 +185,23 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     public PlayerState OwningPlayer()
     {
         return MyPlayerState;
+    }
+
+    public bool OnHeadShotNotify()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void takeDamage(int amount, PlayerState Instigator, bool Headshot)
+    {
+        if(HP - amount < 0)
+        {
+            Instigator.updateScore(Category.Headshots, 1);
+            takeDamage(amount, Instigator);
+        }
+        else
+        {
+            takeDamage(amount, Instigator);
+        }
     }
 }

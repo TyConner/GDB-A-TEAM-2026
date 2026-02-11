@@ -20,7 +20,7 @@ public class GameMode : MonoBehaviour
     int Team_A;
     int Team_B;
     int PlayerCount;
-    public PlayerController Player;
+    public GameObject Player;
     public PlayerState player_PS;
     public GameObject[] SpawnLocs;
     GameObject Spectator;
