@@ -1571,7 +1571,7 @@ GameObject:
   - component: {fileID: 1231206671584224365}
   m_Layer: 7
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Bot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1659,6 +1659,7 @@ MonoBehaviour:
   AnimationTransSpeed: 2
   Config: {fileID: 11400000, guid: 60c2adf033086d746b495423d1dc4118, type: 2}
   MyPlayerState: {fileID: 0}
+  NearbyEnemyPlayers: []
 --- !u!95 &8304904998154455148
 Animator:
   serializedVersion: 7

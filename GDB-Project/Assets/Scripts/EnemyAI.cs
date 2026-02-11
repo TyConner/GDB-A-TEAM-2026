@@ -213,12 +213,14 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             return;
         }
-        if (other.GetComponent<iOwner>() != null)
+        
+        if (other.transform.root.CompareTag("Bot") || other.transform.root.CompareTag("Player") && other.transform.root.gameObject == other.gameObject)
         {
-            if (!NearbyEnemyPlayers.Contains(other.gameObject.transform.root.gameObject) && GameMode.instance != null) {
-                PlayerState otherPlayer = other.GetComponent<PlayerState>();
-                if(otherPlayer.PS_Score.Assigned_Team == Team.FFA || otherPlayer.PS_Score.Assigned_Team != MyPlayerState.PS_Score.Assigned_Team)
+            if (!NearbyEnemyPlayers.Contains(other.transform.root.gameObject) && GameMode.instance.Phase == GameMode.GamePhase.Playing) {
+                PlayerState otherPlayer = other.transform.root.gameObject.GetComponent<iOwner>().OwningPlayer();
+                if(otherPlayer != null && otherPlayer.PS_Score.Assigned_Team == Team.FFA || otherPlayer.PS_Score.Assigned_Team != MyPlayerState.PS_Score.Assigned_Team)
                 {
+                    //Debug.Log(other.transform.root.gameObject.name + " Added to list of enemies");
                     NearbyEnemyPlayers.Add(other.transform.root.gameObject);
                 }
 
