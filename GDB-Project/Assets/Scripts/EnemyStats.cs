@@ -11,7 +11,7 @@ public class EnemyStats : ScriptableObject
     [Range(1, 10)][SerializeField] int AgentAlertPauseTime = 2;
     [Range(1,150)][SerializeField] int RoamDist;
     [Range(1,10)][SerializeField] int RoamPauseTime;
-
+    [Range(1, 100)][SerializeField] int LowHPThreshhold = 10;
     public void SetStats(EnemyStats stats)
     {
         FOV = stats.FOV;
@@ -31,5 +31,7 @@ public class EnemyStats : ScriptableObject
     public int get_AgentAlertPauseTime() { return AgentAlertPauseTime; }  
     public int get_RoamDist() { return RoamDist; }
     public int get_RoamPauseTime() { return RoamPauseTime; }
+
+    public int get_LowHPThreshhold() { return LowHPThreshhold; }
 
 }
