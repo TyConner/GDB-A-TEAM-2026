@@ -1671,6 +1671,10 @@ PrefabInstance:
       propertyPath: Spectator
       value: 
       objectReference: {fileID: 1817280761}
+    - target: {fileID: 7607730634378468936, guid: 70886b767216ef04a8688369fb03b2eb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8944735426387112682, guid: 70886b767216ef04a8688369fb03b2eb, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 29.8
