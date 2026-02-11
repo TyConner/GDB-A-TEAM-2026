@@ -32,5 +32,6 @@ public class Shotgun : Gun
     protected override void Start()
     {
         base.Start();
+        print("Obtained Shotgun");
     }
 }

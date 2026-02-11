@@ -154,7 +154,7 @@ public class PlayerController : MonoBehaviour, iDamage
         EquipGun(newGun);
     }
 
-    void EquipGun(Gun newGun)
+    public void EquipGun(Gun newGun)
     {
         if(Gun != null)
         {
@@ -171,7 +171,7 @@ public class PlayerController : MonoBehaviour, iDamage
 
     }
 
-    void DropGun()
+    public void DropGun()
     {
         if(Gun == null) return;
 
