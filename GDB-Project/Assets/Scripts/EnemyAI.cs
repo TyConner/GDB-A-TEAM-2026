@@ -73,7 +73,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     [Header("---------Score and Team---------")]
     PlayerState MyPlayerState;
     List<GameObject> NearbyEnemyPlayers;
-
+    List<GameObject> NearbyAllyPlayers;
 
     //private vars
     bool isFlashingRed;
@@ -85,14 +85,23 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     Color orig;
 
     enum Behaviors { Fight, Flee, Search, Assist, Roam, Dead};
-
     Behaviors CurrentState;
+
+    Vector3 SpawningLocation;
+    Vector3 TargetLastKnownLoc;
+
+    float RoamTimer;
+
+    float SearchTimer;
+
+    float targetTimer;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         RandomCharacter();
         NearbyEnemyPlayers = new List<GameObject>();
+        NearbyAllyPlayers = new List<GameObject>();
         orig = Characters[CharacterIndex].GetComponent<SkinnedMeshRenderer>().material.color;
     }
 
@@ -137,10 +146,24 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             case Behaviors.Roam:
                 {
+                    RoamTimer = 0;
+                    Agent.stoppingDistance = 0;
+                    Vector3 ranPos = UnityEngine.Random.insideUnitSphere * Config.get_RoamDist();
+                    ranPos += SpawningLocation;
+                    NavMeshHit hit;
+                    NavMesh.SamplePosition(ranPos, out hit, Config.get_RoamDist(), 1);
+                    Agent.SetDestination(hit.position);
                     break;
                 }
             case Behaviors.Search:
                 {
+                    SearchTimer = 0;
+                    Agent.stoppingDistance = 0;
+                    Vector3 ranpos = UnityEngine.Random.insideUnitSphere * Config.get_AgentAlertedSearchDistance();
+                    ranpos += TargetLastKnownLoc;
+                    NavMeshHit hit;
+                    NavMesh.SamplePosition(ranpos, out hit, Config.get_AgentAlertedSearchDistance(), 1);
+                    Agent.SetDestination(hit.position);
                     break;
                 }
             case Behaviors.Assist:
@@ -225,7 +248,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         
     }
    
-    bool CanSeeTarget()
+    bool CanSeeTarget(GameObject target)
     {
         return false;
         //    playerdir = GameManager.instance.player.transform.position - headPos.position;
@@ -293,7 +316,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                     //Debug.Log(other.transform.root.gameObject.name + " Added to list of enemies");
                     NearbyEnemyPlayers.Add(other.transform.root.gameObject);
                 }
-
+                else if (otherPlayer != null && GameMode.instance.config.ThisMatch != GameMode_Config.MatchType.FFA && otherPlayer.PS_Score.Assigned_Team == MyPlayerState.PS_Score.Assigned_Team)
+                {
+                    NearbyAllyPlayers.Add(other.transform.root.gameObject);
+                }
 
             }
 
@@ -312,9 +338,13 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
             return;
         }
 
-        if (NearbyEnemyPlayers.Contains(other.gameObject.transform.root.gameObject) && GameMode.instance != null)
+        if (NearbyEnemyPlayers.Contains(other.gameObject.transform.root.gameObject))
         {
             NearbyEnemyPlayers.Remove(other.transform.root.gameObject);
+        }
+        if (NearbyAllyPlayers.Contains(other.gameObject.transform.root.gameObject))
+        {
+            NearbyAllyPlayers.Remove(other.transform.root.gameObject);
         }
     }
 
