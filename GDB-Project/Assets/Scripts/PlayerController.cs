@@ -1,6 +1,7 @@
 using System.ComponentModel.Design.Serialization;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class PlayerController : MonoBehaviour, iDamage, iOwner
 {
@@ -65,6 +66,14 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
             }
             
         }
+
+        if (Input.GetButtonDown("Reload"))
+        {
+            if(Gun != null)
+            {
+                Gun.Reload();
+            }
+        }
     }
 
     public void SetOwningPlayer(PlayerState Player)
@@ -122,6 +131,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     {
         HP -= Mathf.Clamp(amount, 0, startingHP);
         UpdateUI();
+        StartCoroutine(flashScreen());
         if (HP <= 0)
         {
             Instagator.updateScore(MyScore.Category.Kills, 1);
@@ -132,13 +142,12 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
 
     void Die()
     {
-
+        GameManager.instance.DamageScreen.SetActive(false);
         MyPlayerState.OnDeath();
         //you died ui screen to be called in playerstate
         print("You died");
-        
-        
-  
+
+
     }
 
     void Shoot()//Gun script will handle shoot implementation
@@ -190,4 +199,12 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     {
         return MyPlayerState;
     }
+
+    IEnumerator flashScreen()
+    {
+        GameManager.instance.DamageScreen.SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        GameManager.instance.DamageScreen.SetActive(false);
+    }
+
 }

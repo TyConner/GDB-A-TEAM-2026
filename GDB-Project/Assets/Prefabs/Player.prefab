@@ -55,7 +55,7 @@ MonoBehaviour:
   cameraController: {fileID: 1010018219412278215}
   moveSpeed: 7
   sprintModifier: 1.7
-  HP: 2
+  HP: 100
   jumpVelocity: 12
   jumpMax: 1
   gravity: 30

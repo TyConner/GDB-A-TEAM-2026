@@ -4,7 +4,6 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
-using static UnityEditor.PlayerSettings;
 using static MyScore;
 
 public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
