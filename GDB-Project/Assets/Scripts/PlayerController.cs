@@ -1,9 +1,7 @@
-using System.ComponentModel.Design.Serialization;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
-public class PlayerController : MonoBehaviour, iDamage, iOwner
+public class PlayerController : MonoBehaviour, iDamage
 {
     [SerializeField] LayerMask ignoreLayer;
 
@@ -11,7 +9,9 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     [SerializeField] CameraController cameraController;
     [SerializeField] float moveSpeed = 5.0f;
     [SerializeField] float sprintModifier = 1.7f;
-    [SerializeField] int HP = 100;
+    [SerializeField] int maxHP = 100;
+    [SerializeField] int startingHP = 100;
+    [SerializeField] int currentHP;
     [SerializeField] int jumpVelocity = 15;
     [SerializeField] int jumpMax = 1;
     [SerializeField] float gravity = 32f;
@@ -21,7 +21,6 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     [SerializeField] Transform WeaponHoldPos;
 
     int jumpCount = 0;
-    int startingHP;
     float startingMovespeed;
 
     float shootTimer;
@@ -29,15 +28,20 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     Vector3 moveDir;
     Vector3 playerVelocity;
 
-    public PlayerState MyPlayerState;
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        startingHP = HP;
+        if (RunState.WasRestarted)
+        {
+            currentHP = maxHP;          
+            RunState.WasRestarted = false;
+        }
+        else
+        {
+            currentHP = Mathf.Clamp(startingHP, 0, maxHP); 
+        }
         startingMovespeed = moveSpeed;
         UpdateUI();
-
         //GameManager.instance.updateGunUI(fields);
     }
 
@@ -66,22 +70,8 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
             }
             
         }
-
-        if (Input.GetButtonDown("Reload"))
-        {
-            if(Gun != null)
-            {
-                Gun.Reload();
-            }
-        }
     }
 
-    public void SetOwningPlayer(PlayerState Player)
-    {
-
-        MyPlayerState = Player;
-
-    }
     void Movement()
     {
         if (characterController.isGrounded)
@@ -127,34 +117,35 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         }
     }
 
-    public void takeDamage(int amount, PlayerState Instagator)
+    public void takeDamage(int amount, GameObject Instagator, GameObject Victim)
     {
-        HP -= Mathf.Clamp(amount, 0, startingHP);
+        currentHP -= amount;
+        currentHP -= Mathf.Clamp(currentHP, 0, maxHP);
         UpdateUI();
-        StartCoroutine(flashScreen());
-        if (HP <= 0)
+        if (currentHP <= 0)
         {
-            Instagator.updateScore(MyScore.Category.Kills, 1);
             Die();
-            Debug.Log("Killed by: " + Instagator.PS_Score.PlayerName);
+            Debug.Log("Killed by: " + Instagator.name);
         }
+    }
+
+    public void addHealth(int amount)
+    {
+            currentHP += amount;
+            currentHP = Mathf.Clamp(currentHP, 0, maxHP);
+            UpdateUI();
     }
 
     void Die()
     {
-        GameManager.instance.DamageScreen.SetActive(false);
-        MyPlayerState.OnDeath();
-        //you died ui screen to be called in playerstate
         print("You died");
-
-
     }
 
     void Shoot()//Gun script will handle shoot implementation
     {
         if(Gun == null) { return; }
         
-        Gun.Shoot(MyPlayerState);
+        Gun.Shoot();
     }
 
     void DebugGiveGun()
@@ -163,7 +154,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         EquipGun(newGun);
     }
 
-    void EquipGun(Gun newGun)
+    public void EquipGun(Gun newGun)
     {
         if(Gun != null)
         {
@@ -180,7 +171,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
 
     }
 
-    void DropGun()
+    public void DropGun()
     {
         if(Gun == null) return;
 
@@ -191,20 +182,9 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
 
     void UpdateUI()
     {
-        GameManager.instance.playerHPBar.fillAmount = (float)HP / 100;
-
-    }
-
-    public PlayerState OwningPlayer()
-    {
-        return MyPlayerState;
-    }
-
-    IEnumerator flashScreen()
-    {
-        GameManager.instance.DamageScreen.SetActive(true);
-        yield return new WaitForSeconds(0.1f);
-        GameManager.instance.DamageScreen.SetActive(false);
+        if (GameManager.instance == null) return;
+        if (GameManager.instance.playerHPBar == null) return;
+        GameManager.instance.playerHPBar.fillAmount = (float)currentHP / maxHP;
     }
 
 }
