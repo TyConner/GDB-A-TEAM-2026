@@ -1569,7 +1569,6 @@ GameObject:
   - component: {fileID: 7764973709433962702}
   - component: {fileID: 211423293183961414}
   - component: {fileID: 1231206671584224365}
-  - component: {fileID: 1419276754168483448}
   m_Layer: 7
   m_Name: Enemy
   m_TagString: Untagged
@@ -1770,33 +1769,6 @@ MonoBehaviour:
   - m_Rig: {fileID: 818706889011245473}
     m_Active: 1
   m_Effectors: []
---- !u!54 &1419276754168483448
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3237819159316389645}
-  serializedVersion: 5
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 2
-  m_Constraints: 0
-  m_CollisionDetection: 2
 --- !u!1 &3250443380807076557
 GameObject:
   m_ObjectHideFlags: 0

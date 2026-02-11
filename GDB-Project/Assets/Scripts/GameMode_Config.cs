@@ -12,5 +12,6 @@ public class GameMode_Config : ScriptableObject
     [Range(1,50)]public int GameGoal;
     public MatchType ThisMatch;
     public int Respawn_Timer;
+    public int BodyCleanUpTime;
 
 }

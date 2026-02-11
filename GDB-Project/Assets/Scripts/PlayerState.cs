@@ -28,6 +28,7 @@ public class PlayerState : MonoBehaviour
     public void OnDeath()
     {
         updateScore(Category.Deaths, 1);
+        Debug.Log(PS_Type.ToString());
         switch (PS_Type)
         {
             case PlayerType.player:
@@ -37,15 +38,20 @@ public class PlayerState : MonoBehaviour
 
             case PlayerType.bot:
                 EntityRef.GetComponent<EnemyAI>().enabled = false;
+                //EntityRef.GetComponent<Animator>().enabled = false;
+                GameObject Body = EntityRef;
+                //Debug.Log(Body);
+                StartCoroutine(BodyCleanUp(Body));
                 break;
         }
-        StartCoroutine(BodyCleanUp());
+        
         RequestRespawn();
     }
-    IEnumerator BodyCleanUp()
+    IEnumerator BodyCleanUp(GameObject Body)
     {
-        yield return new WaitForSeconds(GameManager.instance.BodyCleanUpTime);
-        Destroy(EntityRef);
+        //Debug.Log("Yield Destroy Body Time: " +GameMode.instance.config.BodyCleanUpTime );
+        yield return new WaitForSeconds(GameMode.instance.config.BodyCleanUpTime);
+        Destroy(Body);
     }
     public void RequestRespawn()
     {

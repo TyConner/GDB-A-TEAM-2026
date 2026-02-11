@@ -97,7 +97,7 @@ public class Gun : MonoBehaviour
     protected virtual void Start()
     {
         AmmoCur = AmmoMax;
-        print(AmmoCur);
+        //print(AmmoCur);
         OwningPlayer = transform.root.GetComponent<iOwner>().OwningPlayer();
     }
 

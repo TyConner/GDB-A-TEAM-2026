@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
-using Unity.Transforms;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
+
 using static MyScore;
 
 public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
@@ -42,16 +43,17 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     bool isFlashingRed;
 
-
     //testing
     float shootTimer;
     float shootRate = 1.1f;
 
+    public List<GameObject> NearbyEnemyPlayers;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         RandomCharacter();
+        NearbyEnemyPlayers = new List<GameObject>();
     }
 
     public void SetPlayerStateRef(PlayerState state)
@@ -86,12 +88,13 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
    void AiLogic()
     {
         shootTimer += Time.deltaTime;
-            Shoot();
-            LocoAnim();
-            if (GameManager.instance != null && GameManager.instance.player != null)
-            {
-                //Agent.SetDestination(GameManager.instance.player.transform.position);
-            }
+        LocoAnim();
+        //Shoot();
+        
+            if (GameMode.instance != null)
+        {
+            
+        }
         
     }
 
@@ -202,5 +205,47 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             takeDamage(amount, Instigator);
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.isTrigger)
+        {
+            return;
+        }
+        if (other.GetComponent<iOwner>() != null)
+        {
+            if (!NearbyEnemyPlayers.Contains(other.gameObject.transform.root.gameObject) && GameMode.instance != null) {
+                PlayerState otherPlayer = other.GetComponent<PlayerState>();
+                if(otherPlayer.PS_Score.Assigned_Team == Team.FFA || otherPlayer.PS_Score.Assigned_Team != MyPlayerState.PS_Score.Assigned_Team)
+                {
+                    NearbyEnemyPlayers.Add(other.transform.root.gameObject);
+                }
+
+                
+            }
+            
+
+
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.isTrigger)
+        {
+            return;
+        }
+
+        if (NearbyEnemyPlayers.Contains(other.gameObject.transform.root.gameObject) && GameMode.instance != null)
+        {
+            NearbyEnemyPlayers.Remove(other.transform.root.gameObject);
+        }
+    }
+
+    bool CanSeeNearbyEnemys()
+    {
+
+        return false;
     }
 }
