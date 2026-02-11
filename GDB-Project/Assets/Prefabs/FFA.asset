@@ -18,3 +18,4 @@ MonoBehaviour:
   GameGoal: 5
   ThisMatch: 1
   Respawn_Timer: 3
+  BodyCleanUpTime: 5
