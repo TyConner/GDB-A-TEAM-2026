@@ -476,27 +476,35 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             return;
         }
-
-        if (other.transform.root.CompareTag("Bot") || other.transform.root.CompareTag("Player") && other.transform.root.gameObject == other.gameObject)
-        {
+      
+            if (other.transform.root.CompareTag("Bot") || other.transform.root.CompareTag("Player") && other.transform.root.gameObject == other.gameObject)
+            {
             if (!NearbyEnemyPlayers.Contains(other.transform.root.gameObject))
             {
-                PlayerState otherPlayer = other.transform.root.gameObject.GetComponent<iOwner>().OwningPlayer();
-                if (otherPlayer != null && otherPlayer.PS_Score.Assigned_Team == Team.FFA || otherPlayer.PS_Score.Assigned_Team != MyPlayerState.PS_Score.Assigned_Team)
+                iOwner HasOwner = other.transform.root.gameObject.GetComponent<iOwner>();
+                if (HasOwner != null)
                 {
-                    //Debug.Log(other.transform.root.gameObject.name + " Added to list of enemies");
-                    NearbyEnemyPlayers.Add(other.transform.root.gameObject);
+                    PlayerState otherPlayer = HasOwner.OwningPlayer();
+                    if (otherPlayer != null)
+                    {
+                        if (otherPlayer.PS_Score.Assigned_Team == Team.FFA || otherPlayer.PS_Score.Assigned_Team != MyPlayerState.PS_Score.Assigned_Team)
+                        {
+                            //Debug.Log(other.transform.root.gameObject.name + " Added to list of enemies");
+                            NearbyEnemyPlayers.Add(other.transform.root.gameObject);
+                        }
+                        else if (otherPlayer != null && GameMode.instance.config.ThisMatch != GameMode_Config.MatchType.FFA && otherPlayer.PS_Score.Assigned_Team == MyPlayerState.PS_Score.Assigned_Team)
+                        {
+                            NearbyAllyPlayers.Add(other.transform.root.gameObject);
+                        }
+                    }
+
                 }
-                else if (otherPlayer != null && GameMode.instance.config.ThisMatch != GameMode_Config.MatchType.FFA && otherPlayer.PS_Score.Assigned_Team == MyPlayerState.PS_Score.Assigned_Team)
-                {
-                    NearbyAllyPlayers.Add(other.transform.root.gameObject);
-                }
+
 
             }
-
-
-
-        }
+            }
+        
+        
 
         //By prototype two scan for pickups here and log it
 
