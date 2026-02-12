@@ -1,9 +1,12 @@
+<<<<<<< Prototype-1-Maxwell
+=======
 using System.Collections;
 using System.ComponentModel.Design.Serialization;
+>>>>>>> main
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour, iDamage, iOwner
+public class PlayerController : MonoBehaviour, iDamage
 {
     [SerializeField] LayerMask ignoreLayer;
 
@@ -12,6 +15,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     [SerializeField] float moveSpeed = 5.0f;
     [SerializeField] float sprintModifier = 1.7f;
     [SerializeField] int HP = 100;
+     int startingHP;
     [SerializeField] int jumpVelocity = 15;
     [SerializeField] int jumpMax = 1;
     [SerializeField] float gravity = 32f;
@@ -21,24 +25,24 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     [SerializeField] Transform WeaponHoldPos;
 
     int jumpCount = 0;
-    int startingHP;
     float startingMovespeed;
 
     float shootTimer;
+    public PlayerState MyPlayerState;
 
     Vector3 moveDir;
     Vector3 playerVelocity;
 
-    public PlayerState MyPlayerState;
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        startingHP = HP;
+        if (RunState.WasRestarted)
+        {
+            HP = startingHP;          
+        }
         startingMovespeed = moveSpeed;
         GameManager.instance.player = this.gameObject;
         UpdateUI();
-
         //GameManager.instance.updateGunUI(fields);
     }
 
@@ -76,12 +80,6 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         }
     }
 
-    public void SetOwningPlayer(PlayerState Player)
-    {
-
-        MyPlayerState = Player;
-
-    }
     void Movement()
     {
         if (characterController.isGrounded)
@@ -126,18 +124,28 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
             moveSpeed = startingMovespeed;
         }
     }
+    public void takeDamage(int amount, PlayerState Instigator)
+    {
+        takeDamage(amount, Instigator, false);
+    }
 
-    public void takeDamage(int amount, PlayerState Instagator)
+    public void takeDamage(int amount, PlayerState Instagator, bool Headshot)
     {
         HP -= Mathf.Clamp(amount, 0, startingHP);
         UpdateUI();
         StartCoroutine(flashScreen());
         if (HP <= 0)
         {
-            Instagator.updateScore(MyScore.Category.Kills, 1);
             Die();
-            Debug.Log("Killed by: " + Instagator.PS_Score.PlayerName);
+            Debug.Log("Killed by: " + Instagator.name);
         }
+    }
+
+    public void addHealth(int amount)
+    {
+            startingHP += amount;
+        HP += Mathf.Clamp(amount, 0, startingHP);
+            UpdateUI();
     }
 
     void Die()
@@ -146,9 +154,6 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         MyPlayerState.OnDeath();
         //you died ui screen to be called in playerstate
         print("You died");
-        
-        
-  
     }
 
     void Shoot()//Gun script will handle shoot implementation
@@ -157,14 +162,14 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         
         Gun.Shoot(MyPlayerState);
     }
-
+    
     void DebugGiveGun()
     {
         Gun newGun = Instantiate(DebugGunPref, WeaponHoldPos).GetComponent<Gun>();
         EquipGun(newGun);
     }
 
-    void EquipGun(Gun newGun)
+    public void EquipGun(Gun newGun)
     {
         if(Gun != null)
         {
@@ -181,7 +186,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
 
     }
 
-    void DropGun()
+    public void DropGun()
     {
         if(Gun == null) return;
 
@@ -200,6 +205,8 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     {
         return MyPlayerState;
     }
+<<<<<<< Prototype-1-Maxwell
+=======
 
     IEnumerator flashScreen()
     {
@@ -220,4 +227,5 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         print("Hit: "+hit.collider.name);
         return hit;
     }
+>>>>>>> main
 }

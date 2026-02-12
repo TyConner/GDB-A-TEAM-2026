@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Shotgun : Gun
+public class Rifle : Gun
 {
     public new void OnEquip()
     {
@@ -32,6 +32,6 @@ public class Shotgun : Gun
     protected override void Start()
     {
         base.Start();
-        print("Obtained Shotgun");
+        print("Obtained Rifle");
     }
 }
