@@ -23,6 +23,7 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        print(other.name);
         if (other.isTrigger)
         {
             return;

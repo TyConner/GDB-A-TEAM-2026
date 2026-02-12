@@ -6,4 +6,6 @@ public interface iOwner
 
     public void SetOwningPlayer(PlayerState player);
 
+    public RaycastHit GetRaycastHit();
+
 }
