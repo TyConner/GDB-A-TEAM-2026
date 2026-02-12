@@ -172,7 +172,7 @@ public class GameManager : MonoBehaviour
 
         if(currenttime <= 0)
         {
-            GameMode.instance.OnMatchOver();
+            GameMode.instance.OnMatchOver(null);
         }
       
         if (Input.GetButtonDown("Cancel"))

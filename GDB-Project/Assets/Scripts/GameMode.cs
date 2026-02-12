@@ -6,6 +6,7 @@ using Unity.Physics.Authoring;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.UIElements;
 using static GameMode_Config;
 using static MyScore;
 
@@ -86,7 +87,7 @@ public class GameMode : MonoBehaviour
                         bot_PS.PS_Score.Assigned_Team = Team.FFA;
                         break;
                 }
-                bot.name = bot_PS.name + "_PlayerState_Prefab";
+                bot.name = bot_PS.PS_Score.PlayerName + "_PlayerState";
                 OurPlayersStates.Add(bot_PS);
             }
         }
@@ -96,9 +97,9 @@ public class GameMode : MonoBehaviour
     void InitPlayer()
     {
         GameObject player = Instantiate(PlayerStatePrefab);
-        player.name = "Player";
-        player_PS = player.GetComponent<PlayerState>();
-        if (player_PS != null)
+        PlayerState Player_PS = player.GetComponent<PlayerState>();
+        Player_PS.PS_Score.PlayerName = "Player";
+        if (Player_PS != null)
         {
 
             switch (config.ThisMatch)
@@ -106,20 +107,21 @@ public class GameMode : MonoBehaviour
                 case GameMode_Config.MatchType.TDM:
                     if (Team_A > Team_B)
                     {
-                        player_PS.PS_Score.Assigned_Team = Team.B;
+                        Player_PS.PS_Score.Assigned_Team = Team.B;
                     }
                     else
                     {
-                        player_PS.PS_Score.Assigned_Team = Team.A;
+                        Player_PS.PS_Score.Assigned_Team = Team.A;
                     }
                     break;
                 case GameMode_Config.MatchType.FFA:
                     {
-                        player_PS.PS_Score.Assigned_Team = Team.FFA;
+                        Player_PS.PS_Score.Assigned_Team = Team.FFA;
                         break;
                     }
             }
-            OurPlayersStates.Add(player_PS);
+            player.name = Player_PS.PS_Score.PlayerName + "_PlayerState";
+            OurPlayersStates.Add(Player_PS);
         }
         PlayerCount++;
 
@@ -294,12 +296,22 @@ public class GameMode : MonoBehaviour
 
     }
 
-    public void OnMatchOver()
+    public void OnMatchOver(PlayerState player)
     {
         Phase = GamePhase.PostMatchScreen;
-        DeactivateBots();
-        //GameManager.instance.ScoreBoard;
-        if (DidPlayerWin())
+        if (player == null)
+        {
+            bool PlayerWin = DidPlayerWin();
+            if (PlayerWin)
+            {
+                GameManager.instance.youWin();
+            }
+            else
+            {
+                GameManager.instance.youLose();
+            }
+        }
+        else if (player.PS_Type == PlayerState.PlayerType.player)
         {
             GameManager.instance.youWin();
         }
@@ -307,6 +319,9 @@ public class GameMode : MonoBehaviour
         {
             GameManager.instance.youLose();
         }
+
+
+        DeactivateBots();
     }
 
 
@@ -314,19 +329,10 @@ public class GameMode : MonoBehaviour
     {
         if(config.GameGoal <= player.PS_Score.GetScore(MyScore.Category.Kills))
         {
-            if (player.PS_Type == PlayerState.PlayerType.player)
-            {
-                //player won
-            }
-            else
-            {
-               //someone won
-            }
-            //someone Won, end match
-            OnMatchOver();
+            
+            OnMatchOver(player);
             return true;
-            
-            
+    
         }
         return false;
 
