@@ -21,7 +21,7 @@ public class Damage : MonoBehaviour
     [SerializeField] ParticleSystem hitEff;
 
 
-    PlayerState Creator;
+    public PlayerState Creator;
 
     public void SetOwningPlayer(PlayerState player)
     {
