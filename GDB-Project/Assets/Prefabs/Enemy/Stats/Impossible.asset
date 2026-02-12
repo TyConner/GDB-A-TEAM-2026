@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c3971d58f798ddb4ea1b7376e4cc9859, type: 3}
-  m_Name: Normal
+  m_Name: Impossible
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
-  FOV: 60
+  FOV: 90
   faceTargetSpeed: 100
-  AgentSearchDistance: 15
-  AgentSearchTime: 30
-  AgentSearchPauseTime: 2
-  RoamDist: 30
-  RoamPauseTime: 5
-  LowHPThreshhold: 10
+  AgentSearchDistance: 30
+  AgentSearchTime: 45
+  AgentSearchPauseTime: 1
+  RoamDist: 20
+  RoamPauseTime: 1
+  LowHPThreshhold: 1

@@ -143,7 +143,7 @@ public class GameMode : MonoBehaviour
             case PlayerState.PlayerType.bot:
                 player.EntityRef = Instantiate(player.BotPrefab, pos, Quaternion.identity);
                 player.EntityRef.GetComponent<EnemyAI>().SetAIConfig(player.botStats);
-                player.EntityRef.GetComponent<iOwner>().SetOwningPlayer(player);
+                player.EntityRef.GetComponent<EnemyAI>().GetComponent<iOwner>().SetOwningPlayer(player);
                 break;
         }
         player.EntityRef.name = player.PS_Score.PlayerName;

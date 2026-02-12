@@ -289,8 +289,9 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         //called from animation event in clip
 
         Transform pos = Gun.transform.Find("ProjectileOrigin");
-        Instantiate(Projectile, pos);
+        GameObject bullet = Instantiate(Projectile, pos.position,transform.rotation);
         GameObject flash = Instantiate(MuzzleFlash, pos);
+        bullet.GetComponent<Projectile>().MyOwner = MyPlayerState; 
         AudioSource.PlayClipAtPoint(AudioConfig.gunshot[0], pos.position, AudioConfig.gunshot_Vol);
         Destroy(flash, .05f);
 
@@ -445,35 +446,39 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             return;
         }
-        if ( (other.transform.root.CompareTag("Bot") || other.transform.root.CompareTag("Player")))
+        if (other)
         {
-            if (!NearbyEnemyPlayers.Contains(other.transform.root.gameObject))
+            if ((other.transform.root.CompareTag("Bot") || other.transform.root.CompareTag("Player")))
             {
-                iOwner HasOwner = other.transform.root.gameObject.GetComponent<iOwner>();
-                if (HasOwner != null)
+                if (!NearbyEnemyPlayers.Contains(other.transform.root.gameObject))
                 {
-                    PlayerState otherPlayer = HasOwner.OwningPlayer();
-                    if (otherPlayer != null)
+                    iOwner HasOwner = other.transform.root.gameObject.GetComponent<iOwner>();
+                    if (HasOwner != null)
                     {
-                        if (otherPlayer.PS_Score.Assigned_Team == Team.FFA || otherPlayer.PS_Score.Assigned_Team != MyPlayerState.PS_Score.Assigned_Team)
+                        PlayerState otherPlayer = HasOwner.OwningPlayer();
+                        if (otherPlayer != null)
                         {
-                            //Debug.Log(other.transform.root.gameObject.name + " Added to list of enemies");
-                            if (other.transform.root.gameObject != transform.root.gameObject)
+                            if (otherPlayer.PS_Score.Assigned_Team == Team.FFA || otherPlayer.PS_Score.Assigned_Team != MyPlayerState.PS_Score.Assigned_Team)
                             {
-                                NearbyEnemyPlayers.Add(other.transform.root.gameObject);
-                            }
+                                //Debug.Log(other.transform.root.gameObject.name + " Added to list of enemies");
+                                if (other.transform.root.gameObject != transform.root.gameObject)
+                                {
+                                    NearbyEnemyPlayers.Add(other.transform.root.gameObject);
+                                }
 
-                        }
-                        else if (otherPlayer != null && GameMode.instance.config.ThisMatch != GameMode_Config.MatchType.FFA && otherPlayer.PS_Score.Assigned_Team == MyPlayerState.PS_Score.Assigned_Team)
-                        {
-                            NearbyAllyPlayers.Add(other.transform.root.gameObject);
+                            }
+                            else if (otherPlayer != null && GameMode.instance.config.ThisMatch != GameMode_Config.MatchType.FFA && otherPlayer.PS_Score.Assigned_Team == MyPlayerState.PS_Score.Assigned_Team)
+                            {
+                                NearbyAllyPlayers.Add(other.transform.root.gameObject);
+                            }
                         }
                     }
+
                 }
-
             }
-        }
 
+
+        }
 
 
 
