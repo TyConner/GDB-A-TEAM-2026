@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2816082740094074984}
   - component: {fileID: 5821844342971923989}
   - component: {fileID: 2486409563310996907}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: GunFlash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -198,7 +198,7 @@ GameObject:
   m_Component:
   - component: {fileID: 345769903304326123}
   - component: {fileID: 7714488404677015286}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: GunFlash (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -288,7 +288,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2523753958961427231}
   - component: {fileID: 5801864640781776467}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: GunFlash
   m_TagString: Untagged
   m_Icon: {fileID: 0}

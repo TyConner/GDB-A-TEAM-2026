@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3b0246e4cd93f7498b472304d8bd32b, type: 3}
   m_Name: FFA
   m_EditorClassIdentifier: Assembly-CSharp::GameMode_Config
-  bots: 1
+  bots: 3
   MatchLength: 120
   Difficulty: {fileID: 11400000, guid: 2281e04cd32c80d4c84f74d32f098a11, type: 2}
   GameGoal: 5

@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Hard
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
   FOV: 80
-  faceTargetSpeed: 100
-  AgentSprintMod: 2
-  AgentAlertedSearchDistance: 40
-  AgentAlertTime: 120
-  AgentAlertPauseTime: 1
+  faceTargetSpeed: 300
+  AgentSearchDistance: 30
+  AgentSearchTime: 60
+  AgentSearchPauseTime: 2
   RoamDist: 40
   RoamPauseTime: 1
+  LowHPThreshhold: 10

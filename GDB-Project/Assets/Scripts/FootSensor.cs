@@ -14,6 +14,7 @@ public class FootSensor : MonoBehaviour
         if (other.CompareTag("Ground") || other.name == "Floor" && Instagator != null)
         {
             Instagator.onStepDetected(transform.position);
+            Debug.Log("FootStepEvent");
             return;
         }
         else if( other.CompareTag("Ground") != true && Instagator != null)

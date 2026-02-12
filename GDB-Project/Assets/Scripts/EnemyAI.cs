@@ -42,6 +42,9 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     [SerializeField] GameObject Gun;
 
     [Space(2)]
+    [SerializeField] GameObject Projectile;
+
+    [Space(2)]
     [SerializeField] GameObject MuzzleFlash;
 
     [Space(2)]
@@ -133,6 +136,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         orig = Characters[CharacterIndex].GetComponent<SkinnedMeshRenderer>().material.color;
         SpawningLocation = transform.position;
         StoppingDistOrig = Agent.stoppingDistance;
+        RoamTimer = Config.get_RoamPauseTime();
         HPOrig = HP;
     }
 
@@ -146,6 +150,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             AiLogic();
         }
+       
     }
 
     void RandomCharacter()
@@ -175,75 +180,30 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     {
         if(CurrentState != Behaviors.Dead)
         {
-            if (Agent.remainingDistance < 0.1f + UnityEngine.Random.value)
+            RoamTimer += Time.deltaTime;
+            MyTarget.SearchTimer += Time.deltaTime;
+            GameObject Threat = ReturnClosestThreat();
+            if (Threat != null)
             {
-                RoamTimer += Time.deltaTime;
-                
-            }
-            if (HP != 0 && HP < (float)HP / HPOrig)
-            {
-                //If we are dying rethink this fight.
-                //CurrentState = Behaviors.Flee;
-                //return;
-            }
-
-            //I want the Bot to pick a target and stick to it for some time even if theres a closer one by prototype 2
-            GameObject ClosestThreat = ReturnClosestThreat();
-            if (ClosestThreat)
-            {
-                MyTarget = CanSeeTarget(ClosestThreat);
-                CurrentState = Behaviors.Fight;
-                if (MyTarget.Obj && MyTarget.CanSee)
+                MyTarget = CanSeeTarget(Threat);
+                if (MyTarget.CanSee)
                 {
                     CurrentState = Behaviors.Fight;
+                    Agent.stoppingDistance = StoppingDistOrig;
+                }
+                else
+                {
+                    CurrentState = Behaviors.Search;
+                    Agent.stoppingDistance = 0;
                 }
             }
-            if (ClosestThreat != null && MyTarget.Obj != ClosestThreat)
+            else
             {
-                // See if there is a closer target we can see if the current ones timer is up
-                //TargetInfo PotentialThreat = new TargetInfo();
-                //PotentialThreat = CanSeeTarget(ClosestThreat);
-
-            }
-           
-            else if (ClosestThreat == MyTarget.Obj && !MyTarget.CanSee)
-            {
-                CheckSearch();
-                MyTarget.SearchTimer += Time.deltaTime;
-            }
-            else if(Agent.remainingDistance <= Agent.stoppingDistance)
-            {
-                CheckRoam();
+                CurrentState = Behaviors.Roam;
+                Agent.stoppingDistance = 0;
             }
         }
        
-    }
-
-    //void CheckFight()
-    //{
-    //    if (agent.remainingDistance <= agent.stoppingDistance)
-    //             {
-      
-    //    }
-
-        
-
-    //    agent.stoppingDistance = stoppingDistOrig;
-    //}
-        void CheckRoam()
-    {
-        if (Agent.remainingDistance < 0.01f && RoamTimer >= Config.get_RoamPauseTime())
-        {
-            CurrentState = Behaviors.Roam;
-        }
-    }
-    void CheckSearch()
-    {
-        if (Agent.remainingDistance < 0.01f && MyTarget.SearchTimer >= Config.get_AgentAlertPauseTime())
-        {
-            CurrentState = Behaviors.Search;
-        }
-        
     }
     void BehaviorTree(Behaviors state)
     {
@@ -251,24 +211,30 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             case Behaviors.Roam:
                 {
-                    RoamTimer = 0;
-                    Agent.stoppingDistance = 0;
-                    Vector3 ranPos = UnityEngine.Random.insideUnitSphere * Config.get_RoamDist();
-                    ranPos += SpawningLocation;
-                    NavMeshHit hit;
-                    NavMesh.SamplePosition(ranPos, out hit, Config.get_RoamDist(), 1);
-                    Agent.SetDestination(hit.position);
+                    if (Agent.remainingDistance < 0.01f && RoamTimer >= Config.get_RoamPauseTime())
+                    {
+                        RoamTimer = 0;
+                        Vector3 ranPos = UnityEngine.Random.insideUnitSphere * Config.get_RoamDist();
+                        ranPos += SpawningLocation;
+                        NavMeshHit hit;
+                        NavMesh.SamplePosition(ranPos, out hit, Config.get_RoamDist(), 1);
+                        Agent.SetDestination(hit.position);
+                    }
+                    
                     break;
                 }
             case Behaviors.Search:
                 {
-                    //MyTarget.SearchTimer = 0;
-                    //Agent.stoppingDistance = 0;
-                    //Vector3 ranpos = UnityEngine.Random.insideUnitSphere * Config.get_AgentAlertedSearchDistance();
-                    //ranpos += MyTarget.TargetLastKnownLoc;
-                    //NavMeshHit hit;
-                    //NavMesh.SamplePosition(ranpos, out hit, Config.get_AgentAlertedSearchDistance(), 1);
-                    //Agent.SetDestination(hit.position);
+                    if(Agent.remainingDistance < 0.01f && MyTarget.SearchTimer >= Config.get_AgentSearchTime())
+                    {
+                        MyTarget.SearchTimer = 0;
+                        Vector3 ranpos = UnityEngine.Random.insideUnitSphere * Config.get_AgentAlertedSearchDistance();
+                        ranpos += MyTarget.TargetLastKnownLoc;
+                        NavMeshHit hit;
+                        NavMesh.SamplePosition(ranpos, out hit, Config.get_AgentAlertedSearchDistance(), 1);
+                        Agent.SetDestination(hit.position);
+                    }
+                    
                     break;
                 }
             case Behaviors.Flee:
@@ -283,9 +249,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                 {
                     if (MyTarget.Obj)
                     {
+                        GoTo(MyTarget.TargetLastKnownLoc);
+                        Agent.stoppingDistance = StoppingDistOrig;
                         faceTarget(MyTarget.Obj);
-                        Debug.Log(MyTarget.Obj.name);
-                        if (shootTimer >= shootRate && Agent.remainingDistance <= Agent.stoppingDistance)
+                        if (shootTimer >= shootRate)
                         {
                             Shoot();
                         }
@@ -302,7 +269,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     void faceTarget(GameObject target)
     {
         
-        Vector3 TargetPos = target.transform.position;
+        Vector3 TargetPos = target.transform.position - headPos.position;
         Quaternion rot = Quaternion.LookRotation(new Vector3(TargetPos.x, transform.position.y, TargetPos.z));
         transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * Config.get_faceTargetSpeed());
     }
@@ -312,19 +279,6 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             shootTimer = 0;
 
-            Transform pos = Gun.transform.Find("ProjectileOrigin");
-            RaycastHit hit;
-            if (Physics.Raycast(pos.position, Gun.transform.forward, out hit, 75))
-            {
-                //Debug.Log(hit.collider.name);
-
-                iDamage dmg = hit.collider.GetComponent<iDamage>();
-                if (dmg != null)
-                {
-                    dmg.takeDamage(30, MyPlayerState );
-                }
-
-            }
             controller.OnShoot();
         
         }
@@ -335,6 +289,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         //called from animation event in clip
 
         Transform pos = Gun.transform.Find("ProjectileOrigin");
+        Instantiate(Projectile, pos);
         GameObject flash = Instantiate(MuzzleFlash, pos);
         AudioSource.PlayClipAtPoint(AudioConfig.gunshot[0], pos.position, AudioConfig.gunshot_Vol);
         Destroy(flash, .05f);
@@ -391,11 +346,11 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
         if ((obj.transform.position - transform.position).magnitude > (obj2.transform.position - transform.position).magnitude)
         {
-            CloserObject = obj;
+            CloserObject = obj2;
         }
         else
         {
-            CloserObject = obj2;
+            CloserObject = obj;
         }
         return CloserObject;
     }
@@ -407,6 +362,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             foreach (GameObject enemy in NearbyEnemyPlayers)
             {
+                if(enemy == null)
+                {
+                    NearbyEnemyPlayers.Remove(enemy);
+                }
                 if (target == null)
                 {
                     target = enemy;
@@ -421,7 +380,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                 }
             }
         }
-        if (bDebug)
+        if (bDebug && target != null)
         {
             Debug.Log(target.GetComponent<iOwner>().OwningPlayer().PS_Score.PlayerName);
         }
@@ -458,10 +417,8 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
             {
                 if (Physics.Raycast(headPos.position, info.TargetDir, out hit, float.MaxValue))
                 {
-                
-                    GoTo(info.TargetLastKnownLoc);
+               
                     info.CanSee = true;
-                    Agent.stoppingDistance = StoppingDistOrig;
                     return info;
                 }
             }
@@ -488,7 +445,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             return;
         }
-        if ((other.transform.root.CompareTag("Bot") || other.transform.root.CompareTag("Player")) && other.transform.root.gameObject == other.gameObject)
+        if ( (other.transform.root.CompareTag("Bot") || other.transform.root.CompareTag("Player")))
         {
             if (!NearbyEnemyPlayers.Contains(other.transform.root.gameObject))
             {
@@ -501,7 +458,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                         if (otherPlayer.PS_Score.Assigned_Team == Team.FFA || otherPlayer.PS_Score.Assigned_Team != MyPlayerState.PS_Score.Assigned_Team)
                         {
                             //Debug.Log(other.transform.root.gameObject.name + " Added to list of enemies");
-                            if (other.transform.root != transform.root)
+                            if (other.transform.root.gameObject != transform.root.gameObject)
                             {
                                 NearbyEnemyPlayers.Add(other.transform.root.gameObject);
                             }
@@ -565,6 +522,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
             Debug.Log(MyPlayerState.PS_Score.PlayerName + " was shot by " + Instagator.PS_Score.PlayerName + "for " + amount + " damage.");
         }
         controller.OnHit();
+        AudioSource.PlayClipAtPoint(AudioConfig.hurt[UnityEngine.Random.Range(0, AudioConfig.hurt.Length)], transform.position, AudioConfig.hurt_Vol);
         StartCoroutine(flashred());
         if (HP <= 0)
         {
