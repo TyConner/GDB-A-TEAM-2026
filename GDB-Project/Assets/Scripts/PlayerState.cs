@@ -4,7 +4,7 @@ using UnityEngine;
 using static MyScore;
 public class PlayerState : MonoBehaviour
 {
-    public enum PlayerType { player, bot };
+    public enum PlayerType { player, bot , environment};
     public PlayerType PS_Type;
     public MyScore PS_Score;
 
@@ -84,21 +84,25 @@ public class PlayerState : MonoBehaviour
 
     public void updateScore(Category cat, int amount)
     {
-        
-        PS_Score.ChangeScore(cat, amount);
-        if(cat == Category.Kills)
+        if(PS_Type != PlayerType.environment)
         {
-            if (PS_Type == PlayerType.player && GameMode.instance.Phase == GameMode.GamePhase.Playing)
+            // if we are the envirnment we dont keep score
+            PS_Score.ChangeScore(cat, amount);
+            if (cat == Category.Kills)
             {
-                GameManager.instance.updateGameGoal(PS_Score.GetScore(Category.Kills));
-                if (GameMode.instance.bHasReachedGoal(this))
+                if (PS_Type == PlayerType.player && GameMode.instance.Phase == GameMode.GamePhase.Playing)
                 {
-                    Debug.Log(PS_Score.PlayerName + " has won!");
+                    GameManager.instance.updateGameGoal(PS_Score.GetScore(Category.Kills));
+                    if (GameMode.instance.bHasReachedGoal(this))
+                    {
+                        Debug.Log(PS_Score.PlayerName + " has won!");
 
+                    }
                 }
+
             }
-            
         }
+       
     }
    
 

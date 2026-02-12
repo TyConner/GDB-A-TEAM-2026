@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Easy
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
   FOV: 45
-  faceTargetSpeed: 50
-  AgentSprintMod: 2
+  faceTargetSpeed: 800
   AgentAlertedSearchDistance: 10
   AgentAlertTime: 30
   AgentAlertPauseTime: 2
   RoamDist: 1
   RoamPauseTime: 1
+  LowHPThreshhold: 10
