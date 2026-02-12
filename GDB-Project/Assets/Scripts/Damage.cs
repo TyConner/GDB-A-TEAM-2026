@@ -9,7 +9,7 @@ public class Damage : MonoBehaviour
     [Space(5)]
     [SerializeField] int Dmg;
     [Space(2)]
-    [SerializeField] int DmgRate;
+    [SerializeField] float DmgRate;
     [Space(2)]
     [SerializeField] int Spd;
     [Space(2)]
