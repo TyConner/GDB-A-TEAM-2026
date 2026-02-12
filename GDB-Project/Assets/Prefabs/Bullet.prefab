@@ -51,7 +51,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   rb: {fileID: 4337354545569716391}
   DamageAmount: 10
-  Speed: 100
+  Speed: 10
   Lifetime: 5
   HitEffect: {fileID: 0}
   MyOwner: {fileID: 0}
