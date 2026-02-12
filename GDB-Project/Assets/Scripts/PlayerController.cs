@@ -212,4 +212,11 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     {
         //
     }
+
+    public RaycastHit GetRaycastHit()
+    {
+        RaycastHit hit;
+        Physics.Raycast(transform.position, cameraController.transform.forward, out hit);
+        return hit;
+    }
 }
