@@ -192,11 +192,11 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
             if (ClosestThreat)
             {
                 MyTarget = CanSeeTarget(ClosestThreat);
-                
-                if (MyTarget.Obj && MyTarget.CanSee && NearbyEnemyPlayers.Contains(MyTarget.Obj))
+                CurrentState = Behaviors.Fight;
+                if (MyTarget.Obj && MyTarget.CanSee)
                 {
                     Debug.Log("My Target:" + MyTarget.Obj.name + " can see?: " + MyTarget.CanSee);
-                    CurrentState = Behaviors.Fight;
+                    
                 }
             }
             if (ClosestThreat != null && MyTarget.Obj != ClosestThreat)
@@ -301,6 +301,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     }
     void faceTarget(GameObject target)
     {
+        Debug.Log("Facing Target");
         Vector3 TargetPos = target.transform.position;
         Quaternion rot = Quaternion.LookRotation(new Vector3(TargetPos.x, transform.position.y, TargetPos.z));
         transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * Config.get_faceTargetSpeed());
@@ -445,6 +446,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
             info.TargetDir = target.transform.position - headPos.position;
             info.TargetAngleToMe = Vector3.Angle(info.TargetDir, transform.forward);
             info.TargetLastKnownLoc = target.transform.position;
+            info.Obj = target;
 
             if (bDebug)
             {
@@ -486,15 +488,14 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             return;
         }
-      
-            if ((other.transform.root.CompareTag("Bot") || other.transform.root.CompareTag("Player")) && other.transform.root.gameObject == other.gameObject)
+        if ((other.transform.root.CompareTag("Bot") || other.transform.root.CompareTag("Player")) && other.transform.root.gameObject == other.gameObject)
+        {
+            if (!NearbyEnemyPlayers.Contains(other.transform.root.gameObject))
             {
-                if (!NearbyEnemyPlayers.Contains(other.transform.root.gameObject))
-                    {
-                    iOwner HasOwner = other.transform.root.gameObject.GetComponent<iOwner>();
-                    if (HasOwner != null)
-                    {
-                        PlayerState otherPlayer = HasOwner.OwningPlayer();
+                iOwner HasOwner = other.transform.root.gameObject.GetComponent<iOwner>();
+                if (HasOwner != null)
+                {
+                    PlayerState otherPlayer = HasOwner.OwningPlayer();
                     if (otherPlayer != null)
                     {
                         if (otherPlayer.PS_Score.Assigned_Team == Team.FFA || otherPlayer.PS_Score.Assigned_Team != MyPlayerState.PS_Score.Assigned_Team)
@@ -515,8 +516,9 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
             }
         }
-        
-        
+
+
+
 
         //By prototype two scan for pickups here and log it
 
