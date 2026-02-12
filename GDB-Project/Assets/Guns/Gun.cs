@@ -66,21 +66,8 @@ public class Gun : MonoBehaviour
         AmmoCur--;
         //print("Pew");
         GameManager.instance.updateAmmoUI(AmmoMax, AmmoCur);
-        RaycastHit hit;
-        if (Physics.Raycast(BulletOrigin.position, GameManager.instance.player.GetComponentInChildren<Camera>().transform.forward, out hit, 75, ~transform.root.gameObject.layer))
-        {
-            //Debug.Log(hit.collider.name);
-
-            iDamage dmg = hit.collider.GetComponent<iDamage>();
-            if (dmg != null)
-            {
-                dmg.takeDamage(30, Instagator);
-            }
-
-
-        }
-        //GameObject abullet = Instantiate(Bullet, BulletOrigin);
-        //abullet.GetComponent<Projectile>().MyOwner = Instagator;
+        GameObject abullet = Instantiate(Bullet, BulletOrigin.position, BulletOrigin.rotation);
+        abullet.GetComponent<Projectile>().MyOwner = Instagator;
 
         if(AmmoCur == 0)
         {
