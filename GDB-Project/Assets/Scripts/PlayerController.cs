@@ -164,7 +164,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         EquipGun(newGun);
     }
 
-    void EquipGun(Gun newGun)
+    public void EquipGun(Gun newGun)
     {
         if(Gun != null)
         {
@@ -180,8 +180,13 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
 
 
     }
-
-    void DropGun()
+    public void addHealth(int amount)
+    {
+        startingHP += amount;
+        HP += Mathf.Clamp(amount, 0, startingHP);
+        UpdateUI();
+    }
+    public void DropGun()
     {
         if(Gun == null) return;
 
