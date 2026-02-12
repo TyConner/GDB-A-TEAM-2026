@@ -178,7 +178,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
             if (Agent.remainingDistance < 0.1f + UnityEngine.Random.value)
             {
                 RoamTimer += Time.deltaTime;
-                MyTarget.SearchTimer += Time.deltaTime;
+                
             }
             if (HP != 0 && HP < (float)HP / HPOrig)
             {
@@ -195,8 +195,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                 CurrentState = Behaviors.Fight;
                 if (MyTarget.Obj && MyTarget.CanSee)
                 {
-                    Debug.Log("My Target:" + MyTarget.Obj.name + " can see?: " + MyTarget.CanSee);
-                    
+                    CurrentState = Behaviors.Fight;
                 }
             }
             if (ClosestThreat != null && MyTarget.Obj != ClosestThreat)
@@ -207,9 +206,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
             }
            
-            else if (MyTarget.Obj && !MyTarget.CanSee)
+            else if (ClosestThreat == MyTarget.Obj && !MyTarget.CanSee)
             {
                 CheckSearch();
+                MyTarget.SearchTimer += Time.deltaTime;
             }
             else if(Agent.remainingDistance <= Agent.stoppingDistance)
             {
@@ -249,28 +249,28 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     {
         switch (state)
         {
-            //case Behaviors.Roam:
-            //    {
-            //        RoamTimer = 0;
-            //        Agent.stoppingDistance = 0;
-            //        Vector3 ranPos = UnityEngine.Random.insideUnitSphere * Config.get_RoamDist();
-            //        ranPos += SpawningLocation;
-            //        NavMeshHit hit;
-            //        NavMesh.SamplePosition(ranPos, out hit, Config.get_RoamDist(), 1);
-            //        Agent.SetDestination(hit.position);
-            //        break;
-            //    }
-            //case Behaviors.Search:
-            //    {
-            //        MyTarget.SearchTimer = 0;
-            //        Agent.stoppingDistance = 0;
-            //        Vector3 ranpos = UnityEngine.Random.insideUnitSphere * Config.get_AgentAlertedSearchDistance();
-            //        ranpos += MyTarget.TargetLastKnownLoc;
-            //        NavMeshHit hit;
-            //        NavMesh.SamplePosition(ranpos, out hit, Config.get_AgentAlertedSearchDistance(), 1);
-            //        Agent.SetDestination(hit.position);
-            //        break;
-            //    }
+            case Behaviors.Roam:
+                {
+                    RoamTimer = 0;
+                    Agent.stoppingDistance = 0;
+                    Vector3 ranPos = UnityEngine.Random.insideUnitSphere * Config.get_RoamDist();
+                    ranPos += SpawningLocation;
+                    NavMeshHit hit;
+                    NavMesh.SamplePosition(ranPos, out hit, Config.get_RoamDist(), 1);
+                    Agent.SetDestination(hit.position);
+                    break;
+                }
+            case Behaviors.Search:
+                {
+                    //MyTarget.SearchTimer = 0;
+                    //Agent.stoppingDistance = 0;
+                    //Vector3 ranpos = UnityEngine.Random.insideUnitSphere * Config.get_AgentAlertedSearchDistance();
+                    //ranpos += MyTarget.TargetLastKnownLoc;
+                    //NavMeshHit hit;
+                    //NavMesh.SamplePosition(ranpos, out hit, Config.get_AgentAlertedSearchDistance(), 1);
+                    //Agent.SetDestination(hit.position);
+                    break;
+                }
             case Behaviors.Flee:
                 {
                     break;
@@ -301,7 +301,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     }
     void faceTarget(GameObject target)
     {
-        Debug.Log("Facing Target");
+        
         Vector3 TargetPos = target.transform.position;
         Quaternion rot = Quaternion.LookRotation(new Vector3(TargetPos.x, transform.position.y, TargetPos.z));
         transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * Config.get_faceTargetSpeed());
