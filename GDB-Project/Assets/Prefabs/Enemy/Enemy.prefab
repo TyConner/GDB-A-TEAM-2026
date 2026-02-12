@@ -1628,6 +1628,7 @@ MonoBehaviour:
   AudioConfig: {fileID: 11400000, guid: 14e1974ca8db0e145b54e474d90bee76, type: 2}
   HP: 100
   AnimationTransSpeed: 2
+  CurrentState: 4
 --- !u!95 &8304904998154455148
 Animator:
   serializedVersion: 7
@@ -1714,7 +1715,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 15
+  m_Radius: 20
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1231206671584224365
 MonoBehaviour:

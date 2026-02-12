@@ -1,3 +1,8 @@
+<<<<<<< Prototype-1-Maxwell
+=======
+using System.Collections;
+using System.ComponentModel.Design.Serialization;
+>>>>>>> main
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -66,6 +71,13 @@ public class PlayerController : MonoBehaviour, iDamage
             }
             
         }
+        if (Input.GetButtonDown("Reload"))
+        {
+            if (Gun != null)
+            {
+                Gun.Reload();
+            }
+        }
     }
 
     void Movement()
@@ -121,6 +133,7 @@ public class PlayerController : MonoBehaviour, iDamage
     {
         HP -= Mathf.Clamp(amount, 0, startingHP);
         UpdateUI();
+        StartCoroutine(flashScreen());
         if (HP <= 0)
         {
             Die();
@@ -137,7 +150,7 @@ public class PlayerController : MonoBehaviour, iDamage
 
     void Die()
     {
-
+        GameManager.instance.DamageScreen.SetActive(false);
         MyPlayerState.OnDeath();
         //you died ui screen to be called in playerstate
         print("You died");
@@ -192,4 +205,27 @@ public class PlayerController : MonoBehaviour, iDamage
     {
         return MyPlayerState;
     }
+<<<<<<< Prototype-1-Maxwell
+=======
+
+    IEnumerator flashScreen()
+    {
+        GameManager.instance.DamageScreen.SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        GameManager.instance.DamageScreen.SetActive(false);
+    }
+
+    public void takeDamage(int amount, PlayerState Instigator, bool Headshot)
+    {
+        //
+    }
+
+    public RaycastHit GetRaycastHit()
+    {
+        RaycastHit hit;
+        Physics.Raycast(cameraController.transform.position, cameraController.transform.forward, out hit);
+        print("Hit: "+hit.collider.name);
+        return hit;
+    }
+>>>>>>> main
 }
