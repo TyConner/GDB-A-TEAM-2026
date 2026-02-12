@@ -24,9 +24,9 @@ public class Rifle : Gun
         base.SecondaryFire();
     }
 
-    public new void Shoot()
+    public new void Shoot(PlayerState Instagator)
     {
-        base.Shoot();
+        base.Shoot(Instagator);
     }
 
     protected override void Start()

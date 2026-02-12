@@ -9,9 +9,8 @@ public class PlayerController : MonoBehaviour, iDamage
     [SerializeField] CameraController cameraController;
     [SerializeField] float moveSpeed = 5.0f;
     [SerializeField] float sprintModifier = 1.7f;
-    [SerializeField] int maxHP = 100;
-    [SerializeField] int startingHP = 100;
-    [SerializeField] int currentHP;
+    [SerializeField] int HP = 100;
+     int startingHP;
     [SerializeField] int jumpVelocity = 15;
     [SerializeField] int jumpMax = 1;
     [SerializeField] float gravity = 32f;
@@ -24,6 +23,7 @@ public class PlayerController : MonoBehaviour, iDamage
     float startingMovespeed;
 
     float shootTimer;
+    public PlayerState MyPlayerState;
 
     Vector3 moveDir;
     Vector3 playerVelocity;
@@ -33,12 +33,7 @@ public class PlayerController : MonoBehaviour, iDamage
     {
         if (RunState.WasRestarted)
         {
-            currentHP = maxHP;          
-            RunState.WasRestarted = false;
-        }
-        else
-        {
-            currentHP = Mathf.Clamp(startingHP, 0, maxHP); 
+            HP = startingHP;          
         }
         startingMovespeed = moveSpeed;
         GameManager.instance.player = this.gameObject;
@@ -117,8 +112,12 @@ public class PlayerController : MonoBehaviour, iDamage
             moveSpeed = startingMovespeed;
         }
     }
+    public void takeDamage(int amount, PlayerState Instigator)
+    {
+        takeDamage(amount, Instigator, false);
+    }
 
-    public void takeDamage(int amount, GameObject Instagator, GameObject Victim)
+    public void takeDamage(int amount, PlayerState Instagator, bool Headshot)
     {
         HP -= Mathf.Clamp(amount, 0, startingHP);
         UpdateUI();
@@ -131,8 +130,8 @@ public class PlayerController : MonoBehaviour, iDamage
 
     public void addHealth(int amount)
     {
-            currentHP += amount;
-            currentHP = Mathf.Clamp(currentHP, 0, maxHP);
+            startingHP += amount;
+        HP += Mathf.Clamp(amount, 0, startingHP);
             UpdateUI();
     }
 
@@ -148,9 +147,9 @@ public class PlayerController : MonoBehaviour, iDamage
     {
         if(Gun == null) { return; }
         
-        Gun.Shoot();
+        Gun.Shoot(MyPlayerState);
     }
-
+    
     void DebugGiveGun()
     {
         Gun newGun = Instantiate(DebugGunPref, WeaponHoldPos).GetComponent<Gun>();
@@ -192,12 +191,5 @@ public class PlayerController : MonoBehaviour, iDamage
     public PlayerState OwningPlayer()
     {
         return MyPlayerState;
-    }
-
-
-
-    public void takeDamage(int amount, PlayerState Instigator, bool Headshot)
-    {
-        //
     }
 }
