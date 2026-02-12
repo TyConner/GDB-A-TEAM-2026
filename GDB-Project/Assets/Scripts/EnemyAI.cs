@@ -490,7 +490,11 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                         if (otherPlayer.PS_Score.Assigned_Team == Team.FFA || otherPlayer.PS_Score.Assigned_Team != MyPlayerState.PS_Score.Assigned_Team)
                         {
                             //Debug.Log(other.transform.root.gameObject.name + " Added to list of enemies");
-                            NearbyEnemyPlayers.Add(other.transform.root.gameObject);
+                            if (other.transform.root != transform.root)
+                            {
+                                NearbyEnemyPlayers.Add(other.transform.root.gameObject);
+                            }
+                            
                         }
                         else if (otherPlayer != null && GameMode.instance.config.ThisMatch != GameMode_Config.MatchType.FFA && otherPlayer.PS_Score.Assigned_Team == MyPlayerState.PS_Score.Assigned_Team)
                         {
