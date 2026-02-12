@@ -212,4 +212,9 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     {
         //
     }
+
+    public RaycastHit GetRaycastHit()
+    {
+        return new RaycastHit();
+    }
 }

@@ -211,7 +211,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
             {
                 CheckSearch();
             }
-            else
+            else if(Agent.remainingDistance <= Agent.stoppingDistance)
             {
                 CheckRoam();
             }
@@ -249,32 +249,28 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     {
         switch (state)
         {
-            case Behaviors.Roam:
-                {
-                    RoamTimer = 0;
-                    Agent.stoppingDistance = 0;
-                    Vector3 ranPos = UnityEngine.Random.insideUnitSphere * Config.get_RoamDist();
-                    ranPos += SpawningLocation;
-                    NavMeshHit hit;
-                    NavMesh.SamplePosition(ranPos, out hit, Config.get_RoamDist(), 1);
-                    if (Agent.remainingDistance <= Agent.stoppingDistance)
-                    {
-                        Agent.SetDestination(hit.position);
-                    }
-                    
-                    break;
-                }
-            case Behaviors.Search:
-                {
-                    MyTarget.SearchTimer = 0;
-                    Agent.stoppingDistance = 0;
-                    Vector3 ranpos = UnityEngine.Random.insideUnitSphere * Config.get_AgentAlertedSearchDistance();
-                    ranpos += MyTarget.TargetLastKnownLoc;
-                    NavMeshHit hit;
-                    NavMesh.SamplePosition(ranpos, out hit, Config.get_AgentAlertedSearchDistance(), 1);
-                    Agent.SetDestination(hit.position);
-                    break;
-                }
+            //case Behaviors.Roam:
+            //    {
+            //        RoamTimer = 0;
+            //        Agent.stoppingDistance = 0;
+            //        Vector3 ranPos = UnityEngine.Random.insideUnitSphere * Config.get_RoamDist();
+            //        ranPos += SpawningLocation;
+            //        NavMeshHit hit;
+            //        NavMesh.SamplePosition(ranPos, out hit, Config.get_RoamDist(), 1);
+            //        Agent.SetDestination(hit.position);
+            //        break;
+            //    }
+            //case Behaviors.Search:
+            //    {
+            //        MyTarget.SearchTimer = 0;
+            //        Agent.stoppingDistance = 0;
+            //        Vector3 ranpos = UnityEngine.Random.insideUnitSphere * Config.get_AgentAlertedSearchDistance();
+            //        ranpos += MyTarget.TargetLastKnownLoc;
+            //        NavMeshHit hit;
+            //        NavMesh.SamplePosition(ranpos, out hit, Config.get_AgentAlertedSearchDistance(), 1);
+            //        Agent.SetDestination(hit.position);
+            //        break;
+            //    }
             case Behaviors.Flee:
                 {
                     break;
@@ -448,6 +444,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
             TargetInfo info = new TargetInfo();
             info.TargetDir = target.transform.position - headPos.position;
             info.TargetAngleToMe = Vector3.Angle(info.TargetDir, transform.forward);
+            info.TargetLastKnownLoc = target.transform.position;
 
             if (bDebug)
             {
@@ -455,21 +452,23 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
             }
             RaycastHit hit;
-
-            if (Physics.Raycast(headPos.position, info.TargetDir, out hit, float.MaxValue))
+            if (info.TargetAngleToMe <= Config.get_FOV())
             {
-                
-                if (info.TargetAngleToMe <= Config.get_FOV())
+                if (Physics.Raycast(headPos.position, info.TargetDir, out hit, float.MaxValue))
                 {
+                
                     GoTo(info.TargetLastKnownLoc);
                     info.CanSee = true;
                     Agent.stoppingDistance = StoppingDistOrig;
                     return info;
                 }
-
             }
-            Agent.stoppingDistance = 0;
-            info.CanSee = false;
+            else
+            {
+                Agent.stoppingDistance = 0;
+                info.CanSee = false;
+            }
+                
             return info;
         }
         else
@@ -601,4 +600,8 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         AudioSource.PlayClipAtPoint(AudioConfig.footsteps[UnityEngine.Random.Range(0, AudioConfig.footsteps.Length)], Pos, AudioConfig.footsteps_Vol);
     }
 
+    public RaycastHit GetRaycastHit()
+    {
+        return new RaycastHit();
+    }
 }
