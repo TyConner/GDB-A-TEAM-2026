@@ -234,7 +234,4 @@ public class GameManager : MonoBehaviour
        
     }
 }
-public static class RunState
-{
-    public static bool WasRestarted = false;
-}
+
