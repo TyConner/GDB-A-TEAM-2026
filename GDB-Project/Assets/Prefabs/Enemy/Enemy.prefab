@@ -1628,6 +1628,7 @@ MonoBehaviour:
   AudioConfig: {fileID: 11400000, guid: 14e1974ca8db0e145b54e474d90bee76, type: 2}
   HP: 100
   AnimationTransSpeed: 2
+  CurrentState: 4
 --- !u!95 &8304904998154455148
 Animator:
   serializedVersion: 7
