@@ -20,7 +20,7 @@ public class GameMode : MonoBehaviour
     int Team_A;
     int Team_B;
     int PlayerCount;
-    public PlayerController Player;
+    public GameObject Player;
     public PlayerState player_PS;
     public GameObject[] SpawnLocs;
     GameObject Spectator;
@@ -134,16 +134,17 @@ public class GameMode : MonoBehaviour
         {
             case PlayerState.PlayerType.player:
                 player.EntityRef = Instantiate(player.PlayerPrefab, pos, Quaternion.identity, null);
-                player.EntityRef.GetComponent<PlayerController>().MyPlayerState = player;
+                player.EntityRef.GetComponent<iOwner>().SetOwningPlayer(player);
                 Spectator.SetActive(false);
 
                 break;
             case PlayerState.PlayerType.bot:
-                player.EntityRef = Instantiate(player.BotPrefab, pos, Quaternion.identity, null);
-                player.EntityRef.GetComponent<EnemyAI>().Config = player.botStats;
-                player.EntityRef.GetComponent<EnemyAI>().MyPlayerState = player;
+                player.EntityRef = Instantiate(player.BotPrefab, pos, Quaternion.identity);
+                player.EntityRef.GetComponent<EnemyAI>().SetAIConfig(player.botStats);
+                player.EntityRef.GetComponent<iOwner>().SetOwningPlayer(player);
                 break;
         }
+        player.EntityRef.name = player.PS_Score.PlayerName;
     }
 
     public void TryRespawn(PlayerState player)

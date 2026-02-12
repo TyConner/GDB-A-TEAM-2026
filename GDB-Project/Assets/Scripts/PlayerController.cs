@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour, iDamage
             currentHP = Mathf.Clamp(startingHP, 0, maxHP); 
         }
         startingMovespeed = moveSpeed;
+        GameManager.instance.player = this.gameObject;
         UpdateUI();
         //GameManager.instance.updateGunUI(fields);
     }
@@ -119,10 +120,9 @@ public class PlayerController : MonoBehaviour, iDamage
 
     public void takeDamage(int amount, GameObject Instagator, GameObject Victim)
     {
-        currentHP -= amount;
-        currentHP -= Mathf.Clamp(currentHP, 0, maxHP);
+        HP -= Mathf.Clamp(amount, 0, startingHP);
         UpdateUI();
-        if (currentHP <= 0)
+        if (HP <= 0)
         {
             Die();
             Debug.Log("Killed by: " + Instagator.name);
@@ -138,6 +138,9 @@ public class PlayerController : MonoBehaviour, iDamage
 
     void Die()
     {
+
+        MyPlayerState.OnDeath();
+        //you died ui screen to be called in playerstate
         print("You died");
     }
 
@@ -182,9 +185,19 @@ public class PlayerController : MonoBehaviour, iDamage
 
     void UpdateUI()
     {
-        if (GameManager.instance == null) return;
-        if (GameManager.instance.playerHPBar == null) return;
-        GameManager.instance.playerHPBar.fillAmount = (float)currentHP / maxHP;
+        GameManager.instance.playerHPBar.fillAmount = (float)HP / 100;
+
     }
 
+    public PlayerState OwningPlayer()
+    {
+        return MyPlayerState;
+    }
+
+
+
+    public void takeDamage(int amount, PlayerState Instigator, bool Headshot)
+    {
+        //
+    }
 }

@@ -8,6 +8,7 @@ TagManager:
   - Ground
   - SpawnPos
   - SpectatorCam
+  - Bot
   layers:
   - Default
   - TransparentFX

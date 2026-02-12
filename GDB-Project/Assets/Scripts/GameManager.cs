@@ -153,11 +153,15 @@ public class GameManager : MonoBehaviour
     }
     void timer()
     {
-        if(GameMode.instance.Phase.Equals(GameMode.GamePhase.Playing))
+        if (GameMode.instance)
         {
-            currenttime = currenttime - Time.deltaTime;
-            RemainingMatchTime.text = GetTime();
+            if (GameMode.instance.Phase.Equals(GameMode.GamePhase.Playing))
+            {
+                currenttime = currenttime - Time.deltaTime;
+                RemainingMatchTime.text = GetTime();
+            }
         }
+        
         
     }
     // Update is called once per frame
