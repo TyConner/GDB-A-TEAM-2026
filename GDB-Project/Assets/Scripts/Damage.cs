@@ -19,7 +19,7 @@ public class Damage : MonoBehaviour
     [Space(5)]
     [SerializeField] Rigidbody rb;
     [SerializeField] ParticleSystem hitEff;
-
+    [SerializeField] bool bPrintDebug = false;
 
     public PlayerState Creator;
 
@@ -79,6 +79,9 @@ public class Damage : MonoBehaviour
 
         if (dmg != null && Type == DamageType.DOT && !isDamaging)
         {
+            string debuginfo = "Damage-Component: " + dmg + "Attached to: " + transform.root.gameObject.name + "\n" + "Other Component: " + other.name;
+            if (bPrintDebug) { print(debuginfo); }
+
             StartCoroutine(damageOther(dmg, other));
         }
     }

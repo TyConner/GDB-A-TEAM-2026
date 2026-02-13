@@ -23,13 +23,15 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        print(other.name);
+        //print(other.name);
         if (other.isTrigger)
         {
+            
             return;
         }
 
         iDamage dmg = other.GetComponent<iDamage>();
+
         if (dmg != null)
         {
             dmg.takeDamage(DamageAmount, MyOwner);
