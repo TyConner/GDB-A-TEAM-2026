@@ -312,10 +312,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         TurnOffCollision();
         AudioSource.PlayClipAtPoint(AudioConfig.dying[UnityEngine.Random.Range(0, AudioConfig.dying.Length)], transform.position, AudioConfig.dying_Vol);
         //MyPlayerState.updateScore(Category.Deaths, 1);
-        if (controller)
-        {
-            controller.OnDeath();
-        }
+        controller.OnDeath();
         MyPlayerState.OnDeath();
    
 
@@ -453,31 +450,31 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             if ((other.transform.root.CompareTag("Bot") || other.transform.root.CompareTag("Player")))
             {
-            //    if (!NearbyEnemyPlayers.Contains(other.transform.root.gameObject))
-            //    {
-            //        iOwner HasOwner = other.transform.root.gameObject.GetComponent<iOwner>();
-            //        if (HasOwner != null)
-            //        {
-            //            PlayerState otherPlayer = HasOwner.OwningPlayer();
-            //            if (otherPlayer != null)
-            //            {
-            //                if (otherPlayer.PS_Score.Assigned_Team == Team.FFA || otherPlayer.PS_Score.Assigned_Team != MyPlayerState.PS_Score.Assigned_Team)
-            //                {
-            //                    //Debug.Log(other.transform.root.gameObject.name + " Added to list of enemies");
-            //                    if (other.transform.root.gameObject != transform.root.gameObject)
-            //                    {
-            //                        NearbyEnemyPlayers.Add(other.transform.root.gameObject);
-            //                    }
+                if (!NearbyEnemyPlayers.Contains(other.transform.root.gameObject))
+                {
+                    iOwner HasOwner = other.transform.root.gameObject.GetComponent<iOwner>();
+                    if (HasOwner != null)
+                    {
+                        PlayerState otherPlayer = HasOwner.OwningPlayer();
+                        if (otherPlayer != null)
+                        {
+                            if (otherPlayer.PS_Score.Assigned_Team == Team.FFA || otherPlayer.PS_Score.Assigned_Team != MyPlayerState.PS_Score.Assigned_Team)
+                            {
+                                //Debug.Log(other.transform.root.gameObject.name + " Added to list of enemies");
+                                if (other.transform.root.gameObject != transform.root.gameObject)
+                                {
+                                    NearbyEnemyPlayers.Add(other.transform.root.gameObject);
+                                }
 
-            //                }
-            //                else if (otherPlayer != null && GameMode.instance.config.ThisMatch != GameMode_Config.MatchType.FFA && otherPlayer.PS_Score.Assigned_Team == MyPlayerState.PS_Score.Assigned_Team)
-            //                {
-            //                    NearbyAllyPlayers.Add(other.transform.root.gameObject);
-            //                }
-            //            }
-            //        }
+                            }
+                            else if (otherPlayer != null && GameMode.instance.config.ThisMatch != GameMode_Config.MatchType.FFA && otherPlayer.PS_Score.Assigned_Team == MyPlayerState.PS_Score.Assigned_Team)
+                            {
+                                NearbyAllyPlayers.Add(other.transform.root.gameObject);
+                            }
+                        }
+                    }
 
-            //    }
+                }
             }
 
 

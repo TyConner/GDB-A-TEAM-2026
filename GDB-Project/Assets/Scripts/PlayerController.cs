@@ -222,7 +222,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     {
         RaycastHit hit;
         Physics.Raycast(cameraController.transform.position, cameraController.transform.forward, out hit);
-        print(GameManager.instance.RemainingMatchTime.text + " Hit: "+hit.collider.name);
+        print("Hit: "+hit.collider.name);
         return hit;
     }
 }

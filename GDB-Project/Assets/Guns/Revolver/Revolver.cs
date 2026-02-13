@@ -32,6 +32,6 @@ public class Revolver : Gun
     protected override void Start()
     {
         base.Start();
-        //print("Revolver start");
+        print("Revolver start");
     }
 }

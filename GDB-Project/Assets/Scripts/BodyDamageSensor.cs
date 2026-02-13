@@ -9,18 +9,11 @@ public class BodyDamageSensor : MonoBehaviour, iDamage
 
     public void takeDamage(int amount, PlayerState Instigator)
     {
-        if(Instigator != null)
+        if (HeadHitBox)
         {
-            if (HeadHitBox)
-            {
-                transform.root.GetComponent<iDamage>().takeDamage((int)(amount * DamageMultiplier), Instigator, HeadHitBox);
-            }
-            else
-            {
-                transform.root.GetComponent<iDamage>().takeDamage(amount, Instigator);
-            }
+            transform.root.GetComponent<iDamage>().takeDamage((int)(amount * DamageMultiplier), Instigator, HeadHitBox);
         }
-       
+        else { transform.root.GetComponent<iDamage>().takeDamage(amount, Instigator); }
 
     }
 
