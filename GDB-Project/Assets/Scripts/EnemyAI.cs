@@ -572,4 +572,9 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     {
         return new RaycastHit();
     }
+
+    public Transform GetCameraTransform()
+    {
+        return headPos;
+    }
 }

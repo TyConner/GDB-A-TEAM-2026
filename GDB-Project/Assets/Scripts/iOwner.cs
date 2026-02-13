@@ -8,4 +8,6 @@ public interface iOwner
 
     public RaycastHit GetRaycastHit();
 
+    public Transform GetCameraTransform();
+
 }

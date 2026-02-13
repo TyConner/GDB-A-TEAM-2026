@@ -10,6 +10,12 @@ public class Projectile : MonoBehaviour
     [SerializeField] ParticleSystem HitEffect;
 
     public PlayerState MyOwner;
+
+    private void Awake()
+    {
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+    }
     void Start()
     {
 
@@ -21,10 +27,20 @@ public class Projectile : MonoBehaviour
 
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void Update()
     {
-        //print(other.name);
-        if (other.isTrigger)
+        RaycastHit hit;
+        if (rb.SweepTest(transform.forward, out hit, Speed * Time.deltaTime))
+        {
+            HandleHit(hit.collider);
+        }
+
+    }
+
+    private void HandleHit(Collider other)
+    {
+        print("Projectile Hit: "+ other.name);
+        if (other.isTrigger || other.GetComponent<PlayerState>() == MyOwner)
         {
             
             return;
