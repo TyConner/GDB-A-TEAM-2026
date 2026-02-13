@@ -66,17 +66,19 @@ public class Gun : MonoBehaviour
         //print("Pew");
         GameManager.instance.updateAmmoUI(AmmoMax, AmmoCur);
         iOwner owner = Instagator.EntityRef.GetComponent<iOwner>();
-        Quaternion rot = BulletOrigin.rotation;
+
+        Vector3 spawnPosition = transform.position;
+        Quaternion spawnRotation = transform.rotation;
+
         if (owner != null)
         {
-            RaycastHit hit = owner.GetRaycastHit();
-            if (hit.collider != null)
-            {
-                Vector3 dir = (hit.point - BulletOrigin.position).normalized;
-                rot = Quaternion.LookRotation(dir, Vector3.up);
-            }
+            Transform cam = owner.GetCameraTransform();
+
+            spawnPosition = cam.position + cam.forward * 0.7f;
+            spawnRotation = cam.rotation;
         }
-        GameObject abullet = Instantiate(Bullet, BulletOrigin.position, rot);
+
+        GameObject abullet = Instantiate(Bullet, spawnPosition, spawnRotation);
         abullet.GetComponent<Projectile>().MyOwner = Instagator;
 
         if(AmmoCur == 0)

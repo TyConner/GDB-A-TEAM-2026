@@ -52,7 +52,7 @@ MonoBehaviour:
   rb: {fileID: 4337354545569716391}
   DamageAmount: 25
   Speed: 65
-  Lifetime: 5
+  Lifetime: 25
   HitEffect: {fileID: 0}
   MyOwner: {fileID: 0}
 --- !u!33 &7998447829378858867

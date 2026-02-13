@@ -225,4 +225,9 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         print(GameManager.instance.RemainingMatchTime.text + " Hit: "+hit.collider.name);
         return hit;
     }
+
+    public Transform GetCameraTransform()
+    {
+        return cameraController.transform;
+    }
 }
