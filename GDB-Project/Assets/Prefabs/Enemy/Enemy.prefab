@@ -296,7 +296,7 @@ GameObject:
   m_Component:
   - component: {fileID: 517510316205684617}
   - component: {fileID: 2929288837509423183}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: FootSensor_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -341,7 +341,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8614272250830647175}
   - component: {fileID: 1641759885205789027}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: FootSensor_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}

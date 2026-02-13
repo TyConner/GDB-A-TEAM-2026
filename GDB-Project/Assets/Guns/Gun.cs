@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class Gun : MonoBehaviour
 {
@@ -17,7 +16,7 @@ public class Gun : MonoBehaviour
 
     bool bInReload;
     bool bFireCooldown;
-    float FireRateTimer;
+   // float FireRateTimer;
 
     PlayerState OwningPlayer;
     public void OnEquip()

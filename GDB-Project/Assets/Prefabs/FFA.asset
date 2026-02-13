@@ -17,5 +17,5 @@ MonoBehaviour:
   Difficulty: {fileID: 11400000, guid: 60c2adf033086d746b495423d1dc4118, type: 2}
   GameGoal: 5
   ThisMatch: 1
-  Respawn_Timer: 3
-  BodyCleanUpTime: 5
+  Respawn_Timer: 4
+  BodyCleanUpTime: 3
