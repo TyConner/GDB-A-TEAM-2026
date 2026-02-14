@@ -4,10 +4,10 @@ public class Projectile : MonoBehaviour
 {
     [SerializeField] Rigidbody rb;
 
-    [SerializeField] int DamageAmount;
+    public int DamageAmount;
     [SerializeField] int Speed = 1;
     [SerializeField] float Lifetime = 0f;
-    [SerializeField] ParticleSystem HitEffect;
+    public ParticleSystem HitEffect;
 
     public PlayerState MyOwner;
 
@@ -36,7 +36,7 @@ public class Projectile : MonoBehaviour
         //}
 
     }
-    PlayerState otherplayer;
+    
     private void OnTriggerEnter(Collider other)
     {
         HandleHit(other);
@@ -44,13 +44,16 @@ public class Projectile : MonoBehaviour
     }
     private void HandleHit(Collider other)
     {
-        if(other != null)
+        PlayerState otherplayer = null;
+        iOwner otherplayerowner = null;
+        otherplayerowner = other.transform.root.GetComponent<iOwner>();
+        
+        if (other != null  && otherplayerowner != null)
         {
-            otherplayer = other.transform.root.GetComponent<iOwner>().OwningPlayer();
+            
         }
 
-       
-        if (other.isTrigger || otherplayer == MyOwner)
+        if (otherplayer != null  && other.isTrigger || otherplayer == MyOwner)
         {
             
             return;
