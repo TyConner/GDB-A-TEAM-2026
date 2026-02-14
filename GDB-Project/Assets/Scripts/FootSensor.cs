@@ -3,18 +3,22 @@ using UnityEngine;
 public class FootSensor : MonoBehaviour
 {
     [SerializeField] GameObject Parent;
-
+    [SerializeField] bool bDebug = false;
     private void OnTriggerEnter(Collider other)
     {
         if (other.isTrigger || other.transform.IsChildOf(Parent.transform))
         {
             return;
         }
-        iFootStep Instagator = Parent.GetComponent<iFootStep>();
+        iFootStep Instagator = transform.root.GetComponent<iFootStep>();
         if (other.CompareTag("Ground") || other.name == "Floor" && Instagator != null)
         {
             Instagator.onStepDetected(transform.position);
-            Debug.Log("FootStepEvent");
+            if (bDebug)
+            {
+                Debug.Log("FootStepEvent");
+            }
+                
             return;
         }
         else if( other.CompareTag("Ground") != true && Instagator != null)
@@ -23,7 +27,7 @@ public class FootSensor : MonoBehaviour
         }
         else if (Instagator == null)
         {
-            Debug.Log("No Parent found for " + gameObject.name);
+            Debug.LogWarning("No Parent found for " + gameObject.name);
             return;
         }
 

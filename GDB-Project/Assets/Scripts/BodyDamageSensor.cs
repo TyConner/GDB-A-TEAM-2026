@@ -4,13 +4,15 @@ public class BodyDamageSensor : MonoBehaviour, iDamage
 {
     [SerializeField] bool HeadHitBox = false;
     [SerializeField] float DamageMultiplier = 1.0f;
-
+    [SerializeField] bool bDebug = false;
 
 
     public void takeDamage(int amount, PlayerState Instigator)
     {
         if(Instigator != null)
         {
+            if(bDebug) Debug.Log("BodyDamageSensor: " + transform.name + " took damage from " + Instigator.name + " for " + amount);
+
             if (HeadHitBox)
             {
                 transform.root.GetComponent<iDamage>().takeDamage((int)(amount * DamageMultiplier), Instigator, HeadHitBox);
@@ -23,6 +25,7 @@ public class BodyDamageSensor : MonoBehaviour, iDamage
        
 
     }
+
 
     public void takeDamage(int amount, PlayerState Instigator, bool Headshot)
     {

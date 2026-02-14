@@ -50,6 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   HeadHitBox: 0
   DamageMultiplier: 1
+  bDebug: 0
 --- !u!136 &5146847152756980825
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -95,11 +96,11 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
 --- !u!144 &5203613256911811140
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -296,6 +297,8 @@ GameObject:
   m_Component:
   - component: {fileID: 517510316205684617}
   - component: {fileID: 2929288837509423183}
+  - component: {fileID: 3649983819957135376}
+  - component: {fileID: 5097810114950216243}
   m_Layer: 7
   m_Name: FootSensor_L
   m_TagString: Untagged
@@ -311,13 +314,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 359383593811277009}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.058, y: 0, z: 0}
+  m_LocalRotation: {x: -0.000000025120904, y: 0.00000016794117, z: 0.72571754, w: 0.6879927}
+  m_LocalPosition: {x: -0.04, y: -0.025, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3415710201957225308}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 93.057}
 --- !u!114 &2929288837509423183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -331,6 +334,57 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FootSensor
   Parent: {fileID: 3237819159316389645}
+  bDebug: 0
+--- !u!136 &3649983819957135376
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 359383593811277009}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.06
+  m_Height: 0.31
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &5097810114950216243
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 359383593811277009}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 2
 --- !u!1 &538803938386422586
 GameObject:
   m_ObjectHideFlags: 0
@@ -341,6 +395,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8614272250830647175}
   - component: {fileID: 1641759885205789027}
+  - component: {fileID: 892499269348921739}
+  - component: {fileID: 4921646325332733266}
   m_Layer: 7
   m_Name: FootSensor_R
   m_TagString: Untagged
@@ -356,13 +412,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 538803938386422586}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.058, y: 0, z: 0}
+  m_LocalRotation: {x: -0.0000025183783, y: -0.00000047371876, z: 0.72571963, w: 0.6879906}
+  m_LocalPosition: {x: 0.04, y: 0.025, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7979750069621223772}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 93.057}
 --- !u!114 &1641759885205789027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -376,6 +432,57 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FootSensor
   Parent: {fileID: 3237819159316389645}
+  bDebug: 0
+--- !u!136 &892499269348921739
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 538803938386422586}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.06
+  m_Height: 0.31
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &4921646325332733266
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 538803938386422586}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 2
 --- !u!1 &712550311962413043
 GameObject:
   m_ObjectHideFlags: 0
@@ -411,7 +518,6 @@ Transform:
   m_Children:
   - {fileID: 1438031928338301242}
   - {fileID: 2072863589881972544}
-  - {fileID: 6786303468132678670}
   m_Father: {fileID: 9207362889355820275}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4508239648636446689
@@ -427,7 +533,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   HeadHitBox: 1
-  DamageMultiplier: 1.5
+  DamageMultiplier: 2
+  bDebug: 0
 --- !u!135 &1110782187605613096
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -471,11 +578,11 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
 --- !u!144 &8056205656316555927
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -905,6 +1012,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   HeadHitBox: 0
   DamageMultiplier: 1
+  bDebug: 0
 --- !u!136 &1011048546295476381
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -950,11 +1058,11 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
 --- !u!144 &5359325118589451525
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -1208,6 +1316,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   HeadHitBox: 0
   DamageMultiplier: 1
+  bDebug: 0
 --- !u!136 &5743778774471181529
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1253,11 +1362,11 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
 --- !u!144 &1256802142451908184
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -1345,13 +1454,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 664105644325980419}
-  - component: {fileID: 1229505246861524594}
   - component: {fileID: 5712139830543339458}
+  - component: {fileID: 1229505246861524594}
   - component: {fileID: 8304904998154455148}
   - component: {fileID: 6322381929722041012}
   - component: {fileID: 7764973709433962702}
   - component: {fileID: 211423293183961414}
   - component: {fileID: 1231206671584224365}
+  - component: {fileID: 7847149468211988258}
   m_Layer: 7
   m_Name: Enemy
   m_TagString: Bot
@@ -1383,18 +1493,6 @@ Transform:
   - {fileID: 338353471863567620}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1229505246861524594
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3237819159316389645}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 946da164c89608c41a99c8e3aadf955b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Animation_State_Controller
 --- !u!114 &5712139830543339458
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1426,7 +1524,6 @@ MonoBehaviour:
   Colliders:
   - {fileID: 4670674618705727496}
   - {fileID: 5743778774471181529}
-  - {fileID: 6322381929722041012}
   - {fileID: 1110782187605613096}
   - {fileID: 691362111233375076}
   - {fileID: 1533038937490251319}
@@ -1439,7 +1536,19 @@ MonoBehaviour:
   AudioConfig: {fileID: 11400000, guid: 14e1974ca8db0e145b54e474d90bee76, type: 2}
   HP: 100
   AnimationTransSpeed: 2
-  CurrentState: 4
+  CurrentState: 3
+--- !u!114 &1229505246861524594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3237819159316389645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 946da164c89608c41a99c8e3aadf955b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Animation_State_Controller
 --- !u!95 &8304904998154455148
 Animator:
   serializedVersion: 7
@@ -1472,14 +1581,14 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.5
   m_Height: 2
@@ -1524,7 +1633,7 @@ SphereCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Radius: 20
   m_Center: {x: 0, y: 0, z: 0}
@@ -1546,6 +1655,33 @@ MonoBehaviour:
   - m_Rig: {fileID: 97445722310739570}
     m_Active: 1
   m_Effectors: []
+--- !u!54 &7847149468211988258
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3237819159316389645}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 2
 --- !u!1 &3250443380807076557
 GameObject:
   m_ObjectHideFlags: 0
@@ -1596,6 +1732,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   HeadHitBox: 0
   DamageMultiplier: 1
+  bDebug: 0
 --- !u!136 &8034479617921035706
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1641,11 +1778,11 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
 --- !u!144 &8468046316241275189
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -1805,6 +1942,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   HeadHitBox: 0
   DamageMultiplier: 1
+  bDebug: 0
 --- !u!136 &1885038535376550120
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1850,11 +1988,11 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
 --- !u!144 &7492113438452251797
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -2816,6 +2954,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   HeadHitBox: 0
   DamageMultiplier: 1
+  bDebug: 0
 --- !u!136 &4124841372287655485
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2861,11 +3000,11 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
 --- !u!144 &3374458185545098118
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -3136,6 +3275,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   HeadHitBox: 0
   DamageMultiplier: 1
+  bDebug: 0
 --- !u!65 &691362111233375076
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3179,11 +3319,11 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
 --- !u!1 &7679138136760103821
 GameObject:
   m_ObjectHideFlags: 0
@@ -3234,6 +3374,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   HeadHitBox: 0
   DamageMultiplier: 1
+  bDebug: 0
 --- !u!65 &6255278697383745267
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3277,11 +3418,11 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
 --- !u!144 &4339216138156777645
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -3378,6 +3519,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   HeadHitBox: 0
   DamageMultiplier: 1
+  bDebug: 0
 --- !u!136 &4670674618705727496
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3423,11 +3565,11 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
 --- !u!144 &1493805108025622107
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -3555,6 +3697,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   HeadHitBox: 0
   DamageMultiplier: 1
+  bDebug: 0
 --- !u!136 &1533038937490251319
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3600,11 +3743,11 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
 --- !u!144 &6524474141051054249
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -3854,37 +3997,6 @@ Transform:
   m_Children:
   - {fileID: 9096345885474617531}
   m_Father: {fileID: 2855312192703517201}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &8256299427376173741
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6786303468132678670}
-  m_Layer: 7
-  m_Name: HeadShotCollider
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6786303468132678670
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8256299427376173741}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 0.088, z: -0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 208046930408474719}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8286996277908384847
 GameObject:
