@@ -180,12 +180,15 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
 
 
     }
+
     public void addHealth(int amount)
     {
         startingHP += amount;
-        HP += Mathf.Clamp(amount, 0, startingHP);
+        startingHP = Mathf.Clamp(startingHP, 0, HP);
         UpdateUI();
+        StartCoroutine(flashHealScreen());
     }
+
     public void DropGun()
     {
         if(Gun == null) return;
@@ -197,7 +200,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
 
     void UpdateUI()
     {
-        GameManager.instance.playerHPBar.fillAmount = (float)HP / 100;
+        GameManager.instance.playerHPBar.fillAmount = (float)startingHP / HP;
 
     }
 
@@ -211,6 +214,13 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         GameManager.instance.DamageScreen.SetActive(true);
         yield return new WaitForSeconds(0.1f);
         GameManager.instance.DamageScreen.SetActive(false);
+    }
+
+    IEnumerator flashHealScreen()
+    {
+        GameManager.instance.HealScreen.SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        GameManager.instance.HealScreen.SetActive(false);
     }
 
     public void takeDamage(int amount, PlayerState Instigator, bool Headshot)
