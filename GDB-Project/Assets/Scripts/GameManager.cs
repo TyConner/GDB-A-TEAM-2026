@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour
 
     [Header("       Player UI      ")]
     public GameObject DamageScreen;
+    public GameObject HealScreen;
     public GameObject playerCompass;
     public Image playerCompassNeedle;
     public Image playerCrossHair;
