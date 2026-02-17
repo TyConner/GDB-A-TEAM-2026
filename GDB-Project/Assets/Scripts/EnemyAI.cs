@@ -79,8 +79,8 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     [Space(2)]
     [Header("---------Score and Team---------")]
     PlayerState MyPlayerState;
-    List<GameObject> NearbyEnemyPlayers;
-    List<GameObject> NearbyAllyPlayers;
+    List<GameObject> NearbyEnemyPlayers = new();
+    List<GameObject> NearbyAllyPlayers = new();
 
     //private vars
     bool isFlashingRed;
@@ -101,7 +101,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         public Vector3 TargetDir;
         public float TargetAngleToMe;
         public float TargetTimer;
-        public float SearchTimer;
+       
         public bool CanSee;
 
         public void Clear()
@@ -111,7 +111,6 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
             TargetDir = Vector3.zero;
             TargetAngleToMe = 0;
             TargetTimer = 0;
-            SearchTimer = 0;
             CanSee = false; 
         }
     }
@@ -119,9 +118,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     int HPOrig;
 
     TargetInfo MyTarget;
-    
 
-    float RoamTimer;
+   float SearchTimer;
+   float SearchPauseTimer;
+   float RoamTimer;
 
     float StoppingDistOrig;
 
@@ -131,8 +131,6 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     void Start()
     {
         RandomCharacter();
-        NearbyEnemyPlayers = new List<GameObject>();
-        NearbyAllyPlayers = new List<GameObject>();
         if (Characters[CharacterIndex].GetComponent<SkinnedMeshRenderer>())
         {
             orig = Characters[CharacterIndex].GetComponent<SkinnedMeshRenderer>().material.color;
@@ -164,7 +162,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         
         if (bCanPlay)
         {
-            //AiLogic();
+            AiLogic();
         }
        
     }
@@ -201,7 +199,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         if(CurrentState != Behaviors.Dead)
         {
             RoamTimer += Time.deltaTime;
-            MyTarget.SearchTimer += Time.deltaTime;
+            
             GameObject Threat = ReturnClosestThreat();
             if (Threat != null)
             {
@@ -238,23 +236,30 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                         ranPos += SpawningLocation;
                         NavMeshHit hit;
                         NavMesh.SamplePosition(ranPos, out hit, Config.get_RoamDist(), 1);
-                        Agent.SetDestination(hit.position);
+                        GoTo(hit.position);
                     }
                     
                     break;
                 }
             case Behaviors.Search:
                 {
-                    if(Agent.remainingDistance < 0.01f && MyTarget.SearchTimer >= Config.get_AgentSearchTime())
+                    SearchTimer += Time.deltaTime;
+                    SearchPauseTimer += Time.deltaTime;
+                    print(state+ " Agent Remaining Distance: " + Agent.remainingDistance+ "Timer: " + SearchTimer);
+                    if(Agent.remainingDistance < 0.01f && SearchTimer >= Config.get_AgentSearchPauseTime())
                     {
-                        MyTarget.SearchTimer = 0;
+                        SearchPauseTimer = 0;
                         Vector3 ranpos = UnityEngine.Random.insideUnitSphere * Config.get_AgentAlertedSearchDistance();
                         ranpos += MyTarget.TargetLastKnownLoc;
                         NavMeshHit hit;
                         NavMesh.SamplePosition(ranpos, out hit, Config.get_AgentAlertedSearchDistance(), 1);
-                        Agent.SetDestination(hit.position);
+                        GoTo(hit.position);
                     }
-                    
+                    if(SearchTimer >= Config.get_AgentSearchTime())
+                    {
+                        SearchTimer = 0;
+                        MyTarget.Clear();
+                    }
                     break;
                 }
             case Behaviors.Flee:
@@ -428,18 +433,20 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         }
         return CloserObject;
     }
+
+    void cleanList()
+    {
+        NearbyAllyPlayers.RemoveAll(Player => Player == null);
+        NearbyEnemyPlayers.RemoveAll(Player => Player == null);
+    }
     GameObject ReturnClosestThreat()
     {
-
+        cleanList();
         GameObject target = null;
         if (NearbyEnemyPlayers.Count > 0)
         {
             foreach (GameObject enemy in NearbyEnemyPlayers)
             {
-                if(enemy == null)
-                {
-                    NearbyEnemyPlayers.Remove(enemy);
-                }
                 if (target == null)
                 {
                     target = enemy;
@@ -475,7 +482,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     {
         if (target)
         {
-            TargetInfo info = new TargetInfo();
+            TargetInfo info = new();
             info.TargetDir = target.transform.position - headPos.position;
             info.TargetAngleToMe = Vector3.Angle(info.TargetDir, transform.forward);
             info.TargetLastKnownLoc = target.transform.position;
@@ -491,9 +498,15 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
             {
                 if (Physics.Raycast(headPos.position, info.TargetDir, out hit, float.MaxValue))
                 {
-               
-                    info.CanSee = true;
-                    return info;
+                    if(hit.collider.gameObject == info.Obj || hit.collider.transform.IsChildOf(info.Obj.transform))
+                    {
+                        info.CanSee = true;
+                    }
+                    else
+                    {
+                        info.CanSee = false;
+                    }
+                        return info;
                 }
             }
             else
@@ -519,44 +532,58 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             return;
         }
-        if (other)
-        {
-            if ((other.transform.root.CompareTag("Bot") || other.transform.root.CompareTag("Player")))
-            {
-                if (!NearbyEnemyPlayers.Contains(other.transform.root.gameObject))
-                {
-                    iOwner HasOwner = other.transform.root.gameObject.GetComponent<iOwner>();
-                    if (HasOwner != null)
-                    {
-                        PlayerState otherPlayer = HasOwner.OwningPlayer();
-                        if (otherPlayer != null)
-                        {
-                            if (otherPlayer.PS_Score.Assigned_Team == Team.FFA || otherPlayer.PS_Score.Assigned_Team != MyPlayerState.PS_Score.Assigned_Team)
-                            {
-                                //Debug.Log(other.transform.root.gameObject.name + " Added to list of enemies");
-                                if (other.transform.root.gameObject != transform.root.gameObject)
-                                {
-                                    NearbyEnemyPlayers.Add(other.transform.root.gameObject);
-                                }
 
-                            }
-                            else if (otherPlayer != null && GameMode.instance.config.ThisMatch != GameMode_Config.MatchType.FFA && otherPlayer.PS_Score.Assigned_Team == MyPlayerState.PS_Score.Assigned_Team)
-                            {
-                                NearbyAllyPlayers.Add(other.transform.root.gameObject);
-                            }
+        iOwner HasOwner = other.transform.root.gameObject.GetComponent<iOwner>();
+        if (HasOwner != null)
+        {
+            PlayerState otherPlayer = HasOwner.OwningPlayer();
+            if (otherPlayer == null || otherPlayer == MyPlayerState) { return; }
+            switch (IsEnemy(otherPlayer))
+            {
+                case true:
+                    if(NearbyEnemyPlayers.Count > 0)
+                    {
+                        if (!NearbyEnemyPlayers.Contains(otherPlayer.EntityRef))
+                        {
+                            NearbyEnemyPlayers.Add(otherPlayer.EntityRef);
                         }
                     }
-
-                }
+                    else
+                    {
+                        NearbyEnemyPlayers.Add(otherPlayer.EntityRef);
+                    }
+                        break;
+                case false:
+                    if (NearbyAllyPlayers.Count > 0)
+                    {
+                        if (!NearbyAllyPlayers.Contains(otherPlayer.EntityRef))
+                        {
+                            NearbyAllyPlayers.Add(otherPlayer.EntityRef);
+                        }
+                    }
+                    else
+                    {
+                        NearbyAllyPlayers.Add(otherPlayer.EntityRef);
+                    }
+                    break;
+                    
             }
-
-
         }
+       
 
 
 
-        //By prototype two scan for pickups here and log it
-
+    }
+    private bool IsEnemy(PlayerState player)
+    {
+        bool val = false;
+        if (GameMode.instance.config.ThisMatch == GameMode_Config.MatchType.FFA)
+        {
+            val = true;
+            return val;
+        }
+        return (player.PS_Score.Assigned_Team != MyPlayerState.PS_Score.Assigned_Team);
+    
     }
 
     private void OnTriggerExit(Collider other)
@@ -614,6 +641,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
             }
            
             StartCoroutine(flashred());
+
+            MyTarget = CanSeeTarget(Instagator.EntityRef);
+            GoTo(MyTarget.TargetLastKnownLoc);
+
             if (HP <= 0)
             {
                 if (Instagator != null && MyPlayerState)

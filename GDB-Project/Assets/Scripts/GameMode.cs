@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Physics.Authoring;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -23,7 +24,7 @@ public class GameMode : MonoBehaviour
     int PlayerCount;
     public GameObject Player;
     public PlayerState player_PS;
-    public GameObject[] SpawnLocs;
+    public List<Spawner> SpawnLocs;
     GameObject Spectator;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
@@ -32,18 +33,52 @@ public class GameMode : MonoBehaviour
     }
     void Start()
     {
-        
-        SpawnLocs = GameObject.FindGameObjectsWithTag("SpawnPos");
+
+        FindSpawners();
         Spectator = GameObject.FindGameObjectWithTag("SpectatorCam");
         InitMatch();
        
     }
 
-    public Vector3 GetSpawnLoc()
+    private void FindSpawners()
     {
-
-        return SpawnLocs[UnityEngine.Random.Range(0, SpawnLocs.Length)].transform.position;
+        GameObject[] SpawnerObjs = GameObject.FindGameObjectsWithTag("SpawnPos");
+        foreach (GameObject obj in SpawnerObjs)
+        {
+            if (obj != null)
+            {
+                Spawner tmp = obj.GetComponent<Spawner>();
+                if (tmp != null)
+                {
+                    SpawnLocs.Add(tmp);
+                }
+            }
+        }
     }
+    private Spawner GetValidSpawner()
+    {
+        int count = SpawnLocs.Count;
+        List<Spawner> validspawns = new List<Spawner>();
+        for (int i = 0; i< count; i++)
+        {
+            if(!SpawnLocs[i].IsEnemyInRange() && SpawnLocs[i].QueryRespawn())
+            {
+                validspawns.Add(SpawnLocs[i]);
+                
+            }
+        }
+        Debug.Log("valid spawners: " + validspawns.Count());
+
+        if (validspawns.Count > 0)
+        {
+            int index = UnityEngine.Random.Range(0, validspawns.Count);
+            return validspawns[index];
+        }
+       
+
+        return null;
+    }
+ 
     public void SetPhase(GamePhase _phase)
     {
         Phase = _phase;
@@ -130,22 +165,35 @@ public class GameMode : MonoBehaviour
     void Respawn(PlayerState player)
     {
         // ask game made to RespawnMe
-        Vector3 pos = GetSpawnLoc();
-
-        switch (player.PS_Type)
+        Spawner SpawnPoint = GetValidSpawner();
+        Vector3 pos;
+        if (SpawnPoint != null)
         {
-            case PlayerState.PlayerType.player:
-                player.EntityRef = Instantiate(player.PlayerPrefab, pos, Quaternion.identity, null);
-                player.EntityRef.GetComponent<iOwner>().SetOwningPlayer(player);
-                Spectator.SetActive(false);
+            
+            pos = SpawnPoint.transform.position;
+            SpawnPoint.TimeOutSpawner();
 
-                break;
-            case PlayerState.PlayerType.bot:
-                player.EntityRef = Instantiate(player.BotPrefab, pos, Quaternion.identity);
-                player.EntityRef.GetComponent<EnemyAI>().SetAIConfig(player.botStats);
-                player.EntityRef.GetComponent<EnemyAI>().GetComponent<iOwner>().SetOwningPlayer(player);
-                break;
         }
+        else
+        {
+            Debug.Log("No Spawner Found");
+            TryRespawn(player);
+           return;
+        }
+            switch (player.PS_Type)
+            {
+                case PlayerState.PlayerType.player:
+                    player.EntityRef = Instantiate(player.PlayerPrefab, pos, Quaternion.identity, null);
+                    player.EntityRef.GetComponent<iOwner>().SetOwningPlayer(player);
+                    Spectator.SetActive(false);
+
+                    break;
+                case PlayerState.PlayerType.bot:
+                    player.EntityRef = Instantiate(player.BotPrefab, pos, Quaternion.identity);
+                    player.EntityRef.GetComponent<EnemyAI>().SetAIConfig(player.botStats);
+                    player.EntityRef.GetComponent<EnemyAI>().GetComponent<iOwner>().SetOwningPlayer(player);
+                    break;
+            }
         player.EntityRef.name = player.PS_Score.PlayerName;
     }
 
