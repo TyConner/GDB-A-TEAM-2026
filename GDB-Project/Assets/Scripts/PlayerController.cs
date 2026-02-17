@@ -134,7 +134,10 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         StartCoroutine(flashScreen());
         if (HP <= 0)
         {
-            Instagator.updateScore(MyScore.Category.Kills, 1);
+            if (Instagator && Instagator != MyPlayerState)
+            {
+                Instagator.updateScore(MyScore.Category.Kills, 1);
+            }
             Die();
             Debug.Log("Killed by: " + Instagator.PS_Score.PlayerName);
         }

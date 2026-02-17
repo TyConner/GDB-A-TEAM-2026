@@ -10,13 +10,13 @@ public class Gun : MonoBehaviour
     [SerializeField] public int AmmoMax;
     [SerializeField] public float ReloadTime = 1f;
     [SerializeField] public float FireRate = 1f;
-
+    [SerializeField] bool bRaycastBullet; // if false, will spawn a projectile, if true will raycast and apply hitscan damage
     [SerializeField] public GameObject Bullet;
     [SerializeField] Transform BulletOrigin;
-
+    [SerializeField] LayerMask ignorelayer;
     bool bInReload;
     bool bFireCooldown;
-   // float FireRateTimer;
+    // float FireRateTimer;
 
     PlayerState OwningPlayer;
     public void OnEquip()
@@ -76,16 +76,57 @@ public class Gun : MonoBehaviour
 
             spawnPosition = cam.position + cam.forward * 0.7f;
             spawnRotation = cam.rotation;
+            if (!bRaycastBullet)
+            {
+                GameObject abullet = Instantiate(Bullet, spawnPosition, spawnRotation);
+                abullet.GetComponent<Projectile>().MyOwner = Instagator;
+            }
+            else
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(cam.position, cam.forward, out hit, ~ignorelayer))
+                {
+                    Debug.Log("Hit: " + hit.collider.name);
+                    iDamage dmg = hit.collider.GetComponent<iDamage>();
+
+
+                    if (dmg != null)
+                    {
+                        PlayerState otherplayer = null;
+                        iOwner otherplayerowner = null;
+                        otherplayerowner = hit.transform.root.GetComponent<iOwner>();
+                        Projectile mybullet = Bullet.GetComponent<Projectile>();
+
+                        if (mybullet != null)
+                        {
+                            int DamageAmount = mybullet.DamageAmount;
+                            if (otherplayer != null)
+                            {
+                                print("Raycast Hit: " + hit.collider.name + "\n  Shot by " + OwningPlayer.PS_Score.PlayerName + " at " + otherplayer.PS_Score.PlayerName + " Damage: " + DamageAmount);
+                            }
+                            else
+                            {
+                                print("RayCast Hit: " + hit.collider.name + "\n  Shot by " + OwningPlayer.PS_Score.PlayerName + " Damage: " + DamageAmount + " no player state found attached on other object");
+                            }
+
+                        }
+
+                    }
+
+
+                }
+            }
         }
-
-        GameObject abullet = Instantiate(Bullet, spawnPosition, spawnRotation);
-        abullet.GetComponent<Projectile>().MyOwner = Instagator;
-
-        if(AmmoCur == 0)
+        if (AmmoCur == 0)
         {
             Reload();
         }
     }
+
+
+
+
+    
 
     bool GetCanFire()
     {

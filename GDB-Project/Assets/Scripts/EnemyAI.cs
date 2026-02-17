@@ -133,11 +133,27 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         RandomCharacter();
         NearbyEnemyPlayers = new List<GameObject>();
         NearbyAllyPlayers = new List<GameObject>();
-        orig = Characters[CharacterIndex].GetComponent<SkinnedMeshRenderer>().material.color;
+        if (Characters[CharacterIndex].GetComponent<SkinnedMeshRenderer>())
+        {
+            orig = Characters[CharacterIndex].GetComponent<SkinnedMeshRenderer>().material.color;
+        }
+        else if (Characters[CharacterIndex].GetComponent<MeshRenderer>())
+        {
+            orig = Characters[CharacterIndex].GetComponentInChildren<MeshRenderer>().material.color;
+        }
         SpawningLocation = transform.position;
-        StoppingDistOrig = Agent.stoppingDistance;
-        RoamTimer = Config.get_RoamPauseTime();
+        if (Agent)
+        {
+            StoppingDistOrig = Agent.stoppingDistance;
+        }
+        
+        if (Config)
+        {
+            RoamTimer = Config.get_RoamPauseTime();
+        }
+       
         HPOrig = HP;
+        TurnOffCollision();
     }
 
  
@@ -148,7 +164,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         
         if (bCanPlay)
         {
-            AiLogic();
+            //AiLogic();
         }
        
     }
@@ -165,7 +181,11 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     }
     void LocoAnim()
     {
-        controller.SetSpeed(Agent.velocity.normalized.magnitude, AnimationTransSpeed);
+        if (controller)
+        {
+            controller.SetSpeed(Agent.velocity.normalized.magnitude, AnimationTransSpeed);
+        }
+        
     }
    void AiLogic()
     {
@@ -297,34 +317,76 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     }
 
+    void initColliders()
+    {
+        if(Colliders.Length > 0)
+        {
+            foreach (Collider var in Colliders)
+            {
+                var.enabled = true;
+                var.isTrigger = false;
+                
+            }
+        }
+            
+    }
     void TurnOffCollision()
     {
-
-        foreach (Collider var in Colliders)
+        if(Colliders.Length > 0)
         {
-            var.enabled = false;
+            foreach (Collider var in Colliders)
+            {
+                var.enabled = false;
+            }
         }
+            
     }
     void OnDeath()
     {
-        Agent.enabled = false;
-        Ik_Rig.Clear();
-        TurnOffCollision();
-        AudioSource.PlayClipAtPoint(AudioConfig.dying[UnityEngine.Random.Range(0, AudioConfig.dying.Length)], transform.position, AudioConfig.dying_Vol);
-        //MyPlayerState.updateScore(Category.Deaths, 1);
-        if (controller)
+        CurrentState = Behaviors.Dead;
+        if (Agent && Ik_Rig && controller && MyPlayerState && AudioConfig)
         {
+            Agent.enabled = false;
+            Ik_Rig.Clear();
+            TurnOffCollision();
             controller.OnDeath();
+            MyPlayerState.OnDeath();
+            AudioSource.PlayClipAtPoint(AudioConfig.dying[UnityEngine.Random.Range(0, AudioConfig.dying.Length)], transform.position, AudioConfig.dying_Vol);
         }
-        MyPlayerState.OnDeath();
-   
+
+        else
+        {
+            
+            if (bDebug)
+            {
+                Debug.LogWarning(
+                    "Object Not Initialized Component Status's:" + '\n' +
+                    "Agent status: " + (Agent !=  null).ToString() + '\n' +
+                    "ik rig status: " + (Ik_Rig != null).ToString() + '\n' +
+                    "Controller  status: " + (controller != null).ToString() + '\n' +
+                    "PlayerState status: " + (MyPlayerState != null).ToString() + '\n' +
+                    "AudioConfig status: " + (AudioConfig != null).ToString() + '\n' +
+                    "Destroying Object."
+                    );
+
+            }
+            Destroy(gameObject);
+        }
+
+
+
+
+        
+
+
+
 
     }
  
 
     IEnumerator flashred()
     {
-        if (!isFlashingRed)
+        if (!isFlashingRed && Characters[CharacterIndex].GetComponent<SkinnedMeshRenderer>())
         {
             isFlashingRed = true;
             Characters[CharacterIndex].GetComponent<SkinnedMeshRenderer>().material.color = Color.red;
@@ -332,7 +394,15 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
             Characters[CharacterIndex].GetComponent<SkinnedMeshRenderer>().material.color = orig;
             isFlashingRed = false;
         }
-        
+        else if (!isFlashingRed && Characters[CharacterIndex].GetComponent<MeshRenderer>())
+        {
+            isFlashingRed = true;
+            Characters[CharacterIndex].GetComponentInChildren<MeshRenderer>().material.color = Color.red;
+            yield return new WaitForSeconds(.1f);
+            Characters[CharacterIndex].GetComponentInChildren<MeshRenderer>().material.color = orig;
+            isFlashingRed = false;
+        }
+
     }
    
     GameObject ClosestObject(GameObject obj, GameObject obj2)
@@ -453,31 +523,31 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             if ((other.transform.root.CompareTag("Bot") || other.transform.root.CompareTag("Player")))
             {
-            //    if (!NearbyEnemyPlayers.Contains(other.transform.root.gameObject))
-            //    {
-            //        iOwner HasOwner = other.transform.root.gameObject.GetComponent<iOwner>();
-            //        if (HasOwner != null)
-            //        {
-            //            PlayerState otherPlayer = HasOwner.OwningPlayer();
-            //            if (otherPlayer != null)
-            //            {
-            //                if (otherPlayer.PS_Score.Assigned_Team == Team.FFA || otherPlayer.PS_Score.Assigned_Team != MyPlayerState.PS_Score.Assigned_Team)
-            //                {
-            //                    //Debug.Log(other.transform.root.gameObject.name + " Added to list of enemies");
-            //                    if (other.transform.root.gameObject != transform.root.gameObject)
-            //                    {
-            //                        NearbyEnemyPlayers.Add(other.transform.root.gameObject);
-            //                    }
+                if (!NearbyEnemyPlayers.Contains(other.transform.root.gameObject))
+                {
+                    iOwner HasOwner = other.transform.root.gameObject.GetComponent<iOwner>();
+                    if (HasOwner != null)
+                    {
+                        PlayerState otherPlayer = HasOwner.OwningPlayer();
+                        if (otherPlayer != null)
+                        {
+                            if (otherPlayer.PS_Score.Assigned_Team == Team.FFA || otherPlayer.PS_Score.Assigned_Team != MyPlayerState.PS_Score.Assigned_Team)
+                            {
+                                //Debug.Log(other.transform.root.gameObject.name + " Added to list of enemies");
+                                if (other.transform.root.gameObject != transform.root.gameObject)
+                                {
+                                    NearbyEnemyPlayers.Add(other.transform.root.gameObject);
+                                }
 
-            //                }
-            //                else if (otherPlayer != null && GameMode.instance.config.ThisMatch != GameMode_Config.MatchType.FFA && otherPlayer.PS_Score.Assigned_Team == MyPlayerState.PS_Score.Assigned_Team)
-            //                {
-            //                    NearbyAllyPlayers.Add(other.transform.root.gameObject);
-            //                }
-            //            }
-            //        }
+                            }
+                            else if (otherPlayer != null && GameMode.instance.config.ThisMatch != GameMode_Config.MatchType.FFA && otherPlayer.PS_Score.Assigned_Team == MyPlayerState.PS_Score.Assigned_Team)
+                            {
+                                NearbyAllyPlayers.Add(other.transform.root.gameObject);
+                            }
+                        }
+                    }
 
-            //    }
+                }
             }
 
 
@@ -523,36 +593,49 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     public void takeDamage(int amount, PlayerState Instagator)
     {
-        HP -= amount;
+        if (CurrentState != Behaviors.Dead) {
+            HP -= amount;
 
-        if (bDebug)
-        {
-            Debug.Log(MyPlayerState.PS_Score.PlayerName + " was shot by " + Instagator.PS_Score.PlayerName + "for " + amount + " damage.");
-        }
-        controller.OnHit();
-        AudioSource.PlayClipAtPoint(AudioConfig.hurt[UnityEngine.Random.Range(0, AudioConfig.hurt.Length)], transform.position, AudioConfig.hurt_Vol);
-        StartCoroutine(flashred());
-        if (HP <= 0)
-        {
-            if (Instagator != null)
+            if (bDebug)
             {
-                Instagator.updateScore(Category.Kills, 1);
-                if (bDebug)
+                if(MyPlayerState != null && Instagator != null)
                 {
-                    Debug.Log(MyPlayerState.PS_Score.PlayerName + " was killed by " + Instagator.PS_Score.PlayerName);
+                    Debug.Log(MyPlayerState.PS_Score.PlayerName + " was shot by " + Instagator.PS_Score.PlayerName + "for " + amount + " damage.");
+                }
+                    
+            }
+            if (controller)
+            {
+                controller.OnHit();
+            }
+            if (AudioConfig)
+            {
+                AudioSource.PlayClipAtPoint(AudioConfig.hurt[UnityEngine.Random.Range(0, AudioConfig.hurt.Length)], transform.position, AudioConfig.hurt_Vol);
+            }
+           
+            StartCoroutine(flashred());
+            if (HP <= 0)
+            {
+                if (Instagator != null && MyPlayerState)
+                {
+                    Instagator.updateScore(Category.Kills, 1);
+                    if (bDebug)
+                    {
+                        Debug.Log(MyPlayerState.PS_Score.PlayerName + " was killed by " + Instagator.PS_Score.PlayerName);
+                    }
+
                 }
 
+                OnDeath();
+
+
             }
-
-            OnDeath();
-
-
-        }
+        } 
     }
 
     public void takeDamage(int amount, PlayerState Instigator, bool Headshot)
     {
-        if (HP - amount < 0)
+        if (HP - amount <= 0)
         {
             Instigator.updateScore(Category.Headshots, 1);
             takeDamage(amount, Instigator);
