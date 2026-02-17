@@ -153,7 +153,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         }
        
         HPOrig = HP;
-        initColliders();
+        TurnOffCollision();
     }
 
  
