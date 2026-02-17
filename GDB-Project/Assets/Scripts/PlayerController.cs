@@ -203,7 +203,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
 
     void UpdateUI()
     {
-        GameManager.instance.playerHPBar.fillAmount = (float)startingHP / HP;
+        GameManager.instance.playerHPBar.fillAmount = (float)HP/ startingHP;
 
     }
 
