@@ -54,6 +54,7 @@ MonoBehaviour:
   SelfDestructTime: 0
   rb: {fileID: 0}
   hitEff: {fileID: 0}
+  bPrintDebug: 0
   Creator: {fileID: 7412774808559138124, guid: 7ede6b81bf1d36944bea9cb1fc2c0280, type: 3}
 --- !u!33 &4626222892833776571
 MeshFilter:
