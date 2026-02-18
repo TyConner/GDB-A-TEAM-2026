@@ -4,6 +4,7 @@ using UnityEngine;
 [CreateAssetMenu]
 public class GameMode_Config : ScriptableObject
 {
+    
     public enum MatchType { TDM, FFA };
     [Header("Match Configuration")]
     [Range(0, 12)]public  int bots;

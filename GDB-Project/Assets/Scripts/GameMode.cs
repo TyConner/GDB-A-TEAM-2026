@@ -55,16 +55,15 @@ public class GameMode : MonoBehaviour
             }
         }
     }
-    private Spawner GetValidSpawner()
+    private Spawner GetValidSpawner(MyScore.Team playersTeam)
     {
         int count = SpawnLocs.Count;
         List<Spawner> validspawns = new List<Spawner>();
         for (int i = 0; i< count; i++)
         {
-            if(!SpawnLocs[i].IsEnemyInRange() && SpawnLocs[i].QueryRespawn())
+            if(!SpawnLocs[i].IsEnemyInRange() && SpawnLocs[i].QueryRespawn() && SpawnLocs[i].team == playersTeam || config.ThisMatch == MatchType.FFA)
             {
                 validspawns.Add(SpawnLocs[i]);
-                
             }
         }
         Debug.Log("valid spawners: " + validspawns.Count());
@@ -91,6 +90,7 @@ public class GameMode : MonoBehaviour
     void InitBots()
     {
         int botCount = config.bots;
+        
         for (int i = 0; i < botCount; i++)
         {
             GameObject bot = Instantiate(PlayerStatePrefab);
@@ -101,7 +101,6 @@ public class GameMode : MonoBehaviour
                 
                 bot_PS.botStats = config.Difficulty;
                 bot_PS.PS_Type = PlayerState.PlayerType.bot;
-                //Debug.Log(bot_PS.PS_Score.GetScore(Category.Kills));
                 bot_PS.PS_Score.PlayerName = "Bot " + i;
                 switch (config.ThisMatch)
                 {
@@ -131,41 +130,46 @@ public class GameMode : MonoBehaviour
 
     void InitPlayer()
     {
-        GameObject player = Instantiate(PlayerStatePrefab);
-        PlayerState Player_PS = player.GetComponent<PlayerState>();
-        Player_PS.PS_Score.PlayerName = "Player";
-        if (Player_PS != null)
-        {
+        if (!config.BotsOnly) {
 
-            switch (config.ThisMatch)
+            GameObject player = Instantiate(PlayerStatePrefab);
+            PlayerState Player_PS = player.GetComponent<PlayerState>();
+            Player_PS.PS_Score.PlayerName = "Player";
+            if (Player_PS != null)
             {
-                case GameMode_Config.MatchType.TDM:
-                    if (Team_A > Team_B)
-                    {
-                        Player_PS.PS_Score.Assigned_Team = Team.B;
-                    }
-                    else
-                    {
-                        Player_PS.PS_Score.Assigned_Team = Team.A;
-                    }
-                    break;
-                case GameMode_Config.MatchType.FFA:
-                    {
-                        Player_PS.PS_Score.Assigned_Team = Team.FFA;
+
+                switch (config.ThisMatch)
+                {
+                    case GameMode_Config.MatchType.TDM:
+                        if (Team_A > Team_B)
+                        {
+                            Player_PS.PS_Score.Assigned_Team = Team.B;
+                        }
+                        else
+                        {
+                            Player_PS.PS_Score.Assigned_Team = Team.A;
+                        }
                         break;
-                    }
+                    case GameMode_Config.MatchType.FFA:
+                        {
+                            Player_PS.PS_Score.Assigned_Team = Team.FFA;
+                            break;
+                        }
+                }
+                player.name = Player_PS.PS_Score.PlayerName + "_PlayerState";
+                OurPlayersStates.Add(Player_PS);
             }
-            player.name = Player_PS.PS_Score.PlayerName + "_PlayerState";
-            OurPlayersStates.Add(Player_PS);
+            PlayerCount++;
         }
-        PlayerCount++;
+
+       
 
     }
 
     void Respawn(PlayerState player)
     {
         // ask game made to RespawnMe
-        Spawner SpawnPoint = GetValidSpawner();
+        Spawner SpawnPoint = GetValidSpawner(player.PS_Score.Assigned_Team);
         Vector3 pos;
         if (SpawnPoint != null)
         {
