@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: TEST_FFA
   m_EditorClassIdentifier: Assembly-CSharp::GameMode_Config
   bots: 1
-  MatchLength: 1
-  Difficulty: {fileID: 0}
+  MatchLength: 120
+  Difficulty: {fileID: 11400000, guid: 60c2adf033086d746b495423d1dc4118, type: 2}
   GameGoal: 1
-  ThisMatch: 0
-  Respawn_Timer: 0
-  BodyCleanUpTime: 0
+  ThisMatch: 1
+  Respawn_Timer: 5
+  BodyCleanUpTime: 4
