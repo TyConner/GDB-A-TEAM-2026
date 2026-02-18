@@ -6,8 +6,9 @@ public class GameMode_Config : ScriptableObject
 {
     public enum MatchType { TDM, FFA };
     [Header("Match Configuration")]
-    [Range(1,10)]public  int bots;
+    [Range(0, 12)]public  int bots;
     [Range(1, 300)]public int MatchLength;
+    public bool BotsOnly = false;
     public EnemyStats Difficulty;
     [Range(1,50)]public int GameGoal;
     public MatchType ThisMatch;
