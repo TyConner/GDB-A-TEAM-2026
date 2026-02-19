@@ -20,4 +20,8 @@ public class buttonFunctions : MonoBehaviour
         Application.Quit();
 #endif
     }
+    public void backtoMainMenu()
+    {
+        SceneManager.LoadSceneAsync(0);
+    }
 }
