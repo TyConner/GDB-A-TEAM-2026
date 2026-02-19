@@ -28,6 +28,12 @@ public class PlayerState : MonoBehaviour
             botStats = GameMode.instance.config.Difficulty;
 
         }
+        GameManager.instance.scoreboard.GetComponent<Scoreboard>().AddEntry(new ScoreboardEntryData()
+        {
+            playerState = this,
+            entryName = gameObject.name,
+            entryScore = 0
+        });
     }
 
     public void OnDeath()
@@ -89,6 +95,7 @@ public class PlayerState : MonoBehaviour
             PS_Score.ChangeScore(cat, amount);
             if (cat == Category.Kills)
             {
+                GameManager.instance.scoreboard.GetComponent<Scoreboard>().UpdateUI();
                 if (PS_Type == PlayerType.player && GameMode.instance.Phase == GameMode.GamePhase.Playing)
                 {
                     GameManager.instance.updateGameGoal(PS_Score.GetScore(Category.Kills));
