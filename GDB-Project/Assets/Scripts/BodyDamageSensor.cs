@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class BodyDamageSensor : MonoBehaviour, iDamage
 {
-    [SerializeField] bool HeadHitBox = false;
     [SerializeField] float DamageMultiplier = 1.0f;
     [SerializeField] bool bDebug = false;
 
@@ -12,15 +11,7 @@ public class BodyDamageSensor : MonoBehaviour, iDamage
         if(Instigator != null)
         {
             if(bDebug) Debug.Log("BodyDamageSensor: " + transform.name + " took damage from " + Instigator.name + " for " + amount);
-
-            if (HeadHitBox)
-            {
-                transform.root.GetComponent<iDamage>().takeDamage((int)(amount * DamageMultiplier), Instigator, HeadHitBox);
-            }
-            else
-            {
-                transform.root.GetComponent<iDamage>().takeDamage(amount, Instigator);
-            }
+            transform.root.GetComponent<iDamage>().takeDamage(amount, Instigator);
         }
        
 
