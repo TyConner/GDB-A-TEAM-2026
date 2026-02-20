@@ -9,15 +9,15 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8488684009595207915}
+  - component: {fileID: 6820871983412941861}
   - component: {fileID: 7461640642797223799}
   - component: {fileID: 627228444757812311}
   - component: {fileID: 961649043491389550}
   - component: {fileID: 7610950518605327252}
-  - component: {fileID: 6820871983412941861}
   - component: {fileID: 4038972785976380359}
   - component: {fileID: 2797583450091148244}
   m_Layer: 0
-  m_Name: DOTCAMPFIRE
+  m_Name: Campfire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37,8 +37,31 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6952696214324179842}
+  - {fileID: 302782430005882506}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6820871983412941861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 106850158195368932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b1f321a8075d3448dd4582e045b950, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Damage
+  Type: 0
+  Dmg: 5
+  DmgRate: 0.5
+  Spd: 0
+  SelfDestructTime: 0
+  rb: {fileID: 0}
+  hitEff: {fileID: 6431747949993523148, guid: eea1dc11287a5214a9defa177ad1ba03, type: 3}
+  hitEffDuration: 5
+  bPrintDebug: 0
+  Creator: {fileID: 2266652025204437865}
 --- !u!33 &7461640642797223799
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -139,27 +162,6 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 43588110369961836, guid: 83a9e5634d02e4b4dba649df0bdc88ed, type: 2}
---- !u!114 &6820871983412941861
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 106850158195368932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26b1f321a8075d3448dd4582e045b950, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Damage
-  Type: 0
-  Dmg: 5
-  DmgRate: 0.5
-  Spd: 0
-  SelfDestructTime: 0
-  rb: {fileID: 0}
-  hitEff: {fileID: 0}
-  bPrintDebug: 0
-  Creator: {fileID: 0}
 --- !u!136 &4038972785976380359
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -346,3 +348,84 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4511597249398474, guid: f010edb98185581468023b9e14618699, type: 3}
   m_PrefabInstance: {fileID: 6948200010304812360}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &8767298358992389669
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8488684009595207915}
+    m_Modifications:
+    - target: {fileID: 3717812686988146376, guid: 7ede6b81bf1d36944bea9cb1fc2c0280, type: 3}
+      propertyPath: m_Name
+      value: Environment PS_Type
+      objectReference: {fileID: 0}
+    - target: {fileID: 5586522119387872651, guid: 7ede6b81bf1d36944bea9cb1fc2c0280, type: 3}
+      propertyPath: PlayerName
+      value: CampFire
+      objectReference: {fileID: 0}
+    - target: {fileID: 5586522119387872651, guid: 7ede6b81bf1d36944bea9cb1fc2c0280, type: 3}
+      propertyPath: Assigned_Team
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 9049983915445561519, guid: 7ede6b81bf1d36944bea9cb1fc2c0280, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.22600555
+      objectReference: {fileID: 0}
+    - target: {fileID: 9049983915445561519, guid: 7ede6b81bf1d36944bea9cb1fc2c0280, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.00398
+      objectReference: {fileID: 0}
+    - target: {fileID: 9049983915445561519, guid: 7ede6b81bf1d36944bea9cb1fc2c0280, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.71009064
+      objectReference: {fileID: 0}
+    - target: {fileID: 9049983915445561519, guid: 7ede6b81bf1d36944bea9cb1fc2c0280, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9049983915445561519, guid: 7ede6b81bf1d36944bea9cb1fc2c0280, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9049983915445561519, guid: 7ede6b81bf1d36944bea9cb1fc2c0280, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9049983915445561519, guid: 7ede6b81bf1d36944bea9cb1fc2c0280, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9049983915445561519, guid: 7ede6b81bf1d36944bea9cb1fc2c0280, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9049983915445561519, guid: 7ede6b81bf1d36944bea9cb1fc2c0280, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9049983915445561519, guid: 7ede6b81bf1d36944bea9cb1fc2c0280, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7ede6b81bf1d36944bea9cb1fc2c0280, type: 3}
+--- !u!4 &302782430005882506 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9049983915445561519, guid: 7ede6b81bf1d36944bea9cb1fc2c0280, type: 3}
+  m_PrefabInstance: {fileID: 8767298358992389669}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2266652025204437865 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7412774808559138124, guid: 7ede6b81bf1d36944bea9cb1fc2c0280, type: 3}
+  m_PrefabInstance: {fileID: 8767298358992389669}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0388b2b68c9ca0b4890b3307240d149c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerState

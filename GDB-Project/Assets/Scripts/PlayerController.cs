@@ -45,6 +45,10 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     // Update is called once per frame
     void Update()
     {
+        if(GameMode.instance.Phase != GameMode.GamePhase.Playing)
+        {
+            return;
+        }
         Movement();
         Sprint();
 

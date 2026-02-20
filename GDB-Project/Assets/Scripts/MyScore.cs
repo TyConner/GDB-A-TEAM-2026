@@ -5,7 +5,7 @@ using UnityEngine;
 public class MyScore : MonoBehaviour
 {
     public string PlayerName;
-    public enum Team { A , B, FFA}
+    public enum Team { A , B, FFA, Environment}
 
     public Team Assigned_Team;
 
