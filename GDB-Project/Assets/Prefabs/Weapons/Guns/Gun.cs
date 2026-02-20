@@ -12,13 +12,13 @@ public class Gun : MonoBehaviour
     [SerializeField] public float FireRate = 1f;
     [SerializeField] bool bRaycastBullet; // if false, will spawn a projectile, if true will raycast and apply hitscan damage
     [SerializeField] public GameObject Bullet;
-    [SerializeField] Transform BulletOrigin;
+    [SerializeField] public Transform BulletOrigin;
     [SerializeField] LayerMask ignorelayer;
     bool bInReload;
-    bool bFireCooldown;
+    public bool bFireCooldown;
     // float FireRateTimer;
 
-    PlayerState OwningPlayer;
+    public PlayerState OwningPlayer;
     public void OnEquip()
     {
         GameManager.instance.updateGunUI(GunIcon, CrosshairIcon, AmmoMax, AmmoCur, GunName);
@@ -30,7 +30,7 @@ public class Gun : MonoBehaviour
         GameManager.instance.ClearGunUI();
     }
 
-    public void Reload()
+    public virtual void Reload()
     {
         if (bInReload) return;
 
@@ -45,7 +45,7 @@ public class Gun : MonoBehaviour
         GameManager.instance.updateAmmoUI(AmmoMax, AmmoCur);
     }
 
-    IEnumerator FireCooldown()
+    public IEnumerator FireCooldown()
     {
         bFireCooldown = true;
         yield return new WaitForSeconds(FireRate);
@@ -128,7 +128,7 @@ public class Gun : MonoBehaviour
 
     
 
-    bool GetCanFire()
+    public bool GetCanFire()
     {
         return AmmoCur > 0 && !bInReload && !bFireCooldown;
     }
