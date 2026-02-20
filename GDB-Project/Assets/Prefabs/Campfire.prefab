@@ -59,7 +59,7 @@ MonoBehaviour:
   SelfDestructTime: 0
   rb: {fileID: 0}
   hitEff: {fileID: 6431747949993523148, guid: eea1dc11287a5214a9defa177ad1ba03, type: 3}
-  hitEffDuration: 5
+  hitEffDuration: 3
   bPrintDebug: 0
   Creator: {fileID: 2266652025204437865}
 --- !u!33 &7461640642797223799

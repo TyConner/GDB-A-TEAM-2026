@@ -17,6 +17,6 @@ MonoBehaviour:
   AgentSearchDistance: 10
   AgentSearchTime: 30
   AgentSearchPauseTime: 2
-  RoamDist: 10
+  RoamDist: 150
   RoamPauseTime: 5
   LowHPThreshhold: 10
