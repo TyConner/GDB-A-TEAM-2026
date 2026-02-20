@@ -53,9 +53,25 @@ MonoBehaviour:
   AmmoCur: 6
   AmmoMax: 6
   ReloadTime: 1
-  FireRate: 0.5
+  FireRate: 0.25
+  bRaycastBullet: 1
+  HitScanDamage: 25
   Bullet: {fileID: 8805370691394233163, guid: b6dfa4310ac25bf41b48f9acadec0a5e, type: 3}
   BulletOrigin: {fileID: 8406501744804296752}
+  ignorelayer:
+    serializedVersion: 2
+    m_Bits: 0
+  bFireCooldown: 0
+  OwningPlayer: {fileID: 0}
+  recoilLocalPosOffset: {x: 0, y: 0, z: -0.06}
+  recoilLocalRotOffset: {x: -6, y: 2, z: 0}
+  recoilKickTime: 0.05
+  recoilReturnTime: 0.1
+  recoilHoldTime: 0.03
+  muzzleFlashPrefab: {fileID: 8202210436210671905, guid: 653a2bc261c2e3e498e7af496e8c886d, type: 3}
+  shootSound: {fileID: 8300000, guid: 0c2ca71796061314f8f9de18e586a429, type: 3}
+  shootVolume: 0.7
+  shootPitchRange: {x: 0.95, y: 1.05}
 --- !u!1 &5472822603882992901
 GameObject:
   m_ObjectHideFlags: 0
