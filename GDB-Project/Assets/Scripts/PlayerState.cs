@@ -96,11 +96,8 @@ public class PlayerState : MonoBehaviour
             
             if (cat == Category.Kills)
             {
-<<<<<<< scoreboard
                 GameManager.instance.scoreboard.GetComponent<Scoreboard>().UpdateUI();
-=======
                 
->>>>>>> main
                 if (PS_Type == PlayerType.player && GameMode.instance.Phase == GameMode.GamePhase.Playing)
                 {
                     
