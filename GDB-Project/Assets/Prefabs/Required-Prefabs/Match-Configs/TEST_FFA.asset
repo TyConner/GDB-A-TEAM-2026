@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameMode_Config
   bots: 3
   MatchLength: 120
-  BotsOnly: 1
+  BotsOnly: 0
   Difficulty: {fileID: 11400000, guid: 60c2adf033086d746b495423d1dc4118, type: 2}
   GameGoal: 2
   ThisMatch: 1

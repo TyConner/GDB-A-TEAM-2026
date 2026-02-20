@@ -21,6 +21,9 @@ public class GameMode : MonoBehaviour
     public List<PlayerState> OurPlayersStates;
     int Team_A;
     int Team_B;
+    MyScore RedTeam;
+    MyScore BlueTeam;
+
     int PlayerCount;
     public GameObject Player;
     public PlayerState player_PS;
@@ -61,7 +64,7 @@ public class GameMode : MonoBehaviour
         List<Spawner> validspawns = new List<Spawner>();
         for (int i = 0; i< count; i++)
         {
-            if(!SpawnLocs[i].IsEnemyInRange() && SpawnLocs[i].QueryRespawn() && SpawnLocs[i].team == playersTeam || config.ThisMatch == MatchType.FFA)
+            if(!SpawnLocs[i].IsEnemyInRange() && SpawnLocs[i].QueryRespawn() && SpawnLocs[i].team == playersTeam)
             {
                 validspawns.Add(SpawnLocs[i]);
             }
@@ -351,6 +354,7 @@ public class GameMode : MonoBehaviour
     public void OnMatchOver(PlayerState player)
     {
         Phase = GamePhase.PostMatchScreen;
+        //display scoreboard and otherend 
         if (player == null)
         {
             bool PlayerWin = DidPlayerWin();
@@ -376,17 +380,66 @@ public class GameMode : MonoBehaviour
         DeactivateBots();
     }
 
+    public bool TDM_HasReachedGoal()
+    {
+        int A_Team_Score = RedTeam.GetScore(Category.Kills);
+        int B_Team_Score = BlueTeam.GetScore(Category.Kills);
+        
+        if (A_Team_Score >= config.GameGoal || B_Team_Score >= config.GameGoal)
+        {
+            return true;
+        }
+        else { return false; }
+    }
 
+    public bool FFA_HasReachedGoal(PlayerState player)
+    {
+        if (player.PS_Score.GetScore(Category.Kills) >= config.GameGoal)
+        {
+            return true;
+        }
+        else { return false; }
+    }
     public bool bHasReachedGoal(PlayerState player)
     {
-        if(config.GameGoal <= player.PS_Score.GetScore(MyScore.Category.Kills))
+        switch(config.ThisMatch)
         {
-            
-            OnMatchOver(player);
-            return true;
-    
+            case MatchType.FFA:
+                return FFA_HasReachedGoal(player);
+            case MatchType.TDM:
+                return TDM_HasReachedGoal();
+            default:
+                return false;
         }
-        return false;
+  
+
+    }
+
+    public void TeamScoreUpdate(MyScore.Team team, MyScore.Category category, int amount)
+    {
+        if (config.ThisMatch == MatchType.TDM)
+        {
+            switch (team)
+            {
+                case Team.A:
+                    RedTeam.ChangeScore(category, amount);
+                    break;
+                case Team.B:
+                    BlueTeam.ChangeScore(category, amount);
+                    break;
+            }
+            if(category == Category.Kills)
+            {
+                if(bHasReachedGoal(null))
+                {
+                    OnMatchOver(null);
+                }
+            }
+        }
+        else
+        {
+            return;
+        }
 
     }
 

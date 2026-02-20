@@ -537,8 +537,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         if (HasOwner != null)
         {
             PlayerState otherPlayer = HasOwner.OwningPlayer();
-            if (otherPlayer == null || otherPlayer == MyPlayerState) { return; }
-            switch (IsEnemy(otherPlayer))
+            if (otherPlayer != null && otherPlayer != MyPlayerState)
+            {
+                cleanList();
+                switch (IsEnemy(otherPlayer))
             {
                 case true:
                     if(NearbyEnemyPlayers.Count > 0)
@@ -567,6 +569,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                     }
                     break;
                     
+                }
             }
         }
        

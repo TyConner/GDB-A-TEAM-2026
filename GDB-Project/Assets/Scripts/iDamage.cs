@@ -4,7 +4,5 @@ public interface iDamage
 {
     void takeDamage(int amount, PlayerState Instigator);
 
-    void takeDamage(int amount, PlayerState Instigator, bool Headshot);
-
 };
 
