@@ -87,11 +87,18 @@ public class PlayerState : MonoBehaviour
         {
             // if we are the envirnment we dont keep score
             PS_Score.ChangeScore(cat, amount);
+            
             if (cat == Category.Kills)
             {
+                
                 if (PS_Type == PlayerType.player && GameMode.instance.Phase == GameMode.GamePhase.Playing)
                 {
-                    GameManager.instance.updateGameGoal(PS_Score.GetScore(Category.Kills));
+                    
+                    GameMode.instance.TeamScoreUpdate(PS_Score.Assigned_Team, cat, amount);
+                    if(GameMode.instance.config.ThisMatch == GameMode_Config.MatchType.FFA)
+                    {
+                        GameManager.instance.updateGameGoal(PS_Score.GetScore(Category.Kills));
+                    }
                     if (GameMode.instance.bHasReachedGoal(this))
                     {
                         Debug.Log(PS_Score.PlayerName + " has won!");

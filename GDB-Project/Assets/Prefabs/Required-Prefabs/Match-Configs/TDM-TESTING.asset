@@ -16,7 +16,7 @@ MonoBehaviour:
   MatchLength: 300
   BotsOnly: 1
   Difficulty: {fileID: 11400000, guid: 2281e04cd32c80d4c84f74d32f098a11, type: 2}
-  GameGoal: 30
+  GameGoal: 1
   ThisMatch: 0
   Respawn_Timer: 3
   BodyCleanUpTime: 5

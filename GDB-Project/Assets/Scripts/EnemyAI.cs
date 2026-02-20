@@ -245,7 +245,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                 {
                     SearchTimer += Time.deltaTime;
                     SearchPauseTimer += Time.deltaTime;
-                    print(state+ " Agent Remaining Distance: " + Agent.remainingDistance+ "Timer: " + SearchTimer);
+                    //print(state+ " Agent Remaining Distance: " + Agent.remainingDistance+ "Timer: " + SearchTimer);
                     if(Agent.remainingDistance < 0.01f && SearchTimer >= Config.get_AgentSearchPauseTime())
                     {
                         SearchPauseTimer = 0;

@@ -82,9 +82,9 @@ public class Damage : MonoBehaviour
         {
             string debuginfo = "Damage-Component: " + dmg + "Attached to: " + transform.root.gameObject.name + "\n" + "Other Component: " + other.name;
             if (bPrintDebug) { print(debuginfo); }
-            if(hitEff != null && !other.transform.root.Find(hitEff.name))
+            if(hitEff != null && !other.transform.root.Find(hitEff.name + "(Clone)"))
             {
-                GameObject fx = Instantiate(hitEff, other.transform.position, Quaternion.identity, other.transform.root);
+                GameObject fx = Instantiate(hitEff, other.transform.position + new Vector3 (0,.5f,0), Quaternion.identity, other.transform.root);
                 Damage childdamage = fx.GetComponent<Damage>();
                 if(childdamage != null)
                 {
