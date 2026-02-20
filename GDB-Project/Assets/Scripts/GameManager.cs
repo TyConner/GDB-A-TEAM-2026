@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
     public Image playerCrossHair;
     [SerializeField] Sprite DefaultCrossHairSprite;
     [SerializeField] Sprite DefaultWeaponSprite;
-
+    [SerializeField] public GameObject scoreboard;
 
     [Header("       Player Weapon UI Elements      ")]
     public Image playerHPBar;

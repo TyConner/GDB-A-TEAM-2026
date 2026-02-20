@@ -28,6 +28,12 @@ public class PlayerState : MonoBehaviour
             botStats = GameMode.instance.config.Difficulty;
 
         }
+        GameManager.instance.scoreboard.GetComponent<Scoreboard>().AddEntry(new ScoreboardEntryData()
+        {
+            playerState = this,
+            entryName = gameObject.name,
+            entryScore = 0
+        });
     }
 
     public void OnDeath()
@@ -90,7 +96,11 @@ public class PlayerState : MonoBehaviour
             
             if (cat == Category.Kills)
             {
+<<<<<<< scoreboard
+                GameManager.instance.scoreboard.GetComponent<Scoreboard>().UpdateUI();
+=======
                 
+>>>>>>> main
                 if (PS_Type == PlayerType.player && GameMode.instance.Phase == GameMode.GamePhase.Playing)
                 {
                     
