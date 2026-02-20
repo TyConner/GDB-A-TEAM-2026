@@ -21,6 +21,9 @@ public class GameMode : MonoBehaviour
     public List<PlayerState> OurPlayersStates;
     int Team_A;
     int Team_B;
+    MyScore RedTeam;
+    MyScore BlueTeam;
+
     int PlayerCount;
     public GameObject Player;
     public PlayerState player_PS;
@@ -55,16 +58,15 @@ public class GameMode : MonoBehaviour
             }
         }
     }
-    private Spawner GetValidSpawner()
+    private Spawner GetValidSpawner(MyScore.Team playersTeam)
     {
         int count = SpawnLocs.Count;
         List<Spawner> validspawns = new List<Spawner>();
         for (int i = 0; i< count; i++)
         {
-            if(!SpawnLocs[i].IsEnemyInRange() && SpawnLocs[i].QueryRespawn())
+            if(!SpawnLocs[i].IsEnemyInRange() && SpawnLocs[i].QueryRespawn() && SpawnLocs[i].team == playersTeam)
             {
                 validspawns.Add(SpawnLocs[i]);
-                
             }
         }
         Debug.Log("valid spawners: " + validspawns.Count());
@@ -91,6 +93,7 @@ public class GameMode : MonoBehaviour
     void InitBots()
     {
         int botCount = config.bots;
+        
         for (int i = 0; i < botCount; i++)
         {
             GameObject bot = Instantiate(PlayerStatePrefab);
@@ -101,7 +104,6 @@ public class GameMode : MonoBehaviour
                 
                 bot_PS.botStats = config.Difficulty;
                 bot_PS.PS_Type = PlayerState.PlayerType.bot;
-                //Debug.Log(bot_PS.PS_Score.GetScore(Category.Kills));
                 bot_PS.PS_Score.PlayerName = "Bot " + i;
                 switch (config.ThisMatch)
                 {
@@ -131,41 +133,46 @@ public class GameMode : MonoBehaviour
 
     void InitPlayer()
     {
-        GameObject player = Instantiate(PlayerStatePrefab);
-        PlayerState Player_PS = player.GetComponent<PlayerState>();
-        Player_PS.PS_Score.PlayerName = "Player";
-        if (Player_PS != null)
-        {
+        if (!config.BotsOnly) {
 
-            switch (config.ThisMatch)
+            GameObject player = Instantiate(PlayerStatePrefab);
+            PlayerState Player_PS = player.GetComponent<PlayerState>();
+            Player_PS.PS_Score.PlayerName = "Player";
+            if (Player_PS != null)
             {
-                case GameMode_Config.MatchType.TDM:
-                    if (Team_A > Team_B)
-                    {
-                        Player_PS.PS_Score.Assigned_Team = Team.B;
-                    }
-                    else
-                    {
-                        Player_PS.PS_Score.Assigned_Team = Team.A;
-                    }
-                    break;
-                case GameMode_Config.MatchType.FFA:
-                    {
-                        Player_PS.PS_Score.Assigned_Team = Team.FFA;
+
+                switch (config.ThisMatch)
+                {
+                    case GameMode_Config.MatchType.TDM:
+                        if (Team_A > Team_B)
+                        {
+                            Player_PS.PS_Score.Assigned_Team = Team.B;
+                        }
+                        else
+                        {
+                            Player_PS.PS_Score.Assigned_Team = Team.A;
+                        }
                         break;
-                    }
+                    case GameMode_Config.MatchType.FFA:
+                        {
+                            Player_PS.PS_Score.Assigned_Team = Team.FFA;
+                            break;
+                        }
+                }
+                player.name = Player_PS.PS_Score.PlayerName + "_PlayerState";
+                OurPlayersStates.Add(Player_PS);
             }
-            player.name = Player_PS.PS_Score.PlayerName + "_PlayerState";
-            OurPlayersStates.Add(Player_PS);
+            PlayerCount++;
         }
-        PlayerCount++;
+
+       
 
     }
 
     void Respawn(PlayerState player)
     {
         // ask game made to RespawnMe
-        Spawner SpawnPoint = GetValidSpawner();
+        Spawner SpawnPoint = GetValidSpawner(player.PS_Score.Assigned_Team);
         Vector3 pos;
         if (SpawnPoint != null)
         {
@@ -347,6 +354,7 @@ public class GameMode : MonoBehaviour
     public void OnMatchOver(PlayerState player)
     {
         Phase = GamePhase.PostMatchScreen;
+        //display scoreboard and otherend 
         if (player == null)
         {
             bool PlayerWin = DidPlayerWin();
@@ -372,17 +380,66 @@ public class GameMode : MonoBehaviour
         DeactivateBots();
     }
 
+    public bool TDM_HasReachedGoal()
+    {
+        int A_Team_Score = RedTeam.GetScore(Category.Kills);
+        int B_Team_Score = BlueTeam.GetScore(Category.Kills);
+        
+        if (A_Team_Score >= config.GameGoal || B_Team_Score >= config.GameGoal)
+        {
+            return true;
+        }
+        else { return false; }
+    }
 
+    public bool FFA_HasReachedGoal(PlayerState player)
+    {
+        if (player.PS_Score.GetScore(Category.Kills) >= config.GameGoal)
+        {
+            return true;
+        }
+        else { return false; }
+    }
     public bool bHasReachedGoal(PlayerState player)
     {
-        if(config.GameGoal <= player.PS_Score.GetScore(MyScore.Category.Kills))
+        switch(config.ThisMatch)
         {
-            
-            OnMatchOver(player);
-            return true;
-    
+            case MatchType.FFA:
+                return FFA_HasReachedGoal(player);
+            case MatchType.TDM:
+                return TDM_HasReachedGoal();
+            default:
+                return false;
         }
-        return false;
+  
+
+    }
+
+    public void TeamScoreUpdate(MyScore.Team team, MyScore.Category category, int amount)
+    {
+        if (config.ThisMatch == MatchType.TDM)
+        {
+            switch (team)
+            {
+                case Team.A:
+                    RedTeam.ChangeScore(category, amount);
+                    break;
+                case Team.B:
+                    BlueTeam.ChangeScore(category, amount);
+                    break;
+            }
+            if(category == Category.Kills)
+            {
+                if(bHasReachedGoal(null))
+                {
+                    OnMatchOver(null);
+                }
+            }
+        }
+        else
+        {
+            return;
+        }
 
     }
 

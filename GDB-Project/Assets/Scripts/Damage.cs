@@ -18,7 +18,8 @@ public class Damage : MonoBehaviour
     [Header("Components")]
     [Space(5)]
     [SerializeField] Rigidbody rb;
-    [SerializeField] ParticleSystem hitEff;
+    [SerializeField] GameObject hitEff;
+    [SerializeField] float hitEffDuration = 1f;
     [SerializeField] bool bPrintDebug = false;
 
     public PlayerState Creator;
@@ -81,6 +82,17 @@ public class Damage : MonoBehaviour
         {
             string debuginfo = "Damage-Component: " + dmg + "Attached to: " + transform.root.gameObject.name + "\n" + "Other Component: " + other.name;
             if (bPrintDebug) { print(debuginfo); }
+            if(hitEff != null && !other.transform.root.Find(hitEff.name))
+            {
+                GameObject fx = Instantiate(hitEff, other.transform.position, Quaternion.identity, other.transform.root);
+                Damage childdamage = fx.GetComponent<Damage>();
+                if(childdamage != null)
+                {
+                    childdamage.Creator = Creator;
+                }
+                Destroy(fx.gameObject, hitEffDuration);
+
+            }
 
             StartCoroutine(damageOther(dmg, other));
         }
