@@ -21,8 +21,8 @@ public class GameMode : MonoBehaviour
     public List<PlayerState> OurPlayersStates;
     int Team_A;
     int Team_B;
-    MyScore RedTeam;
-    MyScore BlueTeam;
+    MyScore RedTeam = new();
+    MyScore BlueTeam = new();
 
     int PlayerCount;
     public GameObject Player;
