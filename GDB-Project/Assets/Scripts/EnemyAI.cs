@@ -346,8 +346,9 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         }
             
     }
-    void OnDeath()
+    void OnDeath(PlayerState Instagator)
     {
+        KillFeedManager.instance.HandleKill(Instagator.EntityRef.name, MyPlayerState.EntityRef.name, Instagator.EntityRef.GetComponent<Gun>().name);
         CurrentState = Behaviors.Dead;
         if (Agent && Ik_Rig && controller && MyPlayerState && AudioConfig)
         {
@@ -660,7 +661,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
                 }
 
-                OnDeath();
+                OnDeath(Instagator);
 
 
             }
