@@ -3,9 +3,9 @@ using UnityEngine.UI;
 
 public class Rifle : Gun
 {
-    public new void OnEquip()
+    public new void OnEquip(PlayerState owner)
     {
-        base.OnEquip();
+        base.OnEquip(owner);
 
     }
 

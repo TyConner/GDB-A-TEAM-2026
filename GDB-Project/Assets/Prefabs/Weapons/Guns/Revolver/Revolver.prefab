@@ -74,6 +74,9 @@ MonoBehaviour:
   shootPitchRange: {x: 0.95, y: 1.05}
   cameraShakeAmplitude: 0.15
   cameraShakeDuration: 0.1
+  spinOnReload: 1
+  reloadSpinAxis: {x: -1, y: 0, z: 0}
+  reloadSpinUseEase: 1
 --- !u!1 &5472822603882992901
 GameObject:
   m_ObjectHideFlags: 0

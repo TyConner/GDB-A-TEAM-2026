@@ -625,6 +625,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     {
         if (CurrentState != Behaviors.Dead) {
             HP -= amount;
+            if (Instagator == GameManager.instance.player.GetComponent<PlayerController>().MyPlayerState)
+            {
+                GameManager.instance.playHitmarker();
+            }
 
             if (bDebug)
             {

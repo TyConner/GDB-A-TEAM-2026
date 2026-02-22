@@ -2629,6 +2629,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: da6e746bf48e71d4da849aab5105c27a, type: 3}
+--- !u!1001 &234552365
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 35.42
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.00000047683716
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 40.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501032125179, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_Name
+      value: Revolver Barrel (2)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
 --- !u!4 &235708594 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4532099128707850, guid: 611cba82a9d438945b55ca350ba69413, type: 3}
@@ -2773,6 +2830,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4133490634870002, guid: 879a8d323fc98e145966106e9d2018a3, type: 3}
   m_PrefabInstance: {fileID: 857046397}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &258024234
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -22.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.00000047683716
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 35.83
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501032125179, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_Name
+      value: Revolver Barrel (3)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
 --- !u!1001 &264612746
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10678,6 +10792,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4664225842624190, guid: 18238448d591a7741aba892d2134abc8, type: 3}
   m_PrefabInstance: {fileID: 1004327387}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1013842803
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -15.86
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.00000047683716
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 59.72
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501031968475, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046078501032125179, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
+      propertyPath: m_Name
+      value: Revolver Barrel (4)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 50fab6f126bf70441ba7c17f987f6c3d, type: 3}
 --- !u!1001 &1017958966
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11982,6 +12153,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2265620044383494649, guid: 70886b767216ef04a8688369fb03b2eb, type: 3}
+      propertyPath: hitmarkerSound2D
+      value: 
+      objectReference: {fileID: 8300000, guid: cb41302c1279f804da276bba3d05916d, type: 3}
     - target: {fileID: 2463840445194175752, guid: 70886b767216ef04a8688369fb03b2eb, type: 3}
       propertyPath: m_Name
       value: UI
@@ -24748,5 +24923,8 @@ SceneRoots:
   - {fileID: 418238542}
   - {fileID: 849948868}
   - {fileID: 563126106}
+  - {fileID: 234552365}
+  - {fileID: 258024234}
+  - {fileID: 1013842803}
   - {fileID: 357520330}
   - {fileID: 568542093}
