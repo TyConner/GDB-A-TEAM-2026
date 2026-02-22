@@ -164,6 +164,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             AiLogic();
         }
+        else
+        {
+            controller.SetSpeed(0, AnimationTransSpeed);
+        }
        
     }
 
