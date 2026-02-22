@@ -10,15 +10,37 @@ public class Gun : MonoBehaviour
     [SerializeField] public int AmmoMax;
     [SerializeField] public float ReloadTime = 1f;
     [SerializeField] public float FireRate = 1f;
-    [SerializeField] bool bRaycastBullet; // if false, will spawn a projectile, if true will raycast and apply hitscan damage
+    [SerializeField] bool bRaycastBullet;
+    [SerializeField] public int HitScanDamage = 10;
     [SerializeField] public GameObject Bullet;
-    [SerializeField] Transform BulletOrigin;
+    [SerializeField] public Transform BulletOrigin;
     [SerializeField] LayerMask ignorelayer;
-    bool bInReload;
-    bool bFireCooldown;
-    // float FireRateTimer;
 
-    PlayerState OwningPlayer;
+    bool bInReload;
+    public bool bFireCooldown;
+
+    public PlayerState OwningPlayer;
+
+    [Header("Recoil Lerp")]
+    [SerializeField] Vector3 recoilLocalPosOffset = new Vector3(0f, 0f, -0.06f);
+    [SerializeField] Vector3 recoilLocalRotOffset = new Vector3(-6f, 2f, 0f); // euler degrees
+    [SerializeField] float recoilKickTime = 0.05f;     // seconds to reach recoil
+    [SerializeField] float recoilReturnTime = 0.1f;    // seconds to return
+    [SerializeField] float recoilHoldTime = 0.03f;
+
+    Vector3 recoilStartLocalPos;
+    Quaternion recoilStartLocalRot;
+    Coroutine recoilRoutine;
+
+    [Header("VFX")]
+    [SerializeField] GameObject muzzleFlashPrefab;
+
+    [Header("SFX")]
+    [SerializeField] AudioClip shootSound;
+    [SerializeField] float shootVolume = 1f;
+    [SerializeField] Vector2 shootPitchRange = new Vector2(0.95f, 1.05f);
+
+    AudioSource audioSource;
     public void OnEquip()
     {
         GameManager.instance.updateGunUI(GunIcon, CrosshairIcon, AmmoMax, AmmoCur, GunName);
@@ -26,16 +48,15 @@ public class Gun : MonoBehaviour
 
     public void OnUnequip()
     {
-        // TODO: prob input update gun ui for no gun?
         GameManager.instance.ClearGunUI();
     }
 
-    public void Reload()
+    public virtual void Reload()
     {
         if (bInReload) return;
-
         StartCoroutine(DoReload());
     }
+
     IEnumerator DoReload()
     {
         bInReload = true;
@@ -45,17 +66,14 @@ public class Gun : MonoBehaviour
         GameManager.instance.updateAmmoUI(AmmoMax, AmmoCur);
     }
 
-    IEnumerator FireCooldown()
+    public IEnumerator FireCooldown()
     {
         bFireCooldown = true;
         yield return new WaitForSeconds(FireRate);
         bFireCooldown = false;
     }
 
-
-    public virtual void SecondaryFire()
-    {
-    }
+    public virtual void SecondaryFire() { }
 
     public virtual void Shoot(PlayerState Instagator)
     {
@@ -63,19 +81,20 @@ public class Gun : MonoBehaviour
 
         StartCoroutine(FireCooldown());
         AmmoCur--;
-        //print("Pew");
         GameManager.instance.updateAmmoUI(AmmoMax, AmmoCur);
+
         iOwner owner = Instagator.EntityRef.GetComponent<iOwner>();
-
-        Vector3 spawnPosition = transform.position;
-        Quaternion spawnRotation = transform.rotation;
-
         if (owner != null)
         {
             Transform cam = owner.GetCameraTransform();
 
-            spawnPosition = cam.position + cam.forward * 0.7f;
-            spawnRotation = cam.rotation;
+            PlayRecoil();
+            SpawnMuzzleFlash();
+            PlayShootSound();
+
+            Vector3 spawnPosition = cam.position + cam.forward * 0.7f;
+            Quaternion spawnRotation = cam.rotation;
+
             if (!bRaycastBullet)
             {
                 GameObject abullet = Instantiate(Bullet, spawnPosition, spawnRotation);
@@ -84,66 +103,138 @@ public class Gun : MonoBehaviour
             else
             {
                 RaycastHit hit;
-                if (Physics.Raycast(cam.position, cam.forward, out hit, ~ignorelayer))
+                if (Physics.Raycast(cam.position, cam.forward, out hit))
                 {
-                    Debug.Log("Hit: " + hit.collider.name);
                     iDamage dmg = hit.collider.GetComponent<iDamage>();
-
-
                     if (dmg != null)
                     {
                         PlayerState otherplayer = null;
-                        iOwner otherplayerowner = null;
-                        otherplayerowner = hit.transform.root.GetComponent<iOwner>();
-                        Projectile mybullet = Bullet.GetComponent<Projectile>();
-
-                        if (mybullet != null)
+                        iOwner otherplayerowner = hit.transform.root.GetComponent<iOwner>();
+                        if (otherplayerowner != null)
                         {
-                            int DamageAmount = mybullet.DamageAmount;
-                            if (otherplayer != null)
-                            {
-                                print("Raycast Hit: " + hit.collider.name + "\n  Shot by " + OwningPlayer.PS_Score.PlayerName + " at " + otherplayer.PS_Score.PlayerName + " Damage: " + DamageAmount);
-                            }
-                            else
-                            {
-                                print("RayCast Hit: " + hit.collider.name + "\n  Shot by " + OwningPlayer.PS_Score.PlayerName + " Damage: " + DamageAmount + " no player state found attached on other object");
-                            }
-
+                            otherplayer = otherplayerowner.OwningPlayer();
                         }
 
+                        dmg.takeDamage(HitScanDamage, OwningPlayer);
                     }
-
-
                 }
             }
         }
+
         if (AmmoCur == 0)
         {
             Reload();
         }
     }
 
-
-
-
-    
-
-    bool GetCanFire()
+    public bool GetCanFire()
     {
         return AmmoCur > 0 && !bInReload && !bFireCooldown;
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected virtual void Start()
     {
         AmmoCur = AmmoMax;
-        //print(AmmoCur);
         OwningPlayer = transform.root.GetComponent<iOwner>().OwningPlayer();
+
+        CacheRecoilLocals();
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 1f; // 3D sound
+        }
     }
 
-    // Update is called once per frame
     protected virtual void Update()
     {
-        Debug.DrawRay(BulletOrigin.position, transform.forward, Color.red, Time.deltaTime);
+        if (BulletOrigin != null)
+        {
+            Debug.DrawRay(BulletOrigin.position, transform.forward, Color.red, Time.deltaTime);
+        }
+    }
+
+    void CacheRecoilLocals()
+    {
+        recoilStartLocalPos = transform.localPosition;
+        recoilStartLocalRot = transform.localRotation;
+    }
+
+    void PlayRecoil()
+    {
+        if (recoilRoutine != null)
+        {
+            StopCoroutine(recoilRoutine);
+        }
+        recoilRoutine = StartCoroutine(CoRecoil());
+    }
+
+    IEnumerator CoRecoil()
+    {
+        Vector3 recoilPos = recoilStartLocalPos + recoilLocalPosOffset;
+        Quaternion recoilRot = recoilStartLocalRot * Quaternion.Euler(recoilLocalRotOffset);
+
+        float elapsed = 0f;
+
+        // Kick phase
+        while (elapsed < recoilKickTime)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / recoilKickTime);
+
+            transform.localPosition = Vector3.Lerp(recoilStartLocalPos, recoilPos, t);
+            transform.localRotation = Quaternion.Slerp(recoilStartLocalRot, recoilRot, t);
+
+            yield return null;
+        }
+
+        // Hold
+        if (recoilHoldTime > 0f)
+            yield return new WaitForSeconds(recoilHoldTime);
+
+        // Return phase
+        elapsed = 0f;
+
+        while (elapsed < recoilReturnTime)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / recoilReturnTime);
+
+            transform.localPosition = Vector3.Lerp(recoilPos, recoilStartLocalPos, t);
+            transform.localRotation = Quaternion.Slerp(recoilRot, recoilStartLocalRot, t);
+
+            yield return null;
+        }
+
+        transform.localPosition = recoilStartLocalPos;
+        transform.localRotation = recoilStartLocalRot;
+
+        recoilRoutine = null;
+    }
+    void SpawnMuzzleFlash()
+    {
+        if (muzzleFlashPrefab == null || BulletOrigin == null)
+            return;
+
+        GameObject flash = Instantiate(
+            muzzleFlashPrefab,
+            BulletOrigin.position,
+            BulletOrigin.rotation
+        );
+
+        // Optional: parent it to barrel so it follows recoil
+        flash.transform.SetParent(BulletOrigin);
+
+        Destroy(flash, 1f); // adjust if needed
+    }
+    void PlayShootSound()
+    {
+        if (shootSound == null || audioSource == null)
+            return;
+
+        audioSource.pitch = Random.Range(shootPitchRange.x, shootPitchRange.y);
+        audioSource.PlayOneShot(shootSound, shootVolume);
     }
 }

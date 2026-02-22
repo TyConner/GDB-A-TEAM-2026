@@ -146,8 +146,24 @@ MonoBehaviour:
   AmmoMax: 7
   ReloadTime: 5
   FireRate: 1
+  bRaycastBullet: 1
+  HitScanDamage: 75
   Bullet: {fileID: 8805370691394233163, guid: b6dfa4310ac25bf41b48f9acadec0a5e, type: 3}
   BulletOrigin: {fileID: 6070459674691981447}
+  ignorelayer:
+    serializedVersion: 2
+    m_Bits: 0
+  bFireCooldown: 0
+  OwningPlayer: {fileID: 0}
+  recoilLocalPosOffset: {x: 0, y: 0, z: -0.06}
+  recoilLocalRotOffset: {x: -6, y: 2, z: 0}
+  recoilKickTime: 0.05
+  recoilReturnTime: 0.1
+  recoilHoldTime: 0.03
+  muzzleFlashPrefab: {fileID: 8202210436210671905, guid: 653a2bc261c2e3e498e7af496e8c886d, type: 3}
+  shootSound: {fileID: 8300000, guid: 5c596d3f22a242c459954b2dc9e0d216, type: 3}
+  shootVolume: 1
+  shootPitchRange: {x: 0.95, y: 1.05}
 --- !u!33 &8624055010813411588
 MeshFilter:
   m_ObjectHideFlags: 0
