@@ -348,7 +348,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     }
     void OnDeath(PlayerState Instagator)
     {
-        KillFeedManager.instance.HandleKill(Instagator.EntityRef.name, MyPlayerState.EntityRef.name, Instagator.EntityRef.GetComponent<Gun>().name);
+        KillFeedManager.instance.HandleKill(Instagator.PS_Score.PlayerName, MyPlayerState.PS_Score.PlayerName, Instagator.EntityRef.GetComponentInChildren<Gun>().GunName);
         CurrentState = Behaviors.Dead;
         if (Agent && Ik_Rig && controller && MyPlayerState && AudioConfig)
         {
