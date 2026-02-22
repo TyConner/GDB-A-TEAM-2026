@@ -30,6 +30,11 @@ public class Animation_State_Controller : MonoBehaviour
 
         animator.SetFloat("Speed", Mathf.MoveTowards(agentSpeedAnim, currentSpeed, Time.deltaTime * TransSpeed));
     }
+
+    public void Idle()
+    {
+        animator.SetFloat("Speed", 0);
+    }
     // Update is called once per frame
     void Update()
     {
