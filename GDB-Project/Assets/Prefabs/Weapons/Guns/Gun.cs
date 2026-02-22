@@ -40,6 +40,10 @@ public class Gun : MonoBehaviour
     [SerializeField] float shootVolume = 1f;
     [SerializeField] Vector2 shootPitchRange = new Vector2(0.95f, 1.05f);
 
+    [Header("Camera Shake")]
+    [SerializeField] float cameraShakeAmplitude = 0.15f;
+    [SerializeField] float cameraShakeDuration = 0.1f;
+
     AudioSource audioSource;
     public void OnEquip()
     {
@@ -91,6 +95,7 @@ public class Gun : MonoBehaviour
             PlayRecoil();
             SpawnMuzzleFlash();
             PlayShootSound();
+            PlayCameraShake();
 
             Vector3 spawnPosition = cam.position + cam.forward * 0.7f;
             Quaternion spawnRotation = cam.rotation;
@@ -236,5 +241,28 @@ public class Gun : MonoBehaviour
 
         audioSource.pitch = Random.Range(shootPitchRange.x, shootPitchRange.y);
         audioSource.PlayOneShot(shootSound, shootVolume);
+    }
+
+    void PlayCameraShake()
+    {
+        if (cameraShakeAmplitude <= 0f || cameraShakeDuration <= 0f)
+            return;
+
+        if (OwningPlayer == null)
+            return;
+
+        iOwner owner = OwningPlayer.EntityRef.GetComponent<iOwner>();
+        if (owner == null)
+            return;
+
+        Transform camTransform = owner.GetCameraTransform();
+        if (camTransform == null)
+            return;
+
+        CameraController camController = camTransform.GetComponent<CameraController>();
+        if (camController != null)
+        {
+            camController.ShakeCamera(cameraShakeAmplitude, cameraShakeDuration);
+        }
     }
 }

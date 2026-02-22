@@ -140,7 +140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Rifle
   GunIcon: {fileID: 21300000, guid: 99d89cea202b7b248908f175ea66b176, type: 3}
-  CrosshairIcon: {fileID: 21300000, guid: 99fd875973fcf8d49a201e9155970822, type: 3}
+  CrosshairIcon: {fileID: 21300000, guid: 674166f9b2368c24e8d4cb99ad5fc1ad, type: 3}
   GunName: Rifle
   AmmoCur: 7
   AmmoMax: 7
@@ -164,6 +164,8 @@ MonoBehaviour:
   shootSound: {fileID: 8300000, guid: 5c596d3f22a242c459954b2dc9e0d216, type: 3}
   shootVolume: 1
   shootPitchRange: {x: 0.95, y: 1.05}
+  cameraShakeAmplitude: 0.3
+  cameraShakeDuration: 0.1
 --- !u!33 &8624055010813411588
 MeshFilter:
   m_ObjectHideFlags: 0

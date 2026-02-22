@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class CameraController : MonoBehaviour
 {
@@ -8,11 +9,18 @@ public class CameraController : MonoBehaviour
 
     float camRotX;
 
+    [Header("Camera Shake")]
+    [SerializeField] float shakeDamping = 1f;
+
+    Vector3 originalLocalPos;
+    Coroutine shakeRoutine;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        originalLocalPos = transform.localPosition;
     }
 
     // Update is called once per frame
@@ -41,5 +49,37 @@ public class CameraController : MonoBehaviour
 
         transform.parent.Rotate(Vector3.up * mouseX);
 
+    }
+
+    public void ShakeCamera(float amplitude, float duration)
+    {
+        if (shakeRoutine != null)
+        {
+            StopCoroutine(shakeRoutine);
+            transform.localPosition = originalLocalPos;
+        }
+
+        shakeRoutine = StartCoroutine(CoShake(amplitude, duration));
+    }
+
+    IEnumerator CoShake(float amplitude, float duration)
+    {
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+
+            float damper = 1f - Mathf.Clamp01(elapsed / duration);
+            float currentAmplitude = amplitude * damper * shakeDamping;
+
+            Vector3 offset = UnityEngine.Random.insideUnitSphere * currentAmplitude;
+            transform.localPosition = originalLocalPos + offset;
+
+            yield return null;
+        }
+
+        transform.localPosition = originalLocalPos;
+        shakeRoutine = null;
     }
 }
