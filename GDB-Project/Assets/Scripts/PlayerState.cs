@@ -38,6 +38,7 @@ public class PlayerState : MonoBehaviour
 
     public void OnDeath()
     {
+        
         updateScore(Category.Deaths, 1);
         Debug.Log(PS_Type.ToString());
         if(Item_Drop != null)

@@ -51,6 +51,8 @@ MonoBehaviour:
   BotPrefab: {fileID: 3237819159316389645, guid: fccd2b20f35a3524da475ec947f569e4, type: 3}
   botStats: {fileID: 11400000, guid: 2281e04cd32c80d4c84f74d32f098a11, type: 2}
   EntityRef: {fileID: 0}
+  Item_Drop_Height: 1
+  Item_Drop: {fileID: 0}
 --- !u!114 &-3028731324654910527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,5 +65,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9046e693dcd64a4798ecaaa410d47d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MyScore
-  PlayerName: 
+  PlayerName: Player
   Assigned_Team: 0
