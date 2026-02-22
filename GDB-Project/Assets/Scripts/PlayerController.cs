@@ -23,6 +23,8 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     int jumpCount = 0;
     int startingHP;
     float startingMovespeed;
+    public int currentTNT = 0;
+    public int maxTNT = 3;
 
     float shootTimer;
 
@@ -246,5 +248,11 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     public Transform GetCameraTransform()
     {
         return cameraController.transform;
+    }
+
+    public void AddTNT(int amount)
+    {
+        currentTNT += amount;
+        currentTNT = Mathf.Clamp(currentTNT, 0, maxTNT);
     }
 }
