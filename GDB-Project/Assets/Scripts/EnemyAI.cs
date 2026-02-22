@@ -91,7 +91,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     Color orig;
 
-    public enum Behaviors { Fight, Flee, Search, Assist, Roam, Dead};
+    public enum Behaviors { Fight, Flee, Search, Assist, Roam, Dead, Idle};
     public Behaviors CurrentState;
 
     Vector3 SpawningLocation;
@@ -164,6 +164,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             AiLogic();
         }
+        else
+        {
+            controller.SetSpeed(0, AnimationTransSpeed);
+        }
        
     }
 
@@ -196,7 +200,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     void AssessBehavior()
     {
-        if(CurrentState != Behaviors.Dead)
+        if(CurrentState != Behaviors.Dead || CurrentState != Behaviors.Idle)
         {
             RoamTimer += Time.deltaTime;
             
@@ -287,6 +291,13 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                 }
             case Behaviors.Dead:
                 {
+                    break;
+                }
+            case Behaviors.Idle:
+                {
+                    Agent.stoppingDistance = StoppingDistOrig;
+                    Agent.SetDestination(transform.position);
+                    controller.Idle();
                     break;
                 }
         }
@@ -623,7 +634,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     public void takeDamage(int amount, PlayerState Instagator)
     {
-        if (CurrentState != Behaviors.Dead) {
+        if (CurrentState != Behaviors.Dead && MyPlayerState.PS_Score.Assigned_Team == Team.FFA || MyPlayerState.PS_Score.Assigned_Team != Instagator.PS_Score.Assigned_Team) {
             HP -= amount;
 
             if (bDebug)
