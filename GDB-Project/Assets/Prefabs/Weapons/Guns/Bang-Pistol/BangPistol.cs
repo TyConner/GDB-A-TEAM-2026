@@ -23,8 +23,10 @@ public class BangPistol : Gun
     [Range(0f, 1f)][SerializeField] float ExplosionVolume = 1f;
     [SerializeField] AudioClip EmptySound;
     [Range(0f, 1f)][SerializeField] float EmptyVolume = 1f;
-   
-    
+    [SerializeField] AudioClip BreakSound;
+    [Range(0f, 1f)][SerializeField] float BreakVolume = 1f;
+
+    int misfirecount = 0;
 
 
     public new void OnEquip()
@@ -62,7 +64,7 @@ public class BangPistol : Gun
                 Destroy(Flash, 0.05f);
                 AudioSource.PlayClipAtPoint(ShootSound, BulletOrigin.transform.position, ShootVol);
 
-                if (Physics.Raycast(cam.position, cam.forward, out hit, 100f))
+                if (Physics.Raycast(cam.position, cam.forward, out hit, ShootDistance))
                 {
                     AudioSource.PlayClipAtPoint(ExplosionSound, hit.point, ExplosionVolume);
                     GameObject exp = Instantiate(Explosion, hit.point, Quaternion.identity);
@@ -91,16 +93,23 @@ public class BangPistol : Gun
                 GameObject FX = Instantiate(MuzzleFX, BulletOrigin.transform.position, Quaternion.identity, transform);
                 Destroy(FX, 0.05f);
                 AudioSource.PlayClipAtPoint(BangSound, BulletOrigin.transform.position, BangVolume);
-
+                misfirecount++;
 
             }
             GameManager.instance.updateAmmoUI(AmmoMax, AmmoCur);
+        }
+        if(misfirecount >= 3)
+        {
+            //after 3 trys we break it.
+            AudioSource.PlayClipAtPoint(BreakSound, BulletOrigin.transform.position, BreakVolume);
+            OwningPlayer.DropGun();
         }
         else if(AmmoCur == 0 && !bFireCooldown)
         {
             // play empty sound
             AudioSource.PlayClipAtPoint(EmptySound, BulletOrigin.transform.position, EmptyVolume);
             StartCoroutine(FireCooldown());
+            misfirecount++;
         }
 
 

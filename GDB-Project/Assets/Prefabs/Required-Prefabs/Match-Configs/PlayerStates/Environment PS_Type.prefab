@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 9049983915445561519}
   - component: {fileID: 7412774808559138124}
-  - component: {fileID: 5586522119387872651}
   m_Layer: 0
   m_Name: Environment PS_Type
   m_TagString: Untagged
@@ -46,24 +45,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerState
   PS_Type: 2
-  PS_Score: {fileID: 5586522119387872651}
   PlayerPrefab: {fileID: 3583368993927288645, guid: 097f25c715e342147b79d3641e85b5a1, type: 3}
   BotPrefab: {fileID: 3237819159316389645, guid: fccd2b20f35a3524da475ec947f569e4, type: 3}
   botStats: {fileID: 11400000, guid: 2281e04cd32c80d4c84f74d32f098a11, type: 2}
   EntityRef: {fileID: 0}
   Item_Drop_Height: 1
   Item_Drop: {fileID: 0}
---- !u!114 &5586522119387872651
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3717812686988146376}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c9046e693dcd64a4798ecaaa410d47d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MyScore
-  PlayerName: 
-  Assigned_Team: 0
