@@ -44,23 +44,92 @@ public class Gun : MonoBehaviour
     [SerializeField] float cameraShakeAmplitude = 0.15f;
     [SerializeField] float cameraShakeDuration = 0.1f;
 
+    [Header("Reload Spin")]
+    [SerializeField] bool spinOnReload = true;
+    Vector3 reloadSpinAxis = new Vector3(-1, 0, 0); // local axis
+    [SerializeField] bool reloadSpinUseEase = true;
+
+    Coroutine reloadSpinRoutine;
+
     AudioSource audioSource;
-    public void OnEquip()
+    public void OnEquip(PlayerState owner)
     {
+        OwningPlayer = owner;
         GameManager.instance.updateGunUI(GunIcon, CrosshairIcon, AmmoMax, AmmoCur, GunName);
     }
 
     public void OnUnequip()
     {
+        OwningPlayer = null;
         GameManager.instance.ClearGunUI();
     }
 
     public virtual void Reload()
     {
         if (bInReload) return;
+        if (spinOnReload)
+        {
+            StartReloadSpin();
+        }
         StartCoroutine(DoReload());
     }
+    void StartReloadSpin()
+    {
+        if (reloadSpinRoutine != null)
+        {
+            StopCoroutine(reloadSpinRoutine);
+        }
 
+        // Ensure baseline is current equipped pose
+        CacheRecoilLocals();
+
+        reloadSpinRoutine = StartCoroutine(CoReloadSpin());
+    }
+
+    void StopReloadSpin()
+    {
+        if (reloadSpinRoutine != null)
+        {
+            StopCoroutine(reloadSpinRoutine);
+            reloadSpinRoutine = null;
+        }
+
+        transform.localRotation = recoilStartLocalRot;
+    }
+
+    IEnumerator CoReloadSpin()
+    {
+        Vector3 axis = reloadSpinAxis;
+        if (axis.sqrMagnitude <= 0.0001f)
+        {
+            axis = Vector3.forward;
+        }
+        axis.Normalize();
+
+        float duration = Mathf.Max(0.01f, ReloadTime);
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+
+            if (reloadSpinUseEase)
+            {
+                // smoothstep ease in-out
+                t = t * t * (3f - 2f * t);
+            }
+
+            float angle = 360f * t;
+
+            transform.localRotation = recoilStartLocalRot * Quaternion.AngleAxis(angle, axis);
+
+            yield return null;
+        }
+
+        transform.localRotation = recoilStartLocalRot;
+        reloadSpinRoutine = null;
+    }
     IEnumerator DoReload()
     {
         bInReload = true;
