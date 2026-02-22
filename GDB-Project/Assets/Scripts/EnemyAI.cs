@@ -695,6 +695,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         }
     }
 
+    public void DropGun()
+    {
+        return;
+    }
     public void onStepDetected(Vector3 Pos)
     {
         AudioSource.PlayClipAtPoint(AudioConfig.footsteps[UnityEngine.Random.Range(0, AudioConfig.footsteps.Length)], Pos, AudioConfig.footsteps_Vol);

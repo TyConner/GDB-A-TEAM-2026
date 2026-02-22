@@ -11,7 +11,7 @@ public class BodyDamageSensor : MonoBehaviour, iDamage
         if(Instigator != null)
         {
             if(bDebug) Debug.Log("BodyDamageSensor: " + transform.name + " took damage from " + Instigator.name + " for " + amount);
-            transform.root.GetComponent<iDamage>().takeDamage(amount, Instigator);
+            transform.root.GetComponent<iDamage>().takeDamage((int)(amount * DamageMultiplier), Instigator);
         }
        
 

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7024147452438482280}
   m_Layer: 0
   m_Name: Pile of Barrels
-  m_TagString: Untagged
+  m_TagString: IgnoreStep
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -93,6 +93,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BreakableBarrel (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 4470368651922232150, guid: 58a44a0350d99f34cb7d9f7b45bbbedb, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -154,6 +158,10 @@ PrefabInstance:
     - target: {fileID: 4470368651922232150, guid: 58a44a0350d99f34cb7d9f7b45bbbedb, type: 3}
       propertyPath: m_Name
       value: BreakableBarrel (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4470368651922232150, guid: 58a44a0350d99f34cb7d9f7b45bbbedb, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -217,6 +225,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BreakableBarrel
       objectReference: {fileID: 0}
+    - target: {fileID: 4470368651922232150, guid: 58a44a0350d99f34cb7d9f7b45bbbedb, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -278,6 +290,10 @@ PrefabInstance:
     - target: {fileID: 4470368651922232150, guid: 58a44a0350d99f34cb7d9f7b45bbbedb, type: 3}
       propertyPath: m_Name
       value: BreakableBarrel (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4470368651922232150, guid: 58a44a0350d99f34cb7d9f7b45bbbedb, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -341,6 +357,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BreakableBarrel (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 4470368651922232150, guid: 58a44a0350d99f34cb7d9f7b45bbbedb, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -402,6 +422,10 @@ PrefabInstance:
     - target: {fileID: 4470368651922232150, guid: 58a44a0350d99f34cb7d9f7b45bbbedb, type: 3}
       propertyPath: m_Name
       value: BreakableBarrel (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4470368651922232150, guid: 58a44a0350d99f34cb7d9f7b45bbbedb, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -465,6 +489,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BreakableBarrel (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 4470368651922232150, guid: 58a44a0350d99f34cb7d9f7b45bbbedb, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -526,6 +554,10 @@ PrefabInstance:
     - target: {fileID: 4470368651922232150, guid: 58a44a0350d99f34cb7d9f7b45bbbedb, type: 3}
       propertyPath: m_Name
       value: BreakableBarrel (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4470368651922232150, guid: 58a44a0350d99f34cb7d9f7b45bbbedb, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -589,6 +621,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BreakableBarrel (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 4470368651922232150, guid: 58a44a0350d99f34cb7d9f7b45bbbedb, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -650,6 +686,10 @@ PrefabInstance:
     - target: {fileID: 4470368651922232150, guid: 58a44a0350d99f34cb7d9f7b45bbbedb, type: 3}
       propertyPath: m_Name
       value: BreakableBarrel (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4470368651922232150, guid: 58a44a0350d99f34cb7d9f7b45bbbedb, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

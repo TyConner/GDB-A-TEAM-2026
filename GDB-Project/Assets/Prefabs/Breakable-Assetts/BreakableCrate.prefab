@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 7159928124740035208}
   m_Layer: 0
   m_Name: BreakableCrate
-  m_TagString: Untagged
+  m_TagString: IgnoreStep
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -56,6 +56,8 @@ MonoBehaviour:
   breakSound: {fileID: 8300000, guid: 2605e00f8244d7c46b3f48e7b854fd20, type: 3}
   soundVolume: 0.66
   destroyOnBreak: 1
+  RandomModel: 0
+  models: []
 --- !u!33 &1957757711758383132
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -111,6 +113,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &8013939780640271623
 BoxCollider:

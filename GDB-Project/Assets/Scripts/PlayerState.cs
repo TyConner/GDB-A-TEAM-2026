@@ -18,7 +18,10 @@ public class PlayerState : MonoBehaviour
 
     public GameObject Item_Drop;
 
-
+    private void Awake()
+    {
+        PS_Score = new MyScore();
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -86,31 +89,66 @@ public class PlayerState : MonoBehaviour
         Destroy(EntityRef);
     }
 
-
+    public void DropGun()
+    {
+        switch (PS_Type)
+        {
+            case PlayerType.player:
+                PlayerController pc = EntityRef.GetComponent<PlayerController>();
+                if (pc)
+                {
+                                       pc.DropGun();
+                }
+                break;
+            case PlayerType.bot:
+                EnemyAI ai = EntityRef.GetComponent<EnemyAI>();
+                if (ai)
+                {
+                    ai.DropGun();
+                }
+                break;
+        }
+    }
     public void updateScore(Category cat, int amount)
     {
         if(PS_Type != PlayerType.environment)
         {
             // if we are the envirnment we dont keep score
+            // if match is over we escape
+            if(GameMode.instance.Phase != GameMode.GamePhase.Playing)
+            {
+                return;
+            }
             PS_Score.ChangeScore(cat, amount);
             
             if (cat == Category.Kills)
             {
                 GameManager.instance.scoreboard.GetComponent<Scoreboard>().UpdateUI();
                 
-                if (PS_Type == PlayerType.player && GameMode.instance.Phase == GameMode.GamePhase.Playing)
+                if (GameMode.instance.Phase == GameMode.GamePhase.Playing)
                 {
-                    
-                    GameMode.instance.TeamScoreUpdate(PS_Score.Assigned_Team, cat, amount);
-                    if(GameMode.instance.config.ThisMatch == GameMode_Config.MatchType.FFA)
+                    switch(GameMode.instance.config.ThisMatch)
                     {
-                        GameManager.instance.updateGameGoal(PS_Score.GetScore(Category.Kills));
-                    }
-                    if (GameMode.instance.bHasReachedGoal(this))
-                    {
-                        Debug.Log(PS_Score.PlayerName + " has won!");
+                        case GameMode_Config.MatchType.TDM:
+                            GameMode.instance.TeamScoreUpdate(PS_Score.Assigned_Team, cat, amount);
+                            break;
+
+                        case GameMode_Config.MatchType.FFA:
+                                if (GameMode.instance.bHasReachedGoal(this))
+                                {
+                                    Debug.Log(PS_Score.PlayerName + " has won!");
+                                    GameMode.instance.OnMatchOver(this);
+                            }
+                            break;
 
                     }
+                    
+                    if (PS_Type == PlayerType.player && GameMode.instance.config.ThisMatch == GameMode_Config.MatchType.FFA)
+                    {
+                        //update our players UI goal tracker if we are in FFA and we got a kill
+                        GameManager.instance.updateGameGoal(PS_Score.GetScore(Category.Kills));
+                    }
+                    
                 }
 
             }

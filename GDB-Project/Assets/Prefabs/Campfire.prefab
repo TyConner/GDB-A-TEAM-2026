@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 2797583450091148244}
   m_Layer: 0
   m_Name: Campfire
-  m_TagString: Untagged
+  m_TagString: IgnoreStep
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -117,6 +117,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!64 &961649043491389550
 MeshCollider:
@@ -408,7 +409,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5586522119387872651, guid: 7ede6b81bf1d36944bea9cb1fc2c0280, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
