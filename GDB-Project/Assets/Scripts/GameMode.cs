@@ -375,8 +375,7 @@ public class GameMode : MonoBehaviour
         {
             GameManager.instance.youLose();
         }
-
-
+        
         DeactivateBots();
     }
 
