@@ -636,6 +636,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     {
         if (CurrentState != Behaviors.Dead && MyPlayerState.PS_Score.Assigned_Team == Team.FFA || MyPlayerState.PS_Score.Assigned_Team != Instagator.PS_Score.Assigned_Team) {
             HP -= amount;
+            if (Instagator == GameManager.instance.player.GetComponent<PlayerController>().MyPlayerState)
+            {
+                GameManager.instance.playHitmarker();
+            }
 
             if (bDebug)
             {

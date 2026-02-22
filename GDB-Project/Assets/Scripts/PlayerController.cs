@@ -184,7 +184,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         }
 
         Gun = newGun;
-        Gun.OnEquip();
+        Gun.OnEquip(MyPlayerState);
         Gun.transform.SetParent(WeaponHoldPos);
         Gun.transform.localPosition = Vector3.zero;
         Gun.transform.localRotation = Quaternion.identity;
