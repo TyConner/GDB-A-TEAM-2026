@@ -211,6 +211,14 @@ public class GameManager : MonoBehaviour
                 stateUnPause();
             }
         }
+
+        if (Input.GetButtonDown("Tab"))
+        {
+            scoreboard.gameObject.SetActive(true);
+        }else if (Input.GetButtonUp("Tab"))
+        {
+            scoreboard.gameObject.SetActive(false);
+        }
     }
 
     private void Start()
