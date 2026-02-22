@@ -86,6 +86,7 @@ public class GameManager : MonoBehaviour
         playerGun.sprite = gunsprite;
         // change gun sprite
         playerCrossHair.sprite = crosshairsprite;
+        playerCrossHair.rectTransform.sizeDelta = new Vector2(crosshairsprite.rect.width, crosshairsprite.rect.height);
         // change ammo reserve count
         updateAmmoUI(ammo_reserve, ammo_cur);
         // change gun name
