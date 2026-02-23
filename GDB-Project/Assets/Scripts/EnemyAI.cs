@@ -13,7 +13,7 @@ using UnityEngine.Animations.Rigging;
 using UnityEngine.UI;
 using static MyScore;
 
-public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
+public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons
 {
 
     [Space(2)]
@@ -44,13 +44,11 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     [SerializeField] RigBuilder Ik_Rig;
 
     [Space(2)]
-    [SerializeField] GameObject Gun;
-
+    [SerializeField] GameObject Weapon;
     [Space(2)]
-    [SerializeField] GameObject Projectile;
-
+    [SerializeField] Gun GunScript;
     [Space(2)]
-    [SerializeField] GameObject MuzzleFlash;
+    [SerializeField] Transform WeaponHoldPos;
 
     [Space(2)]
     [SerializeField] GameObject PlayerTag;
@@ -102,10 +100,6 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     //private vars
     bool isFlashingRed;
-
-    //testing
-    float shootTimer;
-    float shootRate = 1.1f;
 
     Color orig;
 
@@ -179,6 +173,8 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         PlayerColorIndicator.material = GameMode.instance.GetTeamMat(MyPlayerState.PS_Score.Assigned_Team);
         PlayerNameField.color = PlayerColorIndicator.material.color;
         DisableName();
+        //Equip our default gun
+        EquipDefaultWeapon();
         //TurnOffCollision();
     }
 
@@ -285,7 +281,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     }
    void AiLogic()
     {
-        shootTimer += Time.deltaTime;
+        //shootTimer += Time.deltaTime;
         LocoAnim();
         AssessBehavior();
         BehaviorTree(CurrentState);
@@ -317,7 +313,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                 return;
                 
             }
-                GameObject Threat = ReturnClosestThreat();
+            GameObject Threat = ReturnClosestThreat();
             if (Threat != null)
             {
                 MyTarget = CanSeeTarget(Threat);
@@ -430,10 +426,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                         GoTo(MyTarget.TargetLastKnownLoc);
                         Agent.stoppingDistance = StoppingDistOrig;
                         faceTarget(MyTarget.Obj);
-                        if (shootTimer >= shootRate)
-                        {
-                            Shoot();
-                        }
+                        Shoot();
                     }
                     
                     break;
@@ -468,30 +461,6 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         Quaternion rot = Quaternion.LookRotation(new Vector3(TargetPos.x, transform.position.y, TargetPos.z));
         transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * Config.get_faceTargetSpeed());
     }
-    void Shoot()
-    {
-        if (shootTimer > shootRate && Gun != null)
-        {
-            shootTimer = 0;
-
-            controller.OnShoot();
-        
-        }
-       
-    }
-    public void createBullet()
-    {
-        //called from animation event in clip
-
-        Transform pos = Gun.transform.Find("ProjectileOrigin");
-        GameObject bullet = Instantiate(Projectile, pos.position,transform.rotation);
-        GameObject flash = Instantiate(MuzzleFlash, pos);
-        bullet.GetComponent<Projectile>().MyOwner = MyPlayerState; 
-        AudioSource.PlayClipAtPoint(AudioConfig.gunshot[0], pos.position, AudioConfig.gunshot_Vol);
-        Destroy(flash, .05f);
-
-    }
-
     void initColliders()
     {
         if(Colliders.Length > 0)
@@ -872,10 +841,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         }
     }
 
-    public void DropGun()
-    {
-        return;
-    }
+    
     public void onStepDetected(Vector3 Pos)
     {
         AudioSource.PlayClipAtPoint(AudioConfig.footsteps[UnityEngine.Random.Range(0, AudioConfig.footsteps.Length)], Pos, AudioConfig.footsteps_Vol);
@@ -888,6 +854,64 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     public Transform GetCameraTransform()
     {
-        return headPos;
+        return GunScript.transform.Find("ProjectileOrigin");
+    }
+
+    public void Shoot()
+    {
+        if (GunScript == null) { return; }
+
+        GunScript.Shoot(MyPlayerState);
+    }
+
+    public void EquipDefaultWeapon()
+    {
+      
+        Gun newGun = Instantiate(Weapon, WeaponHoldPos).GetComponent<Gun>();
+        EquipGun(newGun);
+
+    }
+    public void EquipGun(Gun newGun)
+    {
+        if(GunScript != null)
+        {
+            GunScript.OnUnequip();
+        }
+
+        GunScript = newGun;
+        GunScript.OnEquip(MyPlayerState);
+        GunScript.transform.SetParent(WeaponHoldPos);
+        GunScript.transform.localPosition = Vector3.zero;
+        GunScript.transform.localRotation = Quaternion.identity;
+        GunScript.transform.localScale = Vector3.one;
+    }
+
+    public void DropGun()
+    {
+        return;
+    }
+
+    void fire()
+    {
+        //if (shootTimer > shootRate && MyGun != null)
+        //{
+        //    shootTimer = 0;
+
+        //    controller.OnShoot();
+
+        //}
+
+    }
+    public void createBullet()
+    {
+        ////called from animation event in clip
+
+        //Transform pos = MyGun.transform.Find("ProjectileOrigin");
+        //GameObject bullet = Instantiate(Projectile, pos.position, transform.rotation);
+        //GameObject flash = Instantiate(MuzzleFlash, pos);
+        //bullet.GetComponent<Projectile>().MyOwner = MyPlayerState;
+        //AudioSource.PlayClipAtPoint(AudioConfig.gunshot[0], pos.position, AudioConfig.gunshot_Vol);
+        //Destroy(flash, .05f);
+
     }
 }
