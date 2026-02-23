@@ -5,6 +5,8 @@ using System.ComponentModel;
 using TMPro;
 using Unity.Transforms;
 using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
@@ -107,7 +109,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     Color orig;
 
-    public enum Behaviors { Fight, Flee, Search, Assist, Roam, Dead, Idle};
+    public enum Behaviors {Fight, Flee, Search, Assist, Roam, Dead, Idle};
     public Behaviors CurrentState;
 
     Vector3 SpawningLocation;
@@ -135,11 +137,17 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     TargetInfo MyTarget;
 
+    //-----Timers-----
+
    float SearchTimer;
    float SearchPauseTimer;
    float RoamTimer;
-
-    float StoppingDistOrig;
+   float FleeTimer;
+    // -----------------------
+   public bool bFleeing = false;
+   bool bStandGround = false;
+   int fleeCount = 0;
+   float StoppingDistOrig;
 
 
 
@@ -186,6 +194,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
             if(CurrentState != Behaviors.Dead)
             {
                 UpdateTagRotation();
+            }
+            else if(CurrentState == Behaviors.Dead)
+             {
+                DisableTag();
             }
         }
         else
@@ -285,27 +297,44 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         if(CurrentState != Behaviors.Dead || CurrentState != Behaviors.Idle)
         {
             RoamTimer += Time.deltaTime;
-            
-            GameObject Threat = ReturnClosestThreat();
+            if (HP <= Config.get_LowHPThreshhold() && fleeCount < Config.get_MaxFleeCount() && !bStandGround && !bFleeing)
+            {
+                int roll = UnityEngine.Random.Range(0, 100);
+                if (roll <= Config.get_FleeChance())
+                {
+                    CurrentState = Behaviors.Flee;
+                    bStandGround = false;
+                    // decided to runaway stop assessment and panic.
+                    return;
+                }
+            }
+            if (fleeCount >= Config.get_MaxFleeCount())
+            {
+                bStandGround = true;
+            } 
+            if (!bStandGround && bFleeing)
+            {
+                return;
+                
+            }
+                GameObject Threat = ReturnClosestThreat();
             if (Threat != null)
             {
                 MyTarget = CanSeeTarget(Threat);
                 if (MyTarget.CanSee)
                 {
                     CurrentState = Behaviors.Fight;
-                    Agent.stoppingDistance = StoppingDistOrig;
                 }
                 else
                 {
                     CurrentState = Behaviors.Search;
-                    Agent.stoppingDistance = 0;
                 }
             }
             else
             {
-                CurrentState = Behaviors.Roam;
-                Agent.stoppingDistance = 0;
+                    CurrentState = Behaviors.Roam;
             }
+           
         }
        
     }
@@ -315,31 +344,27 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             case Behaviors.Roam:
                 {
+                    Agent.stoppingDistance = 0;
                     if (Agent.remainingDistance < 0.01f && RoamTimer >= Config.get_RoamPauseTime())
                     {
                         RoamTimer = 0;
-                        Vector3 ranPos = UnityEngine.Random.insideUnitSphere * Config.get_RoamDist();
-                        ranPos += SpawningLocation;
-                        NavMeshHit hit;
-                        NavMesh.SamplePosition(ranPos, out hit, Config.get_RoamDist(), 1);
-                        GoTo(hit.position);
+                        NavMeshHit hit = UnitSphere_Rand(SpawningLocation, Config.get_RoamDist());
+                        if (hit.hit){ GoTo(hit.position);}
                     }
                     
                     break;
                 }
             case Behaviors.Search:
                 {
+                    Agent.stoppingDistance = 0;
                     SearchTimer += Time.deltaTime;
                     SearchPauseTimer += Time.deltaTime;
-                    //print(state+ " Agent Remaining Distance: " + Agent.remainingDistance+ "Timer: " + SearchTimer);
                     if(Agent.remainingDistance < 0.01f && SearchTimer >= Config.get_AgentSearchPauseTime())
                     {
                         SearchPauseTimer = 0;
-                        Vector3 ranpos = UnityEngine.Random.insideUnitSphere * Config.get_AgentAlertedSearchDistance();
-                        ranpos += MyTarget.TargetLastKnownLoc;
-                        NavMeshHit hit;
-                        NavMesh.SamplePosition(ranpos, out hit, Config.get_AgentAlertedSearchDistance(), 1);
-                        GoTo(hit.position);
+                        NavMeshHit hit = UnitSphere_Rand(MyTarget.TargetLastKnownLoc, Config.get_AgentSearchDistance());
+                        if (hit.hit){ GoTo(hit.position);}
+                        
                     }
                     if(SearchTimer >= Config.get_AgentSearchTime())
                     {
@@ -350,7 +375,48 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                 }
             case Behaviors.Flee:
                 {
-                    break;
+                    
+                    Agent.stoppingDistance = 0;
+                    if(FleeTimer <= Config.get_FleeTime() && bFleeing == true)
+                    {
+                        FleeTimer += Time.deltaTime;
+                    }
+                    else
+                    {
+                        bFleeing = false;
+                        fleeCount++;
+                    }
+                    if (!bFleeing && fleeCount < Config.get_MaxFleeCount())
+                    {
+                        FleeTimer = 0;
+                        Vector3 DangerZone = new Vector3(0, 0, 0);
+                        Vector3 SafeDir = new Vector3();
+                        if (NearbyEnemyPlayers.Count > 0)
+                        {
+                            foreach (GameObject enemy in NearbyEnemyPlayers)
+                            {
+                                DangerZone += enemy.transform.position;
+                            }
+                        }
+                        else
+                        {
+                            DangerZone = transform.position;
+                            NavMeshHit aroundme = UnitSphere_Rand(DangerZone, Config.get_SafeZoneRadius());
+                            if (aroundme.hit)
+                            {
+                                DangerZone = aroundme.position;
+                            }
+                        }
+                        SafeDir = (DangerZone - transform.position).normalized;
+                        SafeDir = SafeDir * -1;
+                        Vector3 SafeZone = new Vector3();
+                        SafeZone = (SafeDir * UnityEngine.Random.Range(Config.get_FleeDist() / 2, Config.get_FleeDist())) + transform.position;
+                        NavMeshHit hit = UnitSphere_Rand(SafeZone, Config.get_SafeZoneRadius());
+                        if (hit.hit) { GoTo(hit.position); }
+                        bFleeing = true;
+                    }
+                    
+                        break;
                 }
             case Behaviors.Assist:
                 {
@@ -358,6 +424,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                 }
             case Behaviors.Fight:
                 {
+                    Agent.stoppingDistance = StoppingDistOrig;
                     if (MyTarget.Obj)
                     {
                         GoTo(MyTarget.TargetLastKnownLoc);
@@ -383,6 +450,16 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                     break;
                 }
         }
+    }
+
+    NavMeshHit UnitSphere_Rand(Vector3 pos, int radius)
+    {
+        Vector3 ranPos = UnityEngine.Random.insideUnitSphere * radius;
+        ranPos += pos;
+        NavMeshHit hit;
+        NavMesh.SamplePosition(ranPos, out hit, radius, 1);
+        return hit;
+
     }
     void faceTarget(GameObject target)
     {

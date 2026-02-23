@@ -60,7 +60,7 @@ MonoBehaviour:
   jumpVelocity: 12
   jumpMax: 1
   gravity: 30
-  DebugGunPref: {fileID: 6750805723787488600, guid: b3b09ebacf2e69046a7384a30b19cb63, type: 3}
+  DebugGunPref: {fileID: 5179717559272968199, guid: 05120d9cc0febf74daf7381600889aa3, type: 3}
   WeaponHoldPos: {fileID: 3457555769961392228}
   MyPlayerState: {fileID: 0}
 --- !u!33 &1217274782622763217
@@ -118,6 +118,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!143 &5456381951427816479
 CharacterController:
@@ -254,6 +255,7 @@ MonoBehaviour:
   lockVertMin: -90
   lockVertMax: 90
   invertY: 0
+  shakeDamping: 1
 --- !u!20 &5660852311205802088
 Camera:
   m_ObjectHideFlags: 0
