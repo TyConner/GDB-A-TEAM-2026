@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
     public TMP_Text playerGunName;
     public TMP_Text playerAmmoCur;
     public TMP_Text playerAmmoReserve;
-
+    public TMP_Text playerTNTText;
 
 
     int matchstarttimer;
@@ -233,6 +233,11 @@ public class GameManager : MonoBehaviour
         gameGoalCount = amount;
         updateScore();
        
+    }
+    public void UpdateTNTUI(int amount)
+    {
+        if (playerTNTText != null)
+            playerTNTText.text = amount.ToString();
     }
 }
 

@@ -30,15 +30,11 @@ public class TNTStick : MonoBehaviour
     {
         Instantiate(explosion, transform.position, transform.rotation);
 
-        Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
+        Collider[] collidersToDestroy = Physics.OverlapSphere(transform.position, explosionRadius);
 
-        foreach (Collider nearbyObject in colliders)
+        foreach (Collider nearbyObject in collidersToDestroy)
         {
-            Rigidbody rb = nearbyObject.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                rb.AddExplosionForce(explosionForce, transform.position, explosionRadius);
-            }
+            
 
             iDamage damageable = nearbyObject.transform.root.GetComponent<iDamage>();
             if (damageable != null)
@@ -47,6 +43,15 @@ public class TNTStick : MonoBehaviour
             }
         }
 
+        Collider[] collidersToMove = Physics.OverlapSphere(transform.position, explosionRadius);
+        foreach(Collider nearbyObject in collidersToMove)
+        {
+            Rigidbody rb = nearbyObject.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.AddExplosionForce(explosionForce, transform.position, explosionRadius);
+            }
+        }
         Destroy(gameObject);
     }
 

@@ -39,6 +39,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         startingHP = HP;
         startingMovespeed = moveSpeed;
         GameManager.instance.player = this.gameObject;
+        GameManager.instance.UpdateTNTUI(currentTNT);
         UpdateUI();
 
         //GameManager.instance.updateGunUI(fields);
@@ -254,5 +255,17 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     {
         currentTNT += amount;
         currentTNT = Mathf.Clamp(currentTNT, 0, maxTNT);
+        GameManager.instance.UpdateTNTUI(currentTNT);
     }
+
+    public bool UseTNT()
+    {
+        if (currentTNT <= 0)
+            return false;
+
+        currentTNT--;
+        GameManager.instance.UpdateTNTUI(currentTNT);
+        return true;
+    }
+
 }
