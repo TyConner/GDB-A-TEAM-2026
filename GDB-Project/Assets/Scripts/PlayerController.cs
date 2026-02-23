@@ -24,6 +24,8 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     int jumpCount = 0;
     int startingHP;
     float startingMovespeed;
+    public int currentTNT = 0;
+    public int maxTNT = 3;
 
     float shootTimer;
 
@@ -38,6 +40,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         startingHP = HP;
         startingMovespeed = moveSpeed;
         GameManager.instance.player = this.gameObject;
+        GameManager.instance.UpdateTNTUI(currentTNT);
         UpdateUI();
 
         //GameManager.instance.updateGunUI(fields);
@@ -134,11 +137,25 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
 
     public void takeDamage(int amount, PlayerState Instagator)
     {
-        if(MyPlayerState.PS_Score.Assigned_Team == Team.FFA || MyPlayerState.PS_Score.Assigned_Team != Instagator.PS_Score.Assigned_Team)
+        if (MyPlayerState == null || MyPlayerState.PS_Score == null)
+        {
+            Debug.LogWarning("EnemyAI: MyPlayerState or PS_Score is null!");
+            return;
+        }
+
+        if (Instagator == null || Instagator.PS_Score == null)
+        {
+            Debug.LogWarning("EnemyAI: Instagator or PS_Score is null!");
+            return; 
+        }
+
+        if (MyPlayerState.PS_Score.Assigned_Team == Team.FFA ||
+           MyPlayerState.PS_Score.Assigned_Team != Instagator.PS_Score.Assigned_Team)
         {
             HP -= Mathf.Clamp(amount, 0, startingHP);
             UpdateUI();
             StartCoroutine(flashScreen());
+
             if (HP <= 0)
             {
                 if (Instagator && Instagator != MyPlayerState)
@@ -149,7 +166,6 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
                 Debug.Log("Killed by: " + Instagator.PS_Score.PlayerName);
             }
         }
-        
     }
 
     void Die()
@@ -252,4 +268,22 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     {
         return cameraController.transform;
     }
+
+    public void AddTNT(int amount)
+    {
+        currentTNT += amount;
+        currentTNT = Mathf.Clamp(currentTNT, 0, maxTNT);
+        GameManager.instance.UpdateTNTUI(currentTNT);
+    }
+
+    public bool UseTNT()
+    {
+        if (currentTNT <= 0)
+            return false;
+
+        currentTNT--;
+        GameManager.instance.UpdateTNTUI(currentTNT);
+        return true;
+    }
+
 }
