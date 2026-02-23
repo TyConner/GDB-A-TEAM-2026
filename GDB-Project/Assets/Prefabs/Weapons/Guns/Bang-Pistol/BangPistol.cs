@@ -64,6 +64,8 @@ public class BangPistol : Gun
                 Destroy(Flash, 0.05f);
                 AudioSource.PlayClipAtPoint(ShootSound, BulletOrigin.transform.position, ShootVol);
 
+                PlayRecoil();
+                PlayCameraShake();
                 if (Physics.Raycast(cam.position, cam.forward, out hit, ShootDistance))
                 {
                     AudioSource.PlayClipAtPoint(ExplosionSound, hit.point, ExplosionVolume);

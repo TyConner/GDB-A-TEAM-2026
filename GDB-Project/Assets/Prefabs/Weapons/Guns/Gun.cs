@@ -236,7 +236,7 @@ public class Gun : MonoBehaviour
         recoilStartLocalRot = transform.localRotation;
     }
 
-    void PlayRecoil()
+    public void PlayRecoil()
     {
         if (recoilRoutine != null)
         {
@@ -312,7 +312,7 @@ public class Gun : MonoBehaviour
         audioSource.PlayOneShot(shootSound, shootVolume);
     }
 
-    void PlayCameraShake()
+    public void PlayCameraShake()
     {
         if (cameraShakeAmplitude <= 0f || cameraShakeDuration <= 0f)
             return;

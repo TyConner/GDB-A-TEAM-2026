@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour
     public void playHitmarker()
     {
         StartCoroutine(HitmarkerRoutine());
-        Debug.Log("HitMarker");
+        //Debug.Log("HitMarker");
     }
 
     IEnumerator HitmarkerRoutine()

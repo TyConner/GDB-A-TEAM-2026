@@ -482,7 +482,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     }
     void GoTo(Vector3 Location)
     {
-        if (Agent)
+        if (Agent && CurrentState != Behaviors.Dead)
         {
 
             Agent.SetDestination(Location);
@@ -634,9 +634,15 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     public void takeDamage(int amount, PlayerState Instagator)
     {
-        if (CurrentState != Behaviors.Dead && MyPlayerState.PS_Score.Assigned_Team == Team.FFA || MyPlayerState.PS_Score.Assigned_Team != Instagator.PS_Score.Assigned_Team) {
+        if (CurrentState == Behaviors.Dead)
+        {
+
+            return;
+
+        }
+        if(MyPlayerState.PS_Score.Assigned_Team == Team.FFA || MyPlayerState.PS_Score.Assigned_Team != Instagator.PS_Score.Assigned_Team) {
             HP -= amount;
-            if (Instagator == GameManager.instance.player.GetComponent<PlayerController>().MyPlayerState)
+            if (Instagator == GameMode.instance.player_PS)
             {
                 GameManager.instance.playHitmarker();
             }

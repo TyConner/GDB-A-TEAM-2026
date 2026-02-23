@@ -6,7 +6,7 @@ public class FootSensor : MonoBehaviour
     [SerializeField] bool bDebug = false;
     private void OnTriggerEnter(Collider other)
     {
-        if (other.isTrigger || other.transform.IsChildOf(Parent.transform))
+        if (other.isTrigger || other.transform.IsChildOf(Parent.transform) || other.CompareTag("Bot") || other.CompareTag("Player"))
         {
             return;
         }
