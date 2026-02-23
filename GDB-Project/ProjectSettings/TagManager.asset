@@ -9,6 +9,9 @@ TagManager:
   - SpawnPos
   - SpectatorCam
   - Bot
+  - Building
+  - Floor
+  - IgnoreStep
   layers:
   - Default
   - TransparentFX

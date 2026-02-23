@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Shotgun
   GunIcon: {fileID: 21300000, guid: 47c8e618970c5184a94361472a4bf957, type: 3}
-  CrosshairIcon: {fileID: 21300000, guid: 8eee1bc45dca92345b401100b64e12ff, type: 3}
+  CrosshairIcon: {fileID: 21300000, guid: 44857261924345944863f80d97f0fb1d, type: 3}
   GunName: Shotty
   AmmoCur: 2
   AmmoMax: 2
@@ -71,6 +71,8 @@ MonoBehaviour:
   shootSound: {fileID: 8300000, guid: 4dba671c43a171f4382947c9b3ed8460, type: 3}
   shootVolume: 0.7
   shootPitchRange: {x: 0.95, y: 1.05}
+  cameraShakeAmplitude: 0.5
+  cameraShakeDuration: 0.15
 --- !u!1 &8875515426852317402
 GameObject:
   m_ObjectHideFlags: 0

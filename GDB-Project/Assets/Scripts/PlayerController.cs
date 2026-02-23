@@ -2,6 +2,7 @@ using System.Collections;
 using System.ComponentModel.Design.Serialization;
 using UnityEngine;
 using UnityEngine.UI;
+using static MyScore;
 
 public class PlayerController : MonoBehaviour, iDamage, iOwner
 {
@@ -136,18 +137,22 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
 
     public void takeDamage(int amount, PlayerState Instagator)
     {
-        HP -= Mathf.Clamp(amount, 0, startingHP);
-        UpdateUI();
-        StartCoroutine(flashScreen());
-        if (HP <= 0)
+        if(MyPlayerState.PS_Score.Assigned_Team == Team.FFA || MyPlayerState.PS_Score.Assigned_Team != Instagator.PS_Score.Assigned_Team)
         {
-            if (Instagator && Instagator != MyPlayerState)
+            HP -= Mathf.Clamp(amount, 0, startingHP);
+            UpdateUI();
+            StartCoroutine(flashScreen());
+            if (HP <= 0)
             {
-                Instagator.updateScore(MyScore.Category.Kills, 1);
+                if (Instagator && Instagator != MyPlayerState)
+                {
+                    Instagator.updateScore(MyScore.Category.Kills, 1);
+                }
+                Die();
+                Debug.Log("Killed by: " + Instagator.PS_Score.PlayerName);
             }
-            Die();
-            Debug.Log("Killed by: " + Instagator.PS_Score.PlayerName);
         }
+        
     }
 
     void Die()
@@ -182,7 +187,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         }
 
         Gun = newGun;
-        Gun.OnEquip();
+        Gun.OnEquip(MyPlayerState);
         Gun.transform.SetParent(WeaponHoldPos);
         Gun.transform.localPosition = Vector3.zero;
         Gun.transform.localRotation = Quaternion.identity;

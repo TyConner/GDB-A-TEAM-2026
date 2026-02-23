@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 64688302380118348}
   m_Layer: 0
   m_Name: SM_Prop_Bottle_05
-  m_TagString: Untagged
+  m_TagString: IgnoreStep
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -89,6 +89,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!64 &64688302380118348
 MeshCollider:

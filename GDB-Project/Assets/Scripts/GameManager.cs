@@ -47,6 +47,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] Sprite DefaultCrossHairSprite;
     [SerializeField] Sprite DefaultWeaponSprite;
     [SerializeField] public GameObject scoreboard;
+    public Image playerHitmarker;
+
+    [Header("SFX")]
+    [SerializeField] AudioClip hitmarkerSound2D;
+    [SerializeField] float hitmarkerSoundVolume = 1f;
 
     [Header("       Player Weapon UI Elements      ")]
     public Image playerHPBar;
@@ -54,13 +59,15 @@ public class GameManager : MonoBehaviour
     public TMP_Text playerGunName;
     public TMP_Text playerAmmoCur;
     public TMP_Text playerAmmoReserve;
-    public TMP_Text playerTNTText;
+    
+
 
 
     int matchstarttimer;
     float timeScaleOrig;
     float currenttime;
     int gameGoalCount;
+    AudioSource audioSource2D;
 
     public static GameManager instance;
     string GetTime() {
@@ -74,7 +81,20 @@ public class GameManager : MonoBehaviour
         playerCrossHair.enabled = val;
     }
     
-   void updateScore()
+    public void playHitmarker()
+    {
+        StartCoroutine(HitmarkerRoutine());
+        //Debug.Log("HitMarker");
+    }
+
+    IEnumerator HitmarkerRoutine()
+    {
+        audioSource2D.PlayOneShot(hitmarkerSound2D, hitmarkerSoundVolume);
+        playerHitmarker.gameObject.SetActive(true);
+        yield return new WaitForSeconds(0.05f);
+        playerHitmarker.gameObject.SetActive(false);
+    }
+    void updateScore()
     {
         gameGoalCountText.text = "Score: " + gameGoalCount;
     }
@@ -86,6 +106,7 @@ public class GameManager : MonoBehaviour
         playerGun.sprite = gunsprite;
         // change gun sprite
         playerCrossHair.sprite = crosshairsprite;
+        playerCrossHair.rectTransform.sizeDelta = new Vector2(crosshairsprite.rect.width, crosshairsprite.rect.height);
         // change ammo reserve count
         updateAmmoUI(ammo_reserve, ammo_cur);
         // change gun name
@@ -190,8 +211,28 @@ public class GameManager : MonoBehaviour
                 stateUnPause();
             }
         }
+
+        if (Input.GetButtonDown("Tab"))
+        {
+            scoreboard.gameObject.SetActive(true);
+        }else if (Input.GetButtonUp("Tab"))
+        {
+            scoreboard.gameObject.SetActive(false);
+        }
     }
 
+    private void Start()
+    {
+        audioSource2D = GetComponent<AudioSource>();
+
+        if (audioSource2D == null)
+        {
+            audioSource2D = gameObject.AddComponent<AudioSource>();
+        }
+
+        audioSource2D.playOnAwake = false;
+        audioSource2D.spatialBlend = 0f; // 0 = 2D, 1 = 3D
+    }
     public void statePause()
     {
         toggleCrosshair(false);
@@ -233,11 +274,6 @@ public class GameManager : MonoBehaviour
         gameGoalCount = amount;
         updateScore();
        
-    }
-    public void UpdateTNTUI(int amount)
-    {
-        if (playerTNTText != null)
-            playerTNTText.text = amount.ToString();
     }
 }
 

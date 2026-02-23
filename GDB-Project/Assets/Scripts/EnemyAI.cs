@@ -1,11 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using TMPro;
 using Unity.Transforms;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.UI;
 using static MyScore;
 
 public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
@@ -46,6 +49,19 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     [Space(2)]
     [SerializeField] GameObject MuzzleFlash;
+
+    [Space(2)]
+    [SerializeField] GameObject PlayerTag;
+
+    [Space(2)]
+    [SerializeField] TMP_Text PlayerNameField;
+
+    [Space(2)]
+    [SerializeField] Image PlayerColorIndicator;
+
+    [Space(2)]
+    public Material TeamMaterial;
+
 
     [Space(2)]
     [SerializeField]
@@ -91,7 +107,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     Color orig;
 
-    public enum Behaviors { Fight, Flee, Search, Assist, Roam, Dead};
+    public enum Behaviors { Fight, Flee, Search, Assist, Roam, Dead, Idle};
     public Behaviors CurrentState;
 
     Vector3 SpawningLocation;
@@ -151,7 +167,11 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         }
        
         HPOrig = HP;
-        TurnOffCollision();
+        PlayerNameField.text = MyPlayerState.PS_Score.PlayerName;
+        PlayerColorIndicator.material = GameMode.instance.GetTeamMat(MyPlayerState.PS_Score.Assigned_Team);
+        PlayerNameField.color = PlayerColorIndicator.material.color;
+        DisableName();
+        //TurnOffCollision();
     }
 
  
@@ -163,9 +183,75 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         if (bCanPlay)
         {
             AiLogic();
+            if(CurrentState != Behaviors.Dead)
+            {
+                UpdateTagRotation();
+            }
+        }
+        else
+        {
+            controller.SetSpeed(0, AnimationTransSpeed);
         }
        
     }
+
+    void UpdateTagRotation()
+    {
+        if (PlayerTag)
+        {
+            if (Camera.main)
+            {
+                PlayerTag.transform.rotation = Quaternion.LookRotation(PlayerTag.transform.position - Camera.main.transform.position);
+            }
+            
+        }
+    }
+
+    void DisableTag()
+    {
+        if (PlayerTag)
+        {
+            PlayerTag.SetActive(false);
+        }
+    }
+
+    void EnableTag() {         
+        if (PlayerTag)
+        {
+            PlayerTag.SetActive(true);
+        }
+    }
+    void EnableName()
+    {
+        if (PlayerTag)
+        {
+            PlayerNameField.enabled = true;
+        }
+    }
+
+    void DisableName()
+    {
+        if (PlayerTag)
+        {
+            PlayerNameField.enabled = false;
+        }
+    }
+
+    void EnableIndicator()
+    {
+        if (PlayerTag)
+        {
+            PlayerColorIndicator.enabled = true;
+        }
+    }
+    void DisableIndicator()
+    {
+        if (PlayerTag)
+        {
+            PlayerColorIndicator.enabled = false;
+        }
+    }
+
 
     void RandomCharacter()
     {
@@ -196,7 +282,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     void AssessBehavior()
     {
-        if(CurrentState != Behaviors.Dead)
+        if(CurrentState != Behaviors.Dead || CurrentState != Behaviors.Idle)
         {
             RoamTimer += Time.deltaTime;
             
@@ -287,6 +373,13 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                 }
             case Behaviors.Dead:
                 {
+                    break;
+                }
+            case Behaviors.Idle:
+                {
+                    Agent.stoppingDistance = StoppingDistOrig;
+                    Agent.SetDestination(transform.position);
+                    controller.Idle();
                     break;
                 }
         }
@@ -471,7 +564,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     }
     void GoTo(Vector3 Location)
     {
-        if (Agent)
+        if (Agent && CurrentState != Behaviors.Dead)
         {
 
             Agent.SetDestination(Location);
@@ -537,6 +630,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         if (HasOwner != null)
         {
             PlayerState otherPlayer = HasOwner.OwningPlayer();
+            if(otherPlayer == GameMode.instance.player_PS)
+            {
+                EnableName();
+            }
             if (otherPlayer != null && otherPlayer != MyPlayerState)
             {
                 cleanList();
@@ -595,8 +692,16 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             return;
         }
-
-        if (NearbyEnemyPlayers.Contains(other.gameObject.transform.root.gameObject))
+        iOwner HasOwner = other.transform.root.gameObject.GetComponent<iOwner>();
+        if (HasOwner != null)
+        {
+            PlayerState otherPlayer = HasOwner.OwningPlayer();
+            if (otherPlayer == GameMode.instance.player_PS)
+            {
+                DisableName();
+            }
+        }
+            if (NearbyEnemyPlayers.Contains(other.gameObject.transform.root.gameObject))
         {
             NearbyEnemyPlayers.Remove(other.transform.root.gameObject);
         }
@@ -623,8 +728,18 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     public void takeDamage(int amount, PlayerState Instagator)
     {
-        if (CurrentState != Behaviors.Dead) {
+        if (CurrentState == Behaviors.Dead)
+        {
+
+            return;
+
+        }
+        if(MyPlayerState.PS_Score.Assigned_Team == Team.FFA || MyPlayerState.PS_Score.Assigned_Team != Instagator.PS_Score.Assigned_Team) {
             HP -= amount;
+            if (Instagator == GameMode.instance.player_PS)
+            {
+                GameManager.instance.playHitmarker();
+            }
 
             if (bDebug)
             {
@@ -680,6 +795,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         }
     }
 
+    public void DropGun()
+    {
+        return;
+    }
     public void onStepDetected(Vector3 Pos)
     {
         AudioSource.PlayClipAtPoint(AudioConfig.footsteps[UnityEngine.Random.Range(0, AudioConfig.footsteps.Length)], Pos, AudioConfig.footsteps_Vol);
