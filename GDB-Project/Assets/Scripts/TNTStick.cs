@@ -34,12 +34,15 @@ public class TNTStick : MonoBehaviour
 
         foreach (Collider nearbyObject in collidersToDestroy)
         {
-            
-
             iDamage damageable = nearbyObject.transform.root.GetComponent<iDamage>();
             if (damageable != null)
             {
-                damageable.takeDamage(50, MyOwner); 
+                if (MyOwner == null)
+                {
+                    Debug.LogWarning("TNTStick: MyOwner is null, assigning to self.");
+                    MyOwner = GetComponentInParent<PlayerState>(); 
+                }
+                damageable.takeDamage(50, MyOwner);
             }
         }
 

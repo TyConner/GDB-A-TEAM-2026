@@ -52,9 +52,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TNTStick
   delay: 3
   explosionRadius: 5
-  explosionForce: 200
+  explosionForce: 700
   explosion: {fileID: 1027152157345221394, guid: 6d188a07beeb47d4da5c4b28fff30ac2, type: 3}
-  contactDamage: 25
+  contactDamage: 50
   MyOwner: {fileID: 0}
 --- !u!136 &3142729668070329476
 CapsuleCollider:

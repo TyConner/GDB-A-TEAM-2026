@@ -137,11 +137,25 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
 
     public void takeDamage(int amount, PlayerState Instagator)
     {
-        if(MyPlayerState.PS_Score.Assigned_Team == Team.FFA || MyPlayerState.PS_Score.Assigned_Team != Instagator.PS_Score.Assigned_Team)
+        if (MyPlayerState == null || MyPlayerState.PS_Score == null)
+        {
+            Debug.LogWarning("EnemyAI: MyPlayerState or PS_Score is null!");
+            return;
+        }
+
+        if (Instagator == null || Instagator.PS_Score == null)
+        {
+            Debug.LogWarning("EnemyAI: Instagator or PS_Score is null!");
+            return; 
+        }
+
+        if (MyPlayerState.PS_Score.Assigned_Team == Team.FFA ||
+           MyPlayerState.PS_Score.Assigned_Team != Instagator.PS_Score.Assigned_Team)
         {
             HP -= Mathf.Clamp(amount, 0, startingHP);
             UpdateUI();
             StartCoroutine(flashScreen());
+
             if (HP <= 0)
             {
                 if (Instagator && Instagator != MyPlayerState)
@@ -152,7 +166,6 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
                 Debug.Log("Killed by: " + Instagator.PS_Score.PlayerName);
             }
         }
-        
     }
 
     void Die()
