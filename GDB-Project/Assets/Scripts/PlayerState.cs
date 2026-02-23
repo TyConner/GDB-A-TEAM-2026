@@ -42,7 +42,7 @@ public class PlayerState : MonoBehaviour
     public void OnDeath()
     {
         updateScore(Category.Deaths, 1);
-        Debug.Log(PS_Type.ToString());
+        //Debug.Log(PS_Type.ToString());
         if(Item_Drop != null)
         {
             Vector3 pos = transform.position + new Vector3(0, Item_Drop_Height, 0);
