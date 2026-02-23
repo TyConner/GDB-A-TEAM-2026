@@ -22,7 +22,9 @@ public class GameMode : MonoBehaviour
     int Team_A;
     int Team_B;
     MyScore RedTeam = new();
+    [SerializeField] public Material RedMat;
     MyScore BlueTeam = new();
+    [SerializeField] public Material BlueMat;
 
     int PlayerCount;
     public GameObject Player;
@@ -58,6 +60,20 @@ public class GameMode : MonoBehaviour
             }
         }
     }
+    public Material GetTeamMat(Team team)
+    {
+        switch (team)
+        {
+            case Team.A:
+                return RedMat;
+            case Team.B:
+                return BlueMat;
+            case Team.FFA:
+                return RedMat;
+            default:
+                return null;
+        }
+    }
     private Spawner GetValidSpawner(MyScore.Team playersTeam)
     {
         int count = SpawnLocs.Count;
@@ -69,7 +85,7 @@ public class GameMode : MonoBehaviour
                 validspawns.Add(SpawnLocs[i]);
             }
         }
-        Debug.Log("valid spawners: " + validspawns.Count());
+        //Debug.Log("valid spawners: " + validspawns.Count());
 
         if (validspawns.Count > 0)
         {

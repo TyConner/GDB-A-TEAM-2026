@@ -1,11 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using TMPro;
 using Unity.Transforms;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.UI;
 using static MyScore;
 
 public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
@@ -46,6 +49,19 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     [Space(2)]
     [SerializeField] GameObject MuzzleFlash;
+
+    [Space(2)]
+    [SerializeField] GameObject PlayerTag;
+
+    [Space(2)]
+    [SerializeField] TMP_Text PlayerNameField;
+
+    [Space(2)]
+    [SerializeField] Image PlayerColorIndicator;
+
+    [Space(2)]
+    public Material TeamMaterial;
+
 
     [Space(2)]
     [SerializeField]
@@ -151,7 +167,11 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         }
        
         HPOrig = HP;
-        TurnOffCollision();
+        PlayerNameField.text = MyPlayerState.PS_Score.PlayerName;
+        PlayerColorIndicator.material = GameMode.instance.GetTeamMat(MyPlayerState.PS_Score.Assigned_Team);
+        PlayerNameField.color = PlayerColorIndicator.material.color;
+        DisableName();
+        //TurnOffCollision();
     }
 
  
@@ -163,6 +183,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         if (bCanPlay)
         {
             AiLogic();
+            if(CurrentState != Behaviors.Dead)
+            {
+                UpdateTagRotation();
+            }
         }
         else
         {
@@ -170,6 +194,64 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         }
        
     }
+
+    void UpdateTagRotation()
+    {
+        if (PlayerTag)
+        {
+            if (Camera.main)
+            {
+                PlayerTag.transform.rotation = Quaternion.LookRotation(PlayerTag.transform.position - Camera.main.transform.position);
+            }
+            
+        }
+    }
+
+    void DisableTag()
+    {
+        if (PlayerTag)
+        {
+            PlayerTag.SetActive(false);
+        }
+    }
+
+    void EnableTag() {         
+        if (PlayerTag)
+        {
+            PlayerTag.SetActive(true);
+        }
+    }
+    void EnableName()
+    {
+        if (PlayerTag)
+        {
+            PlayerNameField.enabled = true;
+        }
+    }
+
+    void DisableName()
+    {
+        if (PlayerTag)
+        {
+            PlayerNameField.enabled = false;
+        }
+    }
+
+    void EnableIndicator()
+    {
+        if (PlayerTag)
+        {
+            PlayerColorIndicator.enabled = true;
+        }
+    }
+    void DisableIndicator()
+    {
+        if (PlayerTag)
+        {
+            PlayerColorIndicator.enabled = false;
+        }
+    }
+
 
     void RandomCharacter()
     {
@@ -548,6 +630,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         if (HasOwner != null)
         {
             PlayerState otherPlayer = HasOwner.OwningPlayer();
+            if(otherPlayer == GameMode.instance.player_PS)
+            {
+                EnableName();
+            }
             if (otherPlayer != null && otherPlayer != MyPlayerState)
             {
                 cleanList();
@@ -606,8 +692,16 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             return;
         }
-
-        if (NearbyEnemyPlayers.Contains(other.gameObject.transform.root.gameObject))
+        iOwner HasOwner = other.transform.root.gameObject.GetComponent<iOwner>();
+        if (HasOwner != null)
+        {
+            PlayerState otherPlayer = HasOwner.OwningPlayer();
+            if (otherPlayer == GameMode.instance.player_PS)
+            {
+                DisableName();
+            }
+        }
+            if (NearbyEnemyPlayers.Contains(other.gameObject.transform.root.gameObject))
         {
             NearbyEnemyPlayers.Remove(other.transform.root.gameObject);
         }
