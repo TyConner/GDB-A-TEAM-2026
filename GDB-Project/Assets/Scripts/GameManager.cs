@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour
     public TMP_Text playerGunName;
     public TMP_Text playerAmmoCur;
     public TMP_Text playerAmmoReserve;
-    
+    public TMP_Text playerTNTText;
 
 
 
@@ -133,7 +133,12 @@ public class GameManager : MonoBehaviour
         // change ammo current
         playerAmmoCur.text = ammo_cur.ToString();
     }
-    
+    public void UpdateTNTUI(int amount)
+    {
+        if (playerTNTText != null)
+            playerTNTText.text = amount.ToString();
+    }
+
     IEnumerator countdown()
     {
         if(matchstarttimer >= 0)
