@@ -20,3 +20,10 @@ MonoBehaviour:
   RoamDist: 150
   RoamPauseTime: 1
   LowHPThreshhold: 1
+  FleeDist: 30
+  FleeTime: 5
+  MaxFleeCount: 3
+  FleeChance: 30
+  SafeZoneRadius: 5
+  AssistDist: 20
+  AssistTime: 15

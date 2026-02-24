@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.Entities;
 using UnityEngine;
 
 public class Gun : MonoBehaviour
@@ -55,13 +56,21 @@ public class Gun : MonoBehaviour
     public void OnEquip(PlayerState owner)
     {
         OwningPlayer = owner;
-        GameManager.instance.updateGunUI(GunIcon, CrosshairIcon, AmmoMax, AmmoCur, GunName);
+        if(OwningPlayer.PS_Type != PlayerState.PlayerType.bot)
+        {
+            GameManager.instance.updateGunUI(GunIcon, CrosshairIcon, AmmoMax, AmmoCur, GunName);
+        }
+        
     }
 
     public void OnUnequip()
     {
+        if (OwningPlayer.PS_Type != PlayerState.PlayerType.bot)
+        {
+            GameManager.instance.ClearGunUI();
+        }
         OwningPlayer = null;
-        GameManager.instance.ClearGunUI();
+        
     }
 
     public virtual void Reload()
@@ -136,7 +145,10 @@ public class Gun : MonoBehaviour
         yield return new WaitForSeconds(ReloadTime);
         bInReload = false;
         AmmoCur = AmmoMax;
-        GameManager.instance.updateAmmoUI(AmmoMax, AmmoCur);
+        if (OwningPlayer.PS_Type != PlayerState.PlayerType.bot)
+        {
+            GameManager.instance.updateAmmoUI(AmmoMax, AmmoCur);
+        }
     }
 
     public IEnumerator FireCooldown()
@@ -154,18 +166,24 @@ public class Gun : MonoBehaviour
 
         StartCoroutine(FireCooldown());
         AmmoCur--;
-        GameManager.instance.updateAmmoUI(AmmoMax, AmmoCur);
+        if (OwningPlayer.PS_Type != PlayerState.PlayerType.bot)
+        {
+            GameManager.instance.updateAmmoUI(AmmoMax, AmmoCur);
+        }
 
         iOwner owner = Instagator.EntityRef.GetComponent<iOwner>();
         if (owner != null)
         {
+            
             Transform cam = owner.GetCameraTransform();
-
+            
             PlayRecoil();
             SpawnMuzzleFlash();
             PlayShootSound();
-            PlayCameraShake();
-
+            if (OwningPlayer.PS_Type != PlayerState.PlayerType.bot)
+            {
+                PlayCameraShake();
+            }
             Vector3 spawnPosition = cam.position + cam.forward * 0.7f;
             Quaternion spawnRotation = cam.rotation;
 
