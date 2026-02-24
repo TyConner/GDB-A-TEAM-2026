@@ -13,7 +13,7 @@ using UnityEngine.Animations.Rigging;
 using UnityEngine.UI;
 using static MyScore;
 
-public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons
+public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons, iAssist
 {
 
     [Space(2)]
@@ -103,11 +103,11 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons
 
     Color orig;
 
-    public enum Behaviors {Fight, Flee, Search, Assist, Roam, Dead, Idle};
+    public enum Behaviors {Fight, Flee, Search, Roam, Dead, Idle};
     public Behaviors CurrentState;
 
     Vector3 SpawningLocation;
-    struct TargetInfo{
+    public struct TargetInfo{
         public GameObject Obj;
         public Vector3 TargetLastKnownLoc;
         public Vector3 TargetDir;
@@ -137,6 +137,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons
    float SearchPauseTimer;
    float RoamTimer;
    float FleeTimer;
+   float assistTimer;
     // -----------------------
    public bool bFleeing = false;
    bool bStandGround = false;
@@ -198,7 +199,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons
         }
         else
         {
-            controller.SetSpeed(0, AnimationTransSpeed);
+            if (controller)
+            {
+                controller.SetSpeed(0, AnimationTransSpeed);
+            }
         }
        
     }
@@ -290,9 +294,9 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons
 
     void AssessBehavior()
     {
-        if(CurrentState != Behaviors.Dead || CurrentState != Behaviors.Idle)
+        if(CurrentState != Behaviors.Dead && CurrentState != Behaviors.Idle)
         {
-            RoamTimer += Time.deltaTime;
+            assistTimer += Time.deltaTime;
             if (HP <= Config.get_LowHPThreshhold() && fleeCount < Config.get_MaxFleeCount() && !bStandGround && !bFleeing)
             {
                 int roll = UnityEngine.Random.Range(0, 100);
@@ -307,11 +311,11 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons
             if (fleeCount >= Config.get_MaxFleeCount())
             {
                 bStandGround = true;
-            } 
+            }
             if (!bStandGround && bFleeing)
             {
                 return;
-                
+
             }
             GameObject Threat = ReturnClosestThreat();
             if (Threat != null)
@@ -319,9 +323,14 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons
                 MyTarget = CanSeeTarget(Threat);
                 if (MyTarget.CanSee)
                 {
+                    MyTarget.TargetTimer = 0;
                     CurrentState = Behaviors.Fight;
                 }
                 else
+                {
+                    MyTarget.TargetTimer += Time.deltaTime;
+                }
+                if(MyTarget.TargetTimer >= 2f)
                 {
                     CurrentState = Behaviors.Search;
                 }
@@ -340,6 +349,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons
         {
             case Behaviors.Roam:
                 {
+                    RoamTimer += Time.deltaTime; 
                     Agent.stoppingDistance = 0;
                     if (Agent.remainingDistance < 0.01f && RoamTimer >= Config.get_RoamPauseTime())
                     {
@@ -352,10 +362,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons
                 }
             case Behaviors.Search:
                 {
-                    Agent.stoppingDistance = 0;
+                    Agent.stoppingDistance = StoppingDistOrig;
                     SearchTimer += Time.deltaTime;
                     SearchPauseTimer += Time.deltaTime;
-                    if(Agent.remainingDistance < 0.01f && SearchTimer >= Config.get_AgentSearchPauseTime())
+                    if(Agent.remainingDistance <= StoppingDistOrig && SearchTimer >= Config.get_AgentSearchPauseTime())
                     {
                         SearchPauseTimer = 0;
                         NavMeshHit hit = UnitSphere_Rand(MyTarget.TargetLastKnownLoc, Config.get_AgentSearchDistance());
@@ -410,19 +420,32 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons
                         NavMeshHit hit = UnitSphere_Rand(SafeZone, Config.get_SafeZoneRadius());
                         if (hit.hit) { GoTo(hit.position); }
                         bFleeing = true;
+                        MyTarget.Clear();
                     }
                     
                         break;
                 }
-            case Behaviors.Assist:
-                {
-                    break;
-                }
             case Behaviors.Fight:
                 {
-                    Agent.stoppingDistance = StoppingDistOrig;
                     if (MyTarget.Obj)
                     {
+                        //if we can call an assist then do it.
+                        if(assistTimer >= Config.get_AssitTime())
+                        {
+                            assistTimer = 0;
+                            if (NearbyAllyPlayers.Count > 0)
+                            {
+                                foreach (GameObject ally in NearbyAllyPlayers)
+                                {
+                                    iAssist Try_Call_Assist = ally.GetComponent<iAssist>();
+                                    if (Try_Call_Assist != null)
+                                    {
+                                        Try_Call_Assist.Assist(MyTarget);
+                                    }
+                                }
+                            }
+                        }
+                        //Normal Fight Logic
                         GoTo(MyTarget.TargetLastKnownLoc);
                         Agent.stoppingDistance = StoppingDistOrig;
                         faceTarget(MyTarget.Obj);
@@ -602,7 +625,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons
         }
         if (bDebug && target != null)
         {
-            Debug.Log(target.GetComponent<iOwner>().OwningPlayer().PS_Score.PlayerName);
+            //Debug.Log(target.GetComponent<iOwner>().OwningPlayer().PS_Score.PlayerName);
         }
         
         return target;
@@ -635,7 +658,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons
             RaycastHit hit;
             if (info.TargetAngleToMe <= Config.get_FOV())
             {
-                if (Physics.Raycast(headPos.position, info.TargetDir, out hit, float.MaxValue))
+                if (Physics.Raycast(headPos.position, info.TargetDir + new Vector3 (0,.5f,0), out hit, info.TargetDir.magnitude))
                 {
                     if(hit.collider.gameObject == info.Obj || hit.collider.transform.IsChildOf(info.Obj.transform))
                     {
@@ -650,7 +673,6 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons
             }
             else
             {
-                Agent.stoppingDistance = 0;
                 info.CanSee = false;
             }
                 
@@ -888,11 +910,16 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons
 
     public void DropGun()
     {
-        return;
+        if (GunScript == null) return;
+
+        GunScript.OnUnequip();
+        Destroy(GunScript.gameObject);
+        GunScript = null;
     }
 
     void fire()
     {
+        /// Depreciated
         //if (shootTimer > shootRate && MyGun != null)
         //{
         //    shootTimer = 0;
@@ -904,6 +931,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons
     }
     public void createBullet()
     {
+        ///Depreciated
         ////called from animation event in clip
 
         //Transform pos = MyGun.transform.Find("ProjectileOrigin");
@@ -913,5 +941,27 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons
         //AudioSource.PlayClipAtPoint(AudioConfig.gunshot[0], pos.position, AudioConfig.gunshot_Vol);
         //Destroy(flash, .05f);
 
+    }
+
+    public void Assist(TargetInfo Target)
+    {
+        //only if we arent fighting,fleeing, or dead.
+        if(CurrentState == Behaviors.Roam || CurrentState == Behaviors.Idle || CurrentState == Behaviors.Search)
+        {
+            //if we dont have a target assign the target to the assist target.
+            if (MyTarget.Obj == null)
+            {
+                MyTarget = Target;
+            }
+            else
+            {
+                //if we have a target compare the assist target to our current target and see which is closer and assign that one.
+                GameObject CloserObj = ClosestObject(Target.Obj, MyTarget.Obj);
+                if(CloserObj == Target.Obj)
+                {
+                    MyTarget = Target;
+                }
+            }
+        }
     }
 }

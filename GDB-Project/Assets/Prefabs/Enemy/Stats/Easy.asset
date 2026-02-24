@@ -17,11 +17,11 @@ MonoBehaviour:
   AgentSearchDistance: 10
   AgentSearchTime: 30
   AgentSearchPauseTime: 2
-  RoamDist: 150
+  RoamDist: 35
   RoamPauseTime: 5
   LowHPThreshhold: 75
   FleeDist: 70
-  FleeTime: 10
+  FleeTime: 20
   MaxFleeCount: 3
   FleeChance: 75
   SafeZoneRadius: 5
