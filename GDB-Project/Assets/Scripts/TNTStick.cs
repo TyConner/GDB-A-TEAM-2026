@@ -8,8 +8,9 @@ public class TNTStick : MonoBehaviour
     float countdown;
     bool hasExploded = false;
     public GameObject explosion;
-    public int contactDamage = 25;
+    public int contactDamage = 50;
     public PlayerState MyOwner;
+    public AudioClip explosionSound;
 
     void Start()
     {
@@ -31,6 +32,8 @@ public class TNTStick : MonoBehaviour
         Instantiate(explosion, transform.position, transform.rotation);
 
         Collider[] collidersToDestroy = Physics.OverlapSphere(transform.position, explosionRadius);
+
+        AudioSource.PlayClipAtPoint(explosionSound, transform.position);
 
         foreach (Collider nearbyObject in collidersToDestroy)
         {
