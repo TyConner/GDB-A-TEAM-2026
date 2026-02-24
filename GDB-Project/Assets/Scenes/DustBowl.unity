@@ -12591,8 +12591,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 1382691827781510021, guid: 70886b767216ef04a8688369fb03b2eb, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 70886b767216ef04a8688369fb03b2eb, type: 3}
@@ -25496,41 +25495,6 @@ SceneRoots:
   - {fileID: 1135067969}
   - {fileID: 1130544584}
   - {fileID: 47901227}
-  - {fileID: 544652830}
-  - {fileID: 1171206001589197804}
-  - {fileID: 501960042}
-  - {fileID: 1870167536}
-  - {fileID: 1927542811}
-  - {fileID: 611630693}
-  - {fileID: 2137356269}
-  - {fileID: 36943611}
-  - {fileID: 1580338067}
-  - {fileID: 420833896}
-  - {fileID: 1311255981}
-  - {fileID: 2131689121}
-  - {fileID: 1429363291}
-  - {fileID: 793711796}
-  - {fileID: 1649048486}
-  - {fileID: 651270372}
-  - {fileID: 1927351514}
-  - {fileID: 1418935136}
-  - {fileID: 295348400}
-  - {fileID: 1343262348}
-  - {fileID: 1373565265}
-  - {fileID: 611585829}
-  - {fileID: 1656246289}
-  - {fileID: 1354051719}
-  - {fileID: 1815461833}
-  - {fileID: 1872611916}
-  - {fileID: 1474151400}
-  - {fileID: 418238542}
-  - {fileID: 849948868}
-  - {fileID: 563126106}
-  - {fileID: 234552365}
-  - {fileID: 258024234}
-  - {fileID: 1013842803}
-  - {fileID: 357520330}
-  - {fileID: 568542093}
   - {fileID: 148512457}
   - {fileID: 1913596625}
   - {fileID: 316604138}
