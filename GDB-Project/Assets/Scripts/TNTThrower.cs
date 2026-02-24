@@ -3,6 +3,7 @@ using UnityEngine;
 public class TNTThrower : MonoBehaviour
 {
     public float throwForce = 20f;
+    public Transform throwPoint;
     public GameObject tntPref;
     public PlayerState MyPlayerState;
     private PlayerController playerController;
@@ -44,7 +45,7 @@ public class TNTThrower : MonoBehaviour
         TNTStick stick = tnt.GetComponent<TNTStick>();
         if (stick != null)
         {
-            stick.MyOwner = MyPlayerState; // <-- assign the player who threw it
+            stick.MyOwner = MyPlayerState; 
         }
 
         Rigidbody rb = tnt.GetComponent<Rigidbody>();
