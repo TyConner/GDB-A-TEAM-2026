@@ -1,5 +1,8 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
+using static EnemyAI;
 using static MyScore;
 public class PlayerState : MonoBehaviour
 {
@@ -17,6 +20,15 @@ public class PlayerState : MonoBehaviour
     public float Item_Drop_Height = 1.0f;
 
     public GameObject Item_Drop;
+    public struct DamagersInfo
+    {
+        public PlayerState Player;
+        public float Damage;
+        public float DamageTimer;
+
+    }
+
+    List<DamagersInfo> RecentDamagers = new List<DamagersInfo>();
 
     private void Awake()
     {
@@ -39,11 +51,71 @@ public class PlayerState : MonoBehaviour
         });
     }
 
-    public void OnDeath()
+    private void LogRecentDamagers(PlayerState Instigator, int Amount)
+    {
+        for (int i = 0; i < RecentDamagers.Count; i++)
+        {
+            if (RecentDamagers[i].Player == Instigator)
+            {
+                RecentDamagers[i] = new DamagersInfo { Player = Instigator, Damage = RecentDamagers[i].Damage + Amount, DamageTimer = 0 };
+                return;
+            }
+        }
+    }
+
+    private void RecentDamagersTimer()
+    {
+        for (int i = 0; i < RecentDamagers.Count; i++)
+        {
+            RecentDamagers[i] = new DamagersInfo { Player = RecentDamagers[i].Player, Damage = RecentDamagers[i].Damage, DamageTimer = RecentDamagers[i].DamageTimer + Time.deltaTime };
+            if (RecentDamagers[i].DamageTimer >= 90f)
+            {
+                RecentDamagers.RemoveAt(i);
+            }
+        }
+    }
+
+    private void ClearRecentDamagers()
+    {
+                RecentDamagers.Clear();
+    }
+
+    private void AwardAssists(PlayerState Killer)
+    {
+        for (int i = 0; i < RecentDamagers.Count; i++)
+        {
+            if (RecentDamagers[i].Player != Killer)
+            {
+                RecentDamagers[i].Player.updateScore(Category.Assists, 1);
+            }
+        }
+    }
+
+    public void AwardKill(PlayerState Instigator, bool headshot)
+    {
+        if (Instigator != null && this)
+        {
+            Instigator.updateScore(Category.Kills, 1);
+            if(headshot)
+                {
+                    Instigator.updateScore(Category.Headshots, 1);
+            }
+        }
+
+    }
+
+    public void OnDamaged(PlayerState Instigator, int Amount)
+    {
+        LogRecentDamagers(Instigator, Amount);
+    }
+    public void OnDeath(PlayerState Killer, bool headshot)
     {
         updateScore(Category.Deaths, 1);
+        AwardAssists(Killer);
+        AwardKill(Killer, headshot);
+        ClearRecentDamagers();
         //Debug.Log(PS_Type.ToString());
-        if(Item_Drop != null)
+        if (Item_Drop != null)
         {
             Vector3 pos = transform.position + new Vector3(0, Item_Drop_Height, 0);
             GameObject dropped_Item = Instantiate(Item_Drop, pos, Quaternion.identity);
@@ -136,7 +208,7 @@ public class PlayerState : MonoBehaviour
                         case GameMode_Config.MatchType.FFA:
                                 if (GameMode.instance.bHasReachedGoal(this))
                                 {
-                                    Debug.Log(PS_Score.PlayerName + " has won!");
+                                    //Debug.Log(PS_Score.PlayerName + " has won!");
                                     GameMode.instance.OnMatchOver(this);
                             }
                             break;
@@ -163,6 +235,6 @@ public class PlayerState : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        RecentDamagersTimer();
     }
 }
