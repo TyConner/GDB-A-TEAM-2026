@@ -13,7 +13,7 @@ using UnityEngine.Animations.Rigging;
 using UnityEngine.UI;
 using static MyScore;
 
-public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons, iAssist
+public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAndItems, iAssist
 {
 
     [Space(2)]
@@ -129,13 +129,12 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons, i
         }
     }
 
-    int HPOrig;
-
     TargetInfo MyTarget;
+    
 
     //-----Timers-----
 
-   float SearchTimer;
+    float SearchTimer;
    float SearchPauseTimer;
    float RoamTimer;
    float FleeTimer;
@@ -145,7 +144,8 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons, i
    bool bStandGround = false;
    int fleeCount = 0;
    float StoppingDistOrig;
-
+   int HPOrig;
+   int TnTHeld;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -194,9 +194,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons, i
             if(CurrentState != Behaviors.Dead)
             {
                 UpdateTagRotation();
+                
             }
             else if(CurrentState == Behaviors.Dead)
-             {
+            {
                 DisableTag();
             }
         }
@@ -520,7 +521,6 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons, i
             Ik_Rig.Clear();
             TurnOffCollision();
             controller.OnDeath();
-            MyPlayerState.OnDeath();
             AudioSource.PlayClipAtPoint(AudioConfig.dying[UnityEngine.Random.Range(0, AudioConfig.dying.Length)], transform.position, AudioConfig.dying_Vol);
         }
 
@@ -797,7 +797,8 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons, i
         Config = stats;
     }
 
-    public void takeDamage(int amount, PlayerState Instagator)
+
+    public void takeDamage(int amount, PlayerState Instagator, bool Headshot)
     {
         if (CurrentState == Behaviors.Dead)
         {
@@ -806,7 +807,11 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons, i
 
         }
         if(MyPlayerState.PS_Score.Assigned_Team == Team.FFA || MyPlayerState.PS_Score.Assigned_Team != Instagator.PS_Score.Assigned_Team) {
+            //not a teammate, so we take damage
             HP -= amount;
+
+            MyPlayerState.OnDamaged(Instagator, amount);
+
             if (Instagator == GameMode.instance.player_PS)
             {
                 GameManager.instance.playHitmarker();
@@ -820,6 +825,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons, i
                 }
                     
             }
+            
+            //Check to see if we have been damaged by player
+            
+
             if (controller)
             {
                 controller.OnHit();
@@ -836,34 +845,13 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons, i
 
             if (HP <= 0)
             {
-                if (Instagator != null && MyPlayerState)
-                {
-                    Instagator.updateScore(Category.Kills, 1);
-                    if (bDebug)
-                    {
-                        Debug.Log(MyPlayerState.PS_Score.PlayerName + " was killed by " + Instagator.PS_Score.PlayerName);
-                    }
-
-                }
-
+                
+                MyPlayerState.OnDeath(Instagator, Headshot);
                 OnDeath();
 
 
             }
         } 
-    }
-
-    public void takeDamage(int amount, PlayerState Instigator, bool Headshot)
-    {
-        if (HP - amount <= 0)
-        {
-            Instigator.updateScore(Category.Headshots, 1);
-            takeDamage(amount, Instigator);
-        }
-        else
-        {
-            takeDamage(amount, Instigator);
-        }
     }
 
     
@@ -920,32 +908,6 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons, i
         GunScript = null;
     }
 
-    void fire()
-    {
-        /// Depreciated
-        //if (shootTimer > shootRate && MyGun != null)
-        //{
-        //    shootTimer = 0;
-
-        //    controller.OnShoot();
-
-        //}
-
-    }
-    public void createBullet()
-    {
-        ///Depreciated
-        ////called from animation event in clip
-
-        //Transform pos = MyGun.transform.Find("ProjectileOrigin");
-        //GameObject bullet = Instantiate(Projectile, pos.position, transform.rotation);
-        //GameObject flash = Instantiate(MuzzleFlash, pos);
-        //bullet.GetComponent<Projectile>().MyOwner = MyPlayerState;
-        //AudioSource.PlayClipAtPoint(AudioConfig.gunshot[0], pos.position, AudioConfig.gunshot_Vol);
-        //Destroy(flash, .05f);
-
-    }
-
     public void Assist(TargetInfo Target)
     {
         //only if we arent fighting,fleeing, or dead.
@@ -966,5 +928,15 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeapons, i
                 }
             }
         }
+    }
+
+    public void addHealth(int amount)
+    {
+        HP = Mathf.Clamp(HP + amount, 0, HPOrig);
+    }
+
+    public void AddTNT(int amount)
+    {
+        throw new NotImplementedException();
     }
 }

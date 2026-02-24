@@ -25,5 +25,5 @@ MonoBehaviour:
   MaxFleeCount: 3
   FleeChance: 40
   SafeZoneRadius: 5
-  AssistDist: 20
-  AssistTime: 15
+  AssistTime: 5
+  SensoryRange: 40

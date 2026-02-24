@@ -31,7 +31,7 @@ public class breakable : MonoBehaviour, iDamage
         }
     }
 
-    public void takeDamage(int amount, PlayerState Instigator)
+    public void takeDamage(int amount, PlayerState Instigator, bool Headshot = false)
     {
         if(health <= 0)
         {
@@ -59,5 +59,5 @@ public class breakable : MonoBehaviour, iDamage
         }
     }
 
-
+ 
 }
