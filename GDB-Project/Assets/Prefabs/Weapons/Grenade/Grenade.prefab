@@ -62,6 +62,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2893424290745863505}
+  - component: {fileID: 7542379591946764694}
   - component: {fileID: 3380103392614310344}
   - component: {fileID: 1224342096143443373}
   - component: {fileID: 2773337223512930980}
@@ -82,7 +83,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4583935158717668055}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.20255768, y: -0.09088728, z: -0.100765556, w: 0.96982276}
+  m_LocalRotation: {x: -0.20255993, y: -0.09089127, z: -0.10076787, w: 0.9698217}
   m_LocalPosition: {x: 0, y: 3.32, z: 3.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -90,6 +91,24 @@ Transform:
   - {fileID: 5507028689144409915}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -24.281, y: -8.547, z: -10.022}
+--- !u!114 &7542379591946764694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4583935158717668055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a003ed5be81ee74b95b463119c12c2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TNTStick
+  delay: 3
+  explosionRadius: 5
+  explosionForce: 200
+  explosion: {fileID: 1027152157345221394, guid: 6d188a07beeb47d4da5c4b28fff30ac2, type: 3}
+  contactDamage: 25
+  MyOwner: {fileID: 0}
 --- !u!136 &3380103392614310344
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -170,6 +189,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!54 &3224213075402894850
 Rigidbody:
@@ -200,7 +220,7 @@ Rigidbody:
   m_CollisionDetection: 2
 --- !u!96 &6867834120744566249
 TrailRenderer:
-  serializedVersion: 3
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -246,6 +266,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Time: 3
   m_PreviewTimeScale: 1
   m_Parameters:
@@ -322,7 +343,6 @@ TrailRenderer:
     shadowBias: 0.5
     generateLightingData: 0
   m_MinVertexDistance: 0.1
-  m_MaskInteraction: 0
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
