@@ -20,12 +20,15 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
     [SerializeField] GameObject DebugGunPref;
     Gun Gun;
     [SerializeField] Transform WeaponHoldPos;
+    [SerializeField] Transform throwPoint;
 
     int jumpCount = 0;
     int startingHP;
     float startingMovespeed;
     public int currentTNT = 0;
     public int maxTNT = 3;
+    public float throwForce = 20f;
+    public GameObject tntPref;
 
     float shootTimer;
 
@@ -82,6 +85,10 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
             {
                 Gun.Reload();
             }
+        }
+        if (Input.GetButtonDown("Fire2"))
+        {
+            ThrowTNT();
         }
     }
 
@@ -281,11 +288,16 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
         return true;
     }
 
-    public void EquipDefaultWeapon()
+    public void ThrowTNT()
     {
-        Gun newGun = Instantiate(DebugGunPref, WeaponHoldPos).GetComponent<Gun>();
-        EquipGun(newGun);
-    }
+        if (!UseTNT()) return;
 
-  
+        GameObject tnt = Instantiate(tntPref, throwPoint.position, throwPoint.rotation);
+
+        TNTStick stick = tnt.GetComponent<TNTStick>();
+        stick.MyOwner = MyPlayerState; 
+
+        Rigidbody rb = tnt.GetComponent<Rigidbody>();
+        rb.AddForce(throwPoint.forward * throwForce, ForceMode.VelocityChange);
+    }
 }
