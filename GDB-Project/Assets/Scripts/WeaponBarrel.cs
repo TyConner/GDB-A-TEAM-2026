@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class RevolverBarrel : MonoBehaviour
+public class WeaponBarrel : MonoBehaviour
 {
-    [SerializeField] GameObject RevolverPrefab;
+    [SerializeField] private GameObject gunPref;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -11,7 +11,7 @@ public class RevolverBarrel : MonoBehaviour
 
         player.DropGun();
 
-        Gun newGun = Instantiate(RevolverPrefab).GetComponent<Gun>();
+        Gun newGun = Instantiate(gunPref).GetComponent<Gun>();
         player.EquipGun(newGun);
 
         Destroy(gameObject);

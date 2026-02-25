@@ -16,19 +16,19 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
     [SerializeField] int jumpVelocity = 15;
     [SerializeField] int jumpMax = 1;
     [SerializeField] float gravity = 32f;
+    [SerializeField] GameObject tntPref;
+    [SerializeField] Transform throwPoint;
+    [SerializeField] float throwForce = 20f;
 
     [SerializeField] GameObject DebugGunPref;
     Gun Gun;
     [SerializeField] Transform WeaponHoldPos;
-    [SerializeField] Transform throwPoint;
 
     int jumpCount = 0;
     int startingHP;
     float startingMovespeed;
     public int currentTNT = 0;
     public int maxTNT = 3;
-    public float throwForce = 20f;
-    public GameObject tntPref;
 
     float shootTimer;
 
@@ -286,6 +286,12 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
         currentTNT--;
         GameManager.instance.UpdateTNTUI(currentTNT);
         return true;
+    }
+
+    public void EquipDefaultWeapon()
+    {
+        Gun newGun = Instantiate(DebugGunPref, WeaponHoldPos).GetComponent<Gun>();
+        EquipGun(newGun);
     }
 
     public void ThrowTNT()
