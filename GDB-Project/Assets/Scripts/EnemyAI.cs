@@ -139,6 +139,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
    float RoamTimer;
    float FleeTimer;
    float assistTimer;
+    float stuckTimer;
     // -----------------------
    public bool bFleeing = false;
    bool bStandGround = false;
@@ -302,6 +303,20 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
         if(CurrentState != Behaviors.Dead && CurrentState != Behaviors.Idle)
         {
             assistTimer += Time.deltaTime;
+            if(Agent.remainingDistance <= Agent.stoppingDistance || Agent.velocity.sqrMagnitude < .01f)
+            {
+                stuckTimer += Time.deltaTime;
+            }
+            if(stuckTimer >= 3f)
+            {
+                stuckTimer = 0;
+                NavMeshHit hit = UnitSphere_Rand(Agent.pathEndPosition, (int)StoppingDistOrig);
+                if (hit.hit)
+                {
+                    GoTo(hit.position);
+                }
+            }
+            
             if (HP <= Config.get_LowHPThreshhold() && fleeCount < Config.get_MaxFleeCount() && !bStandGround && !bFleeing)
             {
                 int roll = UnityEngine.Random.Range(0, 100);
