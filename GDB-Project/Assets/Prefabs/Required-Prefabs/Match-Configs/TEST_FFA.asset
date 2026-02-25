@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3b0246e4cd93f7498b472304d8bd32b, type: 3}
   m_Name: TEST_FFA
   m_EditorClassIdentifier: Assembly-CSharp::GameMode_Config
-  bots: 0
+  bots: 8
   MatchLength: 120
-  BotsOnly: 0
+  BotsOnly: 1
   Difficulty: {fileID: 11400000, guid: 60c2adf033086d746b495423d1dc4118, type: 2}
   GameGoal: 2
   ThisMatch: 1

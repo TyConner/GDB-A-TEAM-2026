@@ -10,7 +10,6 @@ public class MyScore
         Assigned_Team = Team.None;
         Scores = new Dictionary<Category, int> {
             { Category.Coins, 0 }, { Category.Kills, 0 }, { Category.Assists, 0 }, { Category.Deaths, 0 }, { Category.Headshots, 0 }
-
         };
     }
     public string PlayerName;
