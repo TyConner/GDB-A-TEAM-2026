@@ -288,15 +288,12 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
         return true;
     }
 
-<<<<<<<<< Temporary merge branch 1
     public void EquipDefaultWeapon()
     {
         Gun newGun = Instantiate(DebugGunPref, WeaponHoldPos).GetComponent<Gun>();
         EquipGun(newGun);
     }
 
-  
-=========
     public void ThrowTNT()
     {
         if (!UseTNT()) return;
