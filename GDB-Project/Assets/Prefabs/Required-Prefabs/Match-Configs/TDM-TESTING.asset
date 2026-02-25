@@ -20,3 +20,6 @@ MonoBehaviour:
   ThisMatch: 0
   Respawn_Timer: 3
   BodyCleanUpTime: 5
+  Assist_Coin_Reward: 20
+  Kill_Coin_Reward: 100
+  Headshot_Coin_Reward: 50
