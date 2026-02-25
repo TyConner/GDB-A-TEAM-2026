@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static MyScore;
 
-public class PlayerController : MonoBehaviour, iDamage, iOwner
+public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndItems
 {
     [SerializeField] LayerMask ignoreLayer;
 
@@ -20,15 +20,12 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     [SerializeField] GameObject DebugGunPref;
     Gun Gun;
     [SerializeField] Transform WeaponHoldPos;
-    [SerializeField] Transform throwPoint;
 
     int jumpCount = 0;
     int startingHP;
     float startingMovespeed;
     public int currentTNT = 0;
     public int maxTNT = 3;
-    public float throwForce = 20f;
-    public GameObject tntPref;
 
     float shootTimer;
 
@@ -44,8 +41,9 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         startingMovespeed = moveSpeed;
         GameManager.instance.player = this.gameObject;
         GameManager.instance.UpdateTNTUI(currentTNT);
+        EquipDefaultWeapon();
         UpdateUI();
-
+        
         //GameManager.instance.updateGunUI(fields);
     }
 
@@ -84,10 +82,6 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
             {
                 Gun.Reload();
             }
-        }
-        if (Input.GetButtonDown("Fire2"))
-        {
-            ThrowTNT();
         }
     }
 
@@ -142,7 +136,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         }
     }
 
-    public void takeDamage(int amount, PlayerState Instagator)
+    public void takeDamage(int amount, PlayerState Instagator, bool Headshot = false)
     {
         if (MyPlayerState == null || MyPlayerState.PS_Score == null)
         {
@@ -155,20 +149,19 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
             Debug.LogWarning("EnemyAI: Instagator or PS_Score is null!");
             return; 
         }
-
+        
         if (MyPlayerState.PS_Score.Assigned_Team == Team.FFA ||
            MyPlayerState.PS_Score.Assigned_Team != Instagator.PS_Score.Assigned_Team)
         {
             HP -= Mathf.Clamp(amount, 0, startingHP);
+            MyPlayerState.OnDamaged(Instagator, amount);
             UpdateUI();
             StartCoroutine(flashScreen());
 
             if (HP <= 0)
             {
-                if (Instagator && Instagator != MyPlayerState)
-                {
-                    Instagator.updateScore(MyScore.Category.Kills, 1);
-                }
+                //change when the player can die of a headshot.
+                MyPlayerState.OnDeath(Instagator, Headshot);
                 Die();
                 Debug.Log("Killed by: " + Instagator.PS_Score.PlayerName);
             }
@@ -178,7 +171,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
     void Die()
     {
         GameManager.instance.DamageScreen.SetActive(false);
-        MyPlayerState.OnDeath();
+        //MyPlayerState.OnDeath();
         //you died ui screen to be called in playerstate
         print("You died");
         
@@ -188,8 +181,8 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
 
     void Shoot()//Gun script will handle shoot implementation
     {
-        if(Gun == null) { return; }
-        
+        if (Gun == null) { return; }
+
         Gun.Shoot(MyPlayerState);
     }
 
@@ -258,11 +251,6 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         GameManager.instance.HealScreen.SetActive(false);
     }
 
-    public void takeDamage(int amount, PlayerState Instigator, bool Headshot)
-    {
-        //
-    }
-
     public RaycastHit GetRaycastHit()
     {
         RaycastHit hit;
@@ -293,16 +281,11 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner
         return true;
     }
 
-    public void ThrowTNT()
+    public void EquipDefaultWeapon()
     {
-        if (!UseTNT()) return;
-
-        GameObject tnt = Instantiate(tntPref, throwPoint.position, throwPoint.rotation);
-
-        TNTStick stick = tnt.GetComponent<TNTStick>();
-        stick.MyOwner = MyPlayerState; 
-
-        Rigidbody rb = tnt.GetComponent<Rigidbody>();
-        rb.AddForce(throwPoint.forward * throwForce, ForceMode.VelocityChange);
+        Gun newGun = Instantiate(DebugGunPref, WeaponHoldPos).GetComponent<Gun>();
+        EquipGun(newGun);
     }
+
+  
 }

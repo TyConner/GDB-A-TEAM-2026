@@ -27,6 +27,18 @@ public class MyScore
     public void ChangeScore(Category Stat, int amount)
     {
        Scores[Stat] += amount;
+        switch(Stat)
+        {
+            case Category.Kills:
+                ChangeScore(Category.Coins, GameMode.instance.config.Kill_Coin_Reward);
+                break;
+            case Category.Assists:
+                ChangeScore(Category.Coins, GameMode.instance.config.Assist_Coin_Reward);
+                break;
+            case Category.Headshots:
+                ChangeScore(Category.Coins, GameMode.instance.config.Headshot_Coin_Reward);
+                break;
+        }
     }
 
     public int GetScore(Category Stat)
