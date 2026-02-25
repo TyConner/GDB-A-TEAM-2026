@@ -405,7 +405,11 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
                         {
                             foreach (GameObject enemy in NearbyEnemyPlayers)
                             {
-                                DangerZone += enemy.transform.position;
+                                if (enemy)
+                                {
+                                    DangerZone += enemy.transform.position;
+                                }
+                                
                             }
                         }
                         else
