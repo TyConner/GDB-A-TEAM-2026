@@ -146,6 +146,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
    float StoppingDistOrig;
    int HPOrig;
    int TnTHeld;
+    int TntMax = 3;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -196,7 +197,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
                 UpdateTagRotation();
                 
             }
-            else if(CurrentState == Behaviors.Dead)
+            if(CurrentState == Behaviors.Dead)
             {
                 DisableTag();
             }
@@ -322,6 +323,8 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
 
             }
             GameObject Threat = ReturnClosestThreat();
+            //check if they are dead?
+          
             if (Threat != null)
             {
                 MyTarget = CanSeeTarget(Threat);
@@ -438,7 +441,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
                     if (MyTarget.Obj)
                     {
                         //if we can call an assist then do it.
-                        if(assistTimer >= Config.get_AssitTime())
+                        if (assistTimer >= Config.get_AssitTime())
                         {
                             assistTimer = 0;
                             if (NearbyAllyPlayers.Count > 0)
@@ -616,6 +619,11 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
         {
             foreach (GameObject enemy in NearbyEnemyPlayers)
             {
+                PlayerState ps = enemy.GetComponent<iOwner>().OwningPlayer();
+                if(ps.PS_Phase == PlayerState.PlayerPhase.Dead)
+                {
+                    continue;
+                }
                 if (target == null)
                 {
                     target = enemy;
@@ -651,6 +659,15 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
     {
         if (target)
         {
+            PlayerState targetPS = target.GetComponent<iOwner>().OwningPlayer();
+            if (targetPS)
+            {
+                if (targetPS.PS_Phase == PlayerState.PlayerPhase.Dead)
+                {
+                    TargetInfo nullresult = new TargetInfo();
+                    return nullresult;
+                }
+            }
             TargetInfo info = new();
             info.TargetDir = target.transform.position - headPos.position;
             info.TargetAngleToMe = Vector3.Angle(info.TargetDir, transform.forward);
@@ -941,6 +958,6 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
 
     public void AddTNT(int amount)
     {
-        throw new NotImplementedException();
+        TnTHeld = Mathf.Clamp(TnTHeld + amount, 0, TntMax);
     }
 }
