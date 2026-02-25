@@ -16,6 +16,9 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
     [SerializeField] int jumpVelocity = 15;
     [SerializeField] int jumpMax = 1;
     [SerializeField] float gravity = 32f;
+    [SerializeField] GameObject tntPref;
+    [SerializeField] Transform throwPoint;
+    [SerializeField] float throwForce = 20f;
 
     [SerializeField] GameObject DebugGunPref;
     Gun Gun;
@@ -82,6 +85,10 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
             {
                 Gun.Reload();
             }
+        }
+        if (Input.GetButtonDown("Fire2"))
+        {
+            ThrowTNT();
         }
     }
 
@@ -287,5 +294,16 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
         EquipGun(newGun);
     }
 
-  
+    public void ThrowTNT()
+    {
+        if (!UseTNT()) return;
+
+        GameObject tnt = Instantiate(tntPref, throwPoint.position, throwPoint.rotation);
+
+        TNTStick stick = tnt.GetComponent<TNTStick>();
+        stick.MyOwner = MyPlayerState; 
+
+        Rigidbody rb = tnt.GetComponent<Rigidbody>();
+        rb.AddForce(throwPoint.forward * throwForce, ForceMode.VelocityChange);
+    }
 }
