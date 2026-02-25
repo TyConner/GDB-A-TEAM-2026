@@ -218,6 +218,7 @@ public class GameMode : MonoBehaviour
                     break;
             }
         player.EntityRef.name = player.PS_Score.PlayerName;
+        player.OnRespawn();
     }
 
     public void TryRespawn(PlayerState player)

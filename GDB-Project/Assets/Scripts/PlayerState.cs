@@ -7,6 +7,9 @@ using static MyScore;
 public class PlayerState : MonoBehaviour
 {
     public enum PlayerType { player, bot , environment};
+    public enum PlayerPhase { Alive, Dead };
+    public PlayerPhase PS_Phase;
+
     public PlayerType PS_Type;
     public MyScore PS_Score;
 
@@ -49,6 +52,7 @@ public class PlayerState : MonoBehaviour
             entryName = gameObject.name,
             entryScore = 0
         });
+
     }
 
     private void LogRecentDamagers(PlayerState Instigator, int Amount)
@@ -136,7 +140,7 @@ public class PlayerState : MonoBehaviour
                 StartCoroutine(BodyCleanUp(Body));
                 break;
         }
-        
+        PS_Phase = PlayerPhase.Dead;
         RequestRespawn();
     }
     IEnumerator BodyCleanUp(GameObject Body)
@@ -161,6 +165,10 @@ public class PlayerState : MonoBehaviour
         Destroy(EntityRef);
     }
 
+    public void OnRespawn()
+    {
+        PS_Phase = PlayerPhase.Alive;
+    }
     public void DropGun()
     {
         switch (PS_Type)
