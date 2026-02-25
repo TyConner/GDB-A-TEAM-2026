@@ -10,13 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a3b0246e4cd93f7498b472304d8bd32b, type: 3}
-  m_Name: TEST_FFA
+  m_Name: TDM
   m_EditorClassIdentifier: Assembly-CSharp::GameMode_Config
-  bots: 8
-  MatchLength: 120
-  BotsOnly: 1
-  Difficulty: {fileID: 11400000, guid: 60c2adf033086d746b495423d1dc4118, type: 2}
-  GameGoal: 2
-  ThisMatch: 1
-  Respawn_Timer: 2
-  BodyCleanUpTime: 4
+  bots: 11
+  MatchLength: 300
+  BotsOnly: 0
+  Difficulty: {fileID: 11400000, guid: 2281e04cd32c80d4c84f74d32f098a11, type: 2}
+  GameGoal: 25
+  ThisMatch: 0
+  Respawn_Timer: 3
+  BodyCleanUpTime: 5
+  Assist_Coin_Reward: 20
+  Kill_Coin_Reward: 100
+  Headshot_Coin_Reward: 50
