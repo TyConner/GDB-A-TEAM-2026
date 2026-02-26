@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static MyScore;
 
-public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndItems
+public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndItems, IPush
 {
     [SerializeField] LayerMask ignoreLayer;
 
@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
     [SerializeField] GameObject tntPref;
     [SerializeField] Transform throwPoint;
     [SerializeField] float throwForce = 20f;
+    [SerializeField] int pushVelTime;
 
     [SerializeField] GameObject DebugGunPref;
     Gun Gun;
@@ -34,6 +35,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
 
     Vector3 moveDir;
     Vector3 playerVelocity;
+    Vector3 pushVel;
 
     public PlayerState MyPlayerState;
 
@@ -106,6 +108,8 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
             playerVelocity = Vector3.zero; //zero out gravity
         }
 
+        pushVel = Vector3.Lerp(pushVel, Vector3.zero, pushVelTime * Time.deltaTime);
+
         moveDir = Input.GetAxis("Horizontal") * transform.right + Input.GetAxis("Vertical") * transform.forward;
         moveDir = Vector3.ClampMagnitude(moveDir, 1f); //We must clamp or we go faster when pressing two directions at once
         characterController.Move(moveDir * moveSpeed * Time.deltaTime);
@@ -115,7 +119,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
             Jump();
         }
 
-        characterController.Move(playerVelocity * Time.deltaTime);
+        characterController.Move((playerVelocity + pushVel) * Time.deltaTime);
 
         playerVelocity.y -= gravity * Time.deltaTime;//gravity
 
@@ -306,5 +310,10 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
 
         Rigidbody rb = tnt.GetComponent<Rigidbody>();
         rb.AddForce(throwPoint.forward * throwForce, ForceMode.VelocityChange);
+    }
+
+    public void getPushVel(Vector3 pushAmount)
+    {
+        pushVel += pushAmount;
     }
 }
