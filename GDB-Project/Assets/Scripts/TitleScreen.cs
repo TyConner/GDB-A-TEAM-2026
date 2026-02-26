@@ -2,9 +2,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class TitleScreen : MonoBehaviour
 {
-    public void PlayGame()
+    public void PlayGameTDM()
     {
         SceneManager.LoadSceneAsync(1);
+    }
+
+    public void PlayGameFFA()
+    {
+        SceneManager.LoadSceneAsync(2);
     }
     public void quit()
     {
