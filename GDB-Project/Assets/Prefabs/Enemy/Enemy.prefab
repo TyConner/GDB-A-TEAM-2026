@@ -686,6 +686,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   DamageMultiplier: 1
+  isHead: 0
   bDebug: 0
 --- !u!1 &2765546371370853721
 GameObject:
@@ -817,6 +818,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   DamageMultiplier: 1
+  isHead: 0
   bDebug: 0
 --- !u!1 &2765552551759231157
 GameObject:
@@ -1120,6 +1122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   DamageMultiplier: 1
+  isHead: 0
   bDebug: 0
 --- !u!1 &2765572420512102347
 GameObject:
@@ -1442,6 +1445,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   DamageMultiplier: 1
+  isHead: 0
   bDebug: 0
 --- !u!1 &2765693685671725359
 GameObject:
@@ -1634,6 +1638,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   DamageMultiplier: 2
+  isHead: 1
   bDebug: 0
 --- !u!1 &2765784985650919623
 GameObject:
@@ -1733,6 +1738,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   DamageMultiplier: 1
+  isHead: 0
   bDebug: 0
 --- !u!1 &2765811397706665281
 GameObject:
@@ -1990,6 +1996,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   DamageMultiplier: 1
+  isHead: 0
   bDebug: 0
 --- !u!1 &2765897575145227093
 GameObject:
@@ -3165,6 +3172,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   DamageMultiplier: 1
+  isHead: 0
   bDebug: 0
 --- !u!1 &2767415031410556253
 GameObject:
@@ -3405,6 +3413,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   DamageMultiplier: 1
+  isHead: 0
   bDebug: 0
 --- !u!1 &2767425772254730403
 GameObject:
@@ -3539,6 +3548,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BodyDamageSensor
   DamageMultiplier: 1
+  isHead: 0
   bDebug: 0
 --- !u!1 &3237819159316389645
 GameObject:

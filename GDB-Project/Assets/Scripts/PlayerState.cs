@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Unity.Entities.UniversalDelegates;
 using UnityEngine;
 using static EnemyAI;
 using static MyScore;
@@ -33,6 +34,7 @@ public class PlayerState : MonoBehaviour
 
     List<DamagersInfo> RecentDamagers = new List<DamagersInfo>();
 
+    private ScoreboardEntryUI myscoreUI;
     private void Awake()
     {
         PS_Score = new MyScore();
@@ -43,27 +45,50 @@ public class PlayerState : MonoBehaviour
     {
         if (PS_Type == PlayerType.bot && GameMode.instance)
         {
-            botStats = GameMode.instance.config.Difficulty;
+            botStats.SetStats(GameMode.instance.config.Difficulty);
 
         }
-        GameManager.instance.scoreboard.GetComponent<Scoreboard>().AddEntry(new ScoreboardEntryData()
-        {
-            playerState = this,
-            entryName = gameObject.name,
-            entryScore = 0
-        });
-
+        //GameManager.instance.scoreboard.GetComponent<Scoreboard>().AddEntry(new ScoreboardEntryData()
+        //{
+        //    playerState = this,
+        //    entryName = gameObject.name,
+        //    entryScore = 0
+        //});
+        
     }
 
+    private void AddToScoreBoard()
+    {
+
+        if(PS_Type != PlayerType.environment)
+        {
+            myscoreUI = GameManager.instance.scoreboard.GetComponent<Scoreboard>().AddEntry(PS_Score);
+        }
+        if(PS_Type == PlayerType.player && GameMode.instance.config.ThisMatch == GameMode_Config.MatchType.FFA)
+        {
+            myscoreUI.TeamColor = new Color(0f,255f,0f,40f);
+            myscoreUI.Refresh(PS_Score);
+        }
+
+    }
     private void LogRecentDamagers(PlayerState Instigator, int Amount)
     {
+        bool bContainsPlayer = false;
         for (int i = 0; i < RecentDamagers.Count; i++)
         {
             if (RecentDamagers[i].Player == Instigator)
             {
                 RecentDamagers[i] = new DamagersInfo { Player = Instigator, Damage = RecentDamagers[i].Damage + Amount, DamageTimer = 0 };
+                bContainsPlayer = true;
                 return;
             }
+            
+         
+        }
+        if (!bContainsPlayer)
+        {
+            //if we dont have the player in the list we add them.
+            RecentDamagers.Add(new DamagersInfo { Player = Instigator, Damage = Amount, DamageTimer = 0 });
         }
     }
 
@@ -158,6 +183,7 @@ public class PlayerState : MonoBehaviour
     {
 
         EntityRef.SetActive(true);
+        AddToScoreBoard();
 
     }
 
@@ -233,6 +259,7 @@ public class PlayerState : MonoBehaviour
                 }
 
             }
+            myscoreUI.Refresh(PS_Score);
         }
        
     }

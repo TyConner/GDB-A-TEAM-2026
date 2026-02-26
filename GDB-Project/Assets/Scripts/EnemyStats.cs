@@ -29,6 +29,14 @@ public class EnemyStats : ScriptableObject
         AgentSearchPauseTime = stats.AgentSearchPauseTime;
         RoamDist = stats.RoamDist;
         RoamPauseTime = stats.RoamPauseTime;
+        LowHPThreshhold = stats.LowHPThreshhold;
+        FleeDist = stats.FleeDist;
+        FleeTime = stats.FleeTime;  
+        MaxFleeCount = stats.MaxFleeCount;
+        FleeChance = stats.FleeChance;
+        SafeZoneRadius = stats.SafeZoneRadius;
+        AssistTime = stats.AssistTime;
+        SensoryRange = stats.SensoryRange;
 
     }
 

@@ -13,7 +13,7 @@ public class MyScore
         };
     }
     public string PlayerName;
-    public enum Team { A , B, FFA, Environment, None}
+    public enum Team { Red , Blue, FFA, Environment, None}
 
     public Team Assigned_Team;
 

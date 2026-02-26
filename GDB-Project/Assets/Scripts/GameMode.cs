@@ -7,6 +7,7 @@ using Unity.Physics.Authoring;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 using static GameMode_Config;
 using static MyScore;
@@ -25,6 +26,8 @@ public class GameMode : MonoBehaviour
     [SerializeField] public Material RedMat;
     MyScore BlueTeam = new();
     [SerializeField] public Material BlueMat;
+    
+    [SerializeField] public Material NoneMat;
 
     int PlayerCount;
     public GameObject Player;
@@ -64,12 +67,16 @@ public class GameMode : MonoBehaviour
     {
         switch (team)
         {
-            case Team.A:
+            case Team.Red:
                 return RedMat;
-            case Team.B:
+            case Team.Blue:
                 return BlueMat;
             case Team.FFA:
                 return RedMat;
+            case Team.None:
+                return NoneMat;
+            case Team.Environment:
+                return NoneMat;
             default:
                 return null;
         }
@@ -126,12 +133,12 @@ public class GameMode : MonoBehaviour
                     case GameMode_Config.MatchType.TDM:
                         if (i % 2 == 0)
                         {
-                            bot_PS.PS_Score.Assigned_Team = Team.A;
+                            bot_PS.PS_Score.Assigned_Team = Team.Red;
                             Team_A++;
                         }
                         else
                         {
-                            bot_PS.PS_Score.Assigned_Team = Team.B;
+                            bot_PS.PS_Score.Assigned_Team = Team.Blue;
                             Team_B++;
                         }
                         break;
@@ -162,11 +169,11 @@ public class GameMode : MonoBehaviour
                     case GameMode_Config.MatchType.TDM:
                         if (Team_A > Team_B)
                         {
-                            player_PS.PS_Score.Assigned_Team = Team.B;
+                            player_PS.PS_Score.Assigned_Team = Team.Blue;
                         }
                         else
                         {
-                            player_PS.PS_Score.Assigned_Team = Team.A;
+                            player_PS.PS_Score.Assigned_Team = Team.Red;
                         }
                         break;
                     case GameMode_Config.MatchType.FFA:
@@ -294,12 +301,12 @@ public class GameMode : MonoBehaviour
         {
             switch (var.PS_Score.Assigned_Team)
             {
-                case Team.A:
+                case Team.Red:
                     {
                         A_Team_Score += var.PS_Score.GetScore(Category.Kills);
                         break;
                     }
-                case Team.B:
+                case Team.Blue:
                     {
                         B_Team_Score += var.PS_Score.GetScore(Category.Kills);
                         break;
@@ -308,9 +315,9 @@ public class GameMode : MonoBehaviour
         }
         if (A_Team_Score > B_Team_Score)
         {
-            WinningTeam = Team.A;
+            WinningTeam = Team.Red;
         }
-        else { WinningTeam = Team.B; }
+        else { WinningTeam = Team.Blue; }
         return WinningTeam;
     }
     bool DidPlayerWin()
@@ -359,6 +366,12 @@ public class GameMode : MonoBehaviour
         InitialSpawn();
         Phase = GamePhase.PendingStart;
         GameManager.instance.initalizeMatch(config.MatchLength);
+        switch (config.ThisMatch)
+        {
+            case MatchType.FFA:
+                GameManager.instance.FFASCORE.SetActive(true);
+                break;
+        }
     }
 
     public void OnPlay()
@@ -372,6 +385,21 @@ public class GameMode : MonoBehaviour
     {
         Phase = GamePhase.PostMatchScreen;
         //display scoreboard and otherend 
+        GameManager.instance.scoreboardBackground.SetActive(true);
+        UnityEngine.UI.Image screen = GameManager.instance.scoreboardBackground.GetComponent<UnityEngine.UI.Image>();
+        if (screen != null)
+        {
+            screen.color = new Color(255, 255, 255, 255);
+        }
+
+        StartCoroutine(ShowWin(player));
+        DeactivateBots();
+    }
+
+    IEnumerator ShowWin(PlayerState player)
+    {
+        yield return new WaitForSeconds(10);
+        GameManager.instance.scoreboardBackground.SetActive(false);
         if (player == null)
         {
             bool PlayerWin = DidPlayerWin();
@@ -392,10 +420,8 @@ public class GameMode : MonoBehaviour
         {
             GameManager.instance.youLose();
         }
-        
-        DeactivateBots();
-    }
 
+    }
     public bool TDM_HasReachedGoal()
     {
         int A_Team_Score = RedTeam.GetScore(Category.Kills);
@@ -437,10 +463,10 @@ public class GameMode : MonoBehaviour
         {
             switch (team)
             {
-                case Team.A:
+                case Team.Red:
                     RedTeam.ChangeScore(category, amount);
                     break;
-                case Team.B:
+                case Team.Blue:
                     BlueTeam.ChangeScore(category, amount);
                     break;
             }
