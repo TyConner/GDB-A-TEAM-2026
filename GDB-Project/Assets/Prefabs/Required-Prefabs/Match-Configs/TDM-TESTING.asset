@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TDM-TESTING
   m_EditorClassIdentifier: Assembly-CSharp::GameMode_Config
   bots: 11
-  MatchLength: 300
+  MatchLength: 150
   BotsOnly: 0
   Difficulty: {fileID: 11400000, guid: 2281e04cd32c80d4c84f74d32f098a11, type: 2}
   GameGoal: 25
