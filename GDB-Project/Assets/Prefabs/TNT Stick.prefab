@@ -56,6 +56,7 @@ MonoBehaviour:
   explosion: {fileID: 1027152157345221394, guid: 6d188a07beeb47d4da5c4b28fff30ac2, type: 3}
   contactDamage: 50
   MyOwner: {fileID: 0}
+  explosionSound: {fileID: 8300000, guid: 6d66704408545fd47a35e9c3a4ec78f9, type: 3}
 --- !u!136 &3142729668070329476
 CapsuleCollider:
   m_ObjectHideFlags: 0

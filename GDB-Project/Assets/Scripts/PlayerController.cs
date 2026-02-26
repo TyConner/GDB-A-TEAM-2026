@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static MyScore;
 
-public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndItems
+public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndItems, IPush
 {
     [SerializeField] LayerMask ignoreLayer;
 
@@ -16,6 +16,10 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
     [SerializeField] int jumpVelocity = 15;
     [SerializeField] int jumpMax = 1;
     [SerializeField] float gravity = 32f;
+    [SerializeField] GameObject tntPref;
+    [SerializeField] Transform throwPoint;
+    [SerializeField] float throwForce = 20f;
+    [SerializeField] int pushVelTime;
 
     [SerializeField] GameObject DebugGunPref;
     Gun Gun;
@@ -31,6 +35,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
 
     Vector3 moveDir;
     Vector3 playerVelocity;
+    Vector3 pushVel;
 
     public PlayerState MyPlayerState;
 
@@ -83,6 +88,10 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
                 Gun.Reload();
             }
         }
+        if (Input.GetButtonDown("Fire2"))
+        {
+            ThrowTNT();
+        }
     }
 
     public void SetOwningPlayer(PlayerState Player)
@@ -99,6 +108,8 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
             playerVelocity = Vector3.zero; //zero out gravity
         }
 
+        pushVel = Vector3.Lerp(pushVel, Vector3.zero, pushVelTime * Time.deltaTime);
+
         moveDir = Input.GetAxis("Horizontal") * transform.right + Input.GetAxis("Vertical") * transform.forward;
         moveDir = Vector3.ClampMagnitude(moveDir, 1f); //We must clamp or we go faster when pressing two directions at once
         characterController.Move(moveDir * moveSpeed * Time.deltaTime);
@@ -108,7 +119,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
             Jump();
         }
 
-        characterController.Move(playerVelocity * Time.deltaTime);
+        characterController.Move((playerVelocity + pushVel) * Time.deltaTime);
 
         playerVelocity.y -= gravity * Time.deltaTime;//gravity
 
@@ -162,14 +173,15 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
             {
                 //change when the player can die of a headshot.
                 MyPlayerState.OnDeath(Instagator, Headshot);
-                Die();
+                Die(Instagator);
                 Debug.Log("Killed by: " + Instagator.PS_Score.PlayerName);
             }
         }
     }
 
-    void Die()
+    void Die(PlayerState Instagator)
     {
+        KillFeedManager.instance.HandleKill(Instagator.PS_Score.PlayerName, MyPlayerState.PS_Score.PlayerName, Instagator.EntityRef.GetComponentInChildren<Gun>().GunName);
         GameManager.instance.DamageScreen.SetActive(false);
         //MyPlayerState.OnDeath();
         //you died ui screen to be called in playerstate
@@ -287,5 +299,21 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
         EquipGun(newGun);
     }
 
-  
+    public void ThrowTNT()
+    {
+        if (!UseTNT()) return;
+
+        GameObject tnt = Instantiate(tntPref, throwPoint.position, throwPoint.rotation);
+
+        TNTStick stick = tnt.GetComponent<TNTStick>();
+        stick.MyOwner = MyPlayerState; 
+
+        Rigidbody rb = tnt.GetComponent<Rigidbody>();
+        rb.AddForce(throwPoint.forward * throwForce, ForceMode.VelocityChange);
+    }
+
+    public void getPushVel(Vector3 pushAmount)
+    {
+        pushVel += pushAmount;
+    }
 }
