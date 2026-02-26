@@ -71,6 +71,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1708593354568848939}
   m_SourcePrefab: {fileID: 100100000, guid: 08209ba1cb62d2944a9ceb46f7b851cd, type: 3}
+--- !u!23 &5363983473177956276 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2300000, guid: 08209ba1cb62d2944a9ceb46f7b851cd, type: 3}
+  m_PrefabInstance: {fileID: 5363983473179989972}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &5363983473179890036 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100000, guid: 08209ba1cb62d2944a9ceb46f7b851cd, type: 3}
@@ -89,6 +94,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponBarrel
   gunPref: {fileID: 0}
+  mesh: {fileID: 5363983473177956276}
+  RespawnTimer: 2
 --- !u!136 &1708593354568848939
 CapsuleCollider:
   m_ObjectHideFlags: 0
