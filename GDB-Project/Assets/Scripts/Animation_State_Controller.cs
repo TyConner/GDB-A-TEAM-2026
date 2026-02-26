@@ -2,14 +2,10 @@ using UnityEngine;
 
 public class Animation_State_Controller : MonoBehaviour
 {
-    Animator animator;
+    [SerializeField] Animator animator;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        animator = GetComponent<Animator>();
-    }
-
+  
     public void OnShoot()
     {
         animator.SetTrigger("Shoot");
@@ -26,9 +22,12 @@ public class Animation_State_Controller : MonoBehaviour
     }
     public void SetSpeed(float currentSpeed, float TransSpeed)
     {
-        float agentSpeedAnim = animator.GetFloat("Speed");
+     
+            float agentSpeedAnim = animator.GetFloat("Speed");
 
-        animator.SetFloat("Speed", Mathf.MoveTowards(agentSpeedAnim, currentSpeed, Time.deltaTime * TransSpeed));
+            animator.SetFloat("Speed", Mathf.MoveTowards(agentSpeedAnim, currentSpeed, Time.deltaTime * TransSpeed));
+      
+        
     }
 
     public void Idle()

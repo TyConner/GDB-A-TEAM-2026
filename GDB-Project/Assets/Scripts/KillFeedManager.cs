@@ -25,7 +25,7 @@ public class KillFeedManager : MonoBehaviour
         Sprite icon = iconLibrary.GetSprite(weaponName);
         row.InsertKillData(killerName, victimName, icon);
 
-        while (killfeedItemParent.childCount > maxRows) {
+        if (killfeedItemParent.childCount > maxRows) {
             Destroy(killfeedItemParent.GetChild(killfeedItemParent.childCount - 1).gameObject);
         }
 
