@@ -91,13 +91,14 @@ MonoBehaviour:
   jumpVelocity: 12
   jumpMax: 1
   gravity: 30
+  tntPref: {fileID: 5052137715496946312, guid: 0045866b76f75e043b70c5c84da5d5b3, type: 3}
+  throwPoint: {fileID: 5919205438110619798}
+  throwForce: 20
+  pushVelTime: 3
   DebugGunPref: {fileID: 5179717559272968199, guid: 05120d9cc0febf74daf7381600889aa3, type: 3}
   WeaponHoldPos: {fileID: 3457555769961392228}
-  throwPoint: {fileID: 5919205438110619798}
   currentTNT: 0
   maxTNT: 3
-  throwForce: 20
-  tntPref: {fileID: 5052137715496946312, guid: 0045866b76f75e043b70c5c84da5d5b3, type: 3}
   MyPlayerState: {fileID: 0}
 --- !u!33 &1217274782622763217
 MeshFilter:
