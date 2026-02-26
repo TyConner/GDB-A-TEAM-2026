@@ -36,9 +36,10 @@ public class GameManager : MonoBehaviour
     [Header("       Player Variable      ")]
     public GameObject player;
     public PlayerController playerScript;
-   
+
 
     [Header("       Player UI      ")]
+    [SerializeField] public GameObject FFASCORE;
     public GameObject DamageScreen;
     public GameObject HealScreen;
     public GameObject playerCompass;
@@ -47,6 +48,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] Sprite DefaultCrossHairSprite;
     [SerializeField] Sprite DefaultWeaponSprite;
     [SerializeField] public GameObject scoreboard;
+    [SerializeField] public GameObject scoreboardBackground;
+
     public Image playerHitmarker;
 
     [Header("SFX")]
@@ -219,10 +222,10 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetButtonDown("Tab"))
         {
-            scoreboard.gameObject.SetActive(true);
+            scoreboardBackground.SetActive(true);
         }else if (Input.GetButtonUp("Tab"))
         {
-            scoreboard.gameObject.SetActive(false);
+            scoreboardBackground.SetActive(false);
         }
     }
 

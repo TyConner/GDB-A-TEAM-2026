@@ -3,74 +3,64 @@ using UnityEngine;
 
 public class Scoreboard : MonoBehaviour
 {
-    [SerializeField] int maxScoreboardEntries = 5;
+    //[SerializeField] int maxScoreboardEntries = 12;
     [SerializeField] Transform highscoresHolderTransform = null;
     [SerializeField] GameObject scoreboardEntryObject = null;
 
-    [Header("Test")]
-    [SerializeField] string testEntryName = "New Name";
-    [SerializeField] int testEntryScore = 0;
 
-    public List<ScoreboardEntryData> savedScores = new List<ScoreboardEntryData>();
+    public List<ScoreboardEntryUI> entries = new();
 
-    void Start()
+    private ScoreboardEntryUI title;
+
+    void Awake()
     {
         CenterHolderIfUI();
-        UpdateUI();
+        AddTestEntry();
+        //UpdateUI();
     }
 
     [ContextMenu("Add Test Entry")]
     public void AddTestEntry()
     {
-        AddEntry(new ScoreboardEntryData()
-        {
-            entryName = testEntryName,
-            entryScore = testEntryScore
-        });
+        GameObject newEntry = Instantiate(scoreboardEntryObject, highscoresHolderTransform);
+        ScoreboardEntryUI entry = newEntry.GetComponent<ScoreboardEntryUI>();
+        entry.Initialise(null);
+        title = entry;
+        entries.Add(entry);
     }
 
-    public void AddEntry(ScoreboardEntryData scoreboardEntryData)
+    public ScoreboardEntryUI AddEntry(MyScore scoreboardEntryData)
     {
-        savedScores.Add(scoreboardEntryData);
-
-        SortAndClampScores();
-        UpdateUI();
+        GameObject newEntry = Instantiate(scoreboardEntryObject, highscoresHolderTransform);
+        ScoreboardEntryUI entry = newEntry.GetComponent<ScoreboardEntryUI>();
+        entry.Initialise(scoreboardEntryData);
+        entries.Add(entry);
+        //UpdateUI();
+        return entry;
     }
 
-    void SortAndClampScores()
+    //void SortAndClampScores()
+    //{
+    //   entries.Sort()
+    //    switch (GameMode.instance.config.ThisMatch)
+    //    {
+    //        //MoveEntry()
+    //        case GameMode_Config.MatchType.TDM:
+    //            break;
+    //        case GameMode_Config.MatchType.FFA:
+    //            break;
+
+    //    }
+    //}
+
+    void MoveEntry(ScoreboardEntryUI entry, int index)
     {
-        savedScores.Sort((a, b) => b.entryScore.CompareTo(a.entryScore));
-
-        if (savedScores.Count > maxScoreboardEntries)
-        {
-            savedScores.RemoveRange(maxScoreboardEntries, savedScores.Count - maxScoreboardEntries);
-        }
+        entry.transform.position = new Vector3(entry.transform.position.x, -40 -(index * 45), entry.transform.position.y);
     }
-
     public void UpdateUI()
     {
-        if (highscoresHolderTransform == null || scoreboardEntryObject == null)
-            return;
 
-        for (int i = highscoresHolderTransform.childCount - 1; i >= 0; i--)
-        {
-            Destroy(highscoresHolderTransform.GetChild(i).gameObject);
-        }
 
-        SortAndClampScores();
-
-        for (int i = 0; i < savedScores.Count; i++)
-        {
-            ScoreboardEntryData highscore = savedScores[i];
-
-            GameObject newEntry = Instantiate(scoreboardEntryObject, highscoresHolderTransform);
-
-            ScoreboardEntryUI ui = newEntry.GetComponent<ScoreboardEntryUI>();
-            if (ui != null)
-            {
-                ui.Initialise(highscore);
-            }
-        }
     }
 
     void CenterHolderIfUI()

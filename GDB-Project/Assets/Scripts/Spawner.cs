@@ -13,11 +13,11 @@ public class Spawner : MonoBehaviour
     {
         switch (team)
         {
-            case MyScore.Team.A:
+            case MyScore.Team.Red:
                 //Red TEAM
                 GetComponent<MeshRenderer>().material = TeamMats[0];
                 break;
-            case MyScore.Team.B:
+            case MyScore.Team.Blue:
                 GetComponent<MeshRenderer>().material = TeamMats[1];
                 //Blue TEAM 
                 break;
