@@ -1,19 +1,41 @@
+using System.Collections;
 using UnityEngine;
 
 public class WeaponBarrel : MonoBehaviour
 {
     [SerializeField] private GameObject gunPref;
-
+    [SerializeField] MeshRenderer mesh;
+    [SerializeField] int RespawnTimer = 5;
+    enum state { Interactable , PhasedOut}
+    state mystate = state.Interactable;
+    IEnumerator TimeOut()
+    {
+        mystate = state.PhasedOut;
+        mesh.enabled = false;
+        yield return new WaitForSeconds(RespawnTimer);
+        mystate = state.Interactable;
+        mesh.enabled = true;
+    }
     private void OnTriggerEnter(Collider other)
     {
-        PlayerController player = other.GetComponent<PlayerController>();
-        if (player == null) return;
+        if (other.isTrigger)
+        {
+            return;
+        }
+        if (mystate == state.Interactable)
+        {
+            iUseWeaponsAndItems player = other.GetComponent<iUseWeaponsAndItems>();
 
-        player.DropGun();
+            if (player != null)
+            {
 
-        Gun newGun = Instantiate(gunPref).GetComponent<Gun>();
-        player.EquipGun(newGun);
+                player.DropGun();
 
-        Destroy(gameObject);
+                Gun newGun = Instantiate(gunPref).GetComponent<Gun>();
+                player.EquipGun(newGun);
+
+                StartCoroutine(TimeOut());
+            }
+        }
     }
 }

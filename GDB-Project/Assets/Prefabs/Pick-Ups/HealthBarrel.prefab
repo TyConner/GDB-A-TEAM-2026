@@ -67,6 +67,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 6403967075195260389}
   m_SourcePrefab: {fileID: 100100000, guid: 08209ba1cb62d2944a9ceb46f7b851cd, type: 3}
+--- !u!23 &4466594483920198929 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2300000, guid: 08209ba1cb62d2944a9ceb46f7b851cd, type: 3}
+  m_PrefabInstance: {fileID: 4466594483922486641}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4466594483922453457 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100000, guid: 08209ba1cb62d2944a9ceb46f7b851cd, type: 3}
@@ -107,3 +112,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::healthUpgrade
   healthIncrease: 20
   healthupgradeSound: {fileID: 8300000, guid: b0c9061a81364a04fb0c9a7ff214c3b8, type: 3}
+  mesh: {fileID: 4466594483920198929}
+  RespawnTimer: 3

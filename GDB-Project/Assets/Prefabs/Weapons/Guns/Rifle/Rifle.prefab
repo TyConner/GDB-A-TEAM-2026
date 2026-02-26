@@ -147,7 +147,7 @@ MonoBehaviour:
   AmmoMax: 7
   ReloadTime: 5
   FireRate: 1
-  bRaycastBullet: 0
+  bRaycastBullet: 1
   HitScanDamage: 75
   Bullet: {fileID: 8805370691394233163, guid: b6dfa4310ac25bf41b48f9acadec0a5e, type: 3}
   BulletOrigin: {fileID: 6070459674691981447}
