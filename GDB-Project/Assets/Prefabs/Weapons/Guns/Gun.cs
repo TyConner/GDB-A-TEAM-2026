@@ -174,18 +174,26 @@ public class Gun : MonoBehaviour
         iOwner owner = Instagator.EntityRef.GetComponent<iOwner>();
         if (owner != null)
         {
-            
-            Transform cam = owner.GetCameraTransform();
-            
+
+            Transform cam;
+            Vector3 spawnPosition;
+            Quaternion spawnRotation;
             PlayRecoil();
             SpawnMuzzleFlash();
             PlayShootSound();
             if (OwningPlayer.PS_Type != PlayerState.PlayerType.bot)
             {
                 PlayCameraShake();
+                cam = owner.GetCameraTransform();
+                spawnPosition = cam.position + cam.forward * 0.7f;
+                spawnRotation = cam.rotation;
             }
-            Vector3 spawnPosition = cam.position + cam.forward * 0.7f;
-            Quaternion spawnRotation = cam.rotation;
+            else
+            {
+                spawnPosition = BulletOrigin.transform.position;
+                spawnRotation = BulletOrigin.rotation;
+                cam = BulletOrigin.transform;
+            }
 
             if (!bRaycastBullet)
             {

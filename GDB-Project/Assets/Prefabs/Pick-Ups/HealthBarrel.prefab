@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HealthBarrel
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 08209ba1cb62d2944a9ceb46f7b851cd, type: 3}
+      propertyPath: m_TagString
+      value: Health PickUp
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 08209ba1cb62d2944a9ceb46f7b851cd, type: 3}
       propertyPath: m_LocalPosition.x
       value: 12.67

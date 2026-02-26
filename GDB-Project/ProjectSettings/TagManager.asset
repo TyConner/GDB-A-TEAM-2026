@@ -12,6 +12,8 @@ TagManager:
   - Building
   - Floor
   - IgnoreStep
+  - Weapon PickUp
+  - Health PickUp
   layers:
   - Default
   - TransparentFX

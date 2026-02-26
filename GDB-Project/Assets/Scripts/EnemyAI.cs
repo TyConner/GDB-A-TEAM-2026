@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using TMPro;
+using Unity.AI.Navigation;
 using Unity.Transforms;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime;
@@ -11,6 +12,7 @@ using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.UI;
 using static MyScore;
+using static UnityEngine.GraphicsBuffer;
 
 public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAndItems, iAssist
 {
@@ -104,7 +106,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
 
     Color orig;
 
-    public enum Behaviors {Fight, Flee, Search, Roam, Dead, Idle};
+    public enum Behaviors {Fight, Flee, Search, Roam, Dead, Idle, FindGun};
     public Behaviors CurrentState;
 
     Vector3 SpawningLocation;
@@ -140,6 +142,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
    float assistTimer;
     // -----------------------
    public bool bFleeing = false;
+    bool gunnearby = false;
    bool bStandGround = false;
    int fleeCount = 0;
    float StoppingDistOrig;
@@ -321,6 +324,8 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
                 return;
 
             }
+
+            
             GameObject Threat = ReturnClosestThreat();
             //check if they are dead?
           
@@ -343,7 +348,15 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
             }
             else
             {
+                if(GunScript == null)
+                {
+                    CurrentState = Behaviors.FindGun;
+                }
+                else
+                {
                     CurrentState = Behaviors.Roam;
+                }
+                    
             }
            
         }
@@ -428,7 +441,19 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
                         Vector3 SafeZone = new Vector3();
                         SafeZone = (SafeDir * UnityEngine.Random.Range(Config.get_FleeDist() / 2, Config.get_FleeDist())) + transform.position;
                         NavMeshHit hit = UnitSphere_Rand(SafeZone, Config.get_SafeZoneRadius());
-                        if (hit.hit) { GoTo(hit.position); }
+
+                        NavMeshHit healthHit = Return_Nav_To_Nearest_Object_With_Tag("Health PickUp");
+
+                        if (healthHit.hit)
+                        {
+                            Agent.stoppingDistance = 0;
+                            GoTo(healthHit.position);
+                        }
+                        else
+                        {
+                            if (hit.hit) { GoTo(hit.position); }
+                        }
+                        
                         bFleeing = true;
                         MyTarget.Clear();
                     }
@@ -475,9 +500,71 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
                     controller.Idle();
                     break;
                 }
+
+            case Behaviors.FindGun:
+                {
+                    if(!gunnearby)
+                    {
+                        NavMeshHit NearestGun = Return_Nav_To_Nearest_Object_With_Tag("Weapon PickUp");
+                        if (NearestGun.hit)
+                        {
+                            //gunnearby = true;
+                            Agent.stoppingDistance = 0;
+                            GoTo(NearestGun.position);
+                            Debug.Log("GunFoundMoving");
+                        }
+                        else
+                        {
+                            Debug.Log("NoGunFound");
+                        }
+                    }
+                   
+                    break; 
+                }
+
         }
     }
 
+    NavMeshHit Return_Nav_To_Nearest_Object_With_Tag (string tag)
+    {
+
+
+        GameObject[] results = GameObject.FindGameObjectsWithTag(tag);
+
+    
+        GameObject target = null;
+        if (results.Length > 0)
+        {
+            foreach (GameObject obj in results)
+            {
+                if (target == null)
+                {
+                    target = obj;
+                }
+                else
+                {
+                    GameObject result = ClosestObject(obj, target);
+                    if (result != null)
+                    {
+                        target = result;
+                    }
+                }
+            }
+        }
+        
+        if(target != null)
+        {
+
+            NavMeshHit hit;
+            NavMesh.SamplePosition(target.transform.position, out hit, (target.transform.position - transform.position).magnitude, 1);
+            if (hit.hit)
+            {
+                return hit;
+            }
+
+        }
+        return new NavMeshHit();
+    }
     NavMeshHit UnitSphere_Rand(Vector3 pos, int radius)
     {
         Vector3 ranPos = UnityEngine.Random.insideUnitSphere * radius;
@@ -892,7 +979,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
 
     public Transform GetCameraTransform()
     {
-        return GunScript.transform.Find("ProjectileOrigin");
+        return GunScript.transform.Find("BulletOrigin");
     }
 
     public void Shoot()
@@ -904,9 +991,12 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
 
     public void EquipDefaultWeapon()
     {
-      
-        Gun newGun = Instantiate(Weapon, WeaponHoldPos).GetComponent<Gun>();
-        EquipGun(newGun);
+        if (Weapon)
+        {
+            Gun newGun = Instantiate(Weapon, WeaponHoldPos).GetComponent<Gun>();
+            EquipGun(newGun);
+        }
+        
 
     }
     public void EquipGun(Gun newGun)
@@ -915,7 +1005,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
         {
             GunScript.OnUnequip();
         }
-
+        gunnearby = true;
         GunScript = newGun;
         GunScript.OnEquip(MyPlayerState);
         GunScript.transform.SetParent(WeaponHoldPos);

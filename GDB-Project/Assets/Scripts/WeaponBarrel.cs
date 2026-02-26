@@ -24,7 +24,7 @@ public class WeaponBarrel : MonoBehaviour
         }
         if (mystate == state.Interactable)
         {
-            iUseWeaponsAndItems player = other.GetComponent<iUseWeaponsAndItems>();
+            iUseWeaponsAndItems player = other.transform.root.GetComponent<iUseWeaponsAndItems>();
 
             if (player != null)
             {
