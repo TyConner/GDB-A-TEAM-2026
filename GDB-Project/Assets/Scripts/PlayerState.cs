@@ -114,6 +114,7 @@ public class PlayerState : MonoBehaviour
     }
     public void OnDeath(PlayerState Killer, bool headshot)
     {
+        
         updateScore(Category.Deaths, 1);
         AwardAssists(Killer);
         AwardKill(Killer, headshot);

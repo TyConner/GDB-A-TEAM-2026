@@ -46,6 +46,7 @@ public class Projectile : MonoBehaviour
     {
         PlayerState otherplayer = null;
         iOwner otherplayerowner = null;
+        otherplayer = other.transform.root.GetComponent<PlayerState>();
         otherplayerowner = other.transform.root.GetComponent<iOwner>();
         
         if (other != null  && otherplayerowner != null)
