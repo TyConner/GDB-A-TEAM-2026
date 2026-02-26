@@ -203,7 +203,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
         }
         else
         {
-            if (controller)
+            if (controller != null)
             {
                 controller.SetSpeed(0, AnimationTransSpeed);
             }
@@ -520,7 +520,11 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
     }
     void OnDeath(PlayerState Instagator)
     {
-        KillFeedManager.instance.HandleKill(Instagator.PS_Score.PlayerName, MyPlayerState.PS_Score.PlayerName, Instagator.EntityRef.GetComponentInChildren<Gun>().GunName);
+        Gun Killers_Gun = Instagator.EntityRef.GetComponentInChildren<Gun>();
+        if (Killers_Gun != null)
+        {
+            KillFeedManager.instance.HandleKill(Instagator.PS_Score.PlayerName, MyPlayerState.PS_Score.PlayerName, Instagator.EntityRef.GetComponentInChildren<Gun>().GunName);
+        }
         CurrentState = Behaviors.Dead;
         if (Agent && Ik_Rig && controller && MyPlayerState && AudioConfig)
         {

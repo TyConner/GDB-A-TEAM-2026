@@ -181,7 +181,11 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
 
     void Die(PlayerState Instagator)
     {
-        KillFeedManager.instance.HandleKill(Instagator.PS_Score.PlayerName, MyPlayerState.PS_Score.PlayerName, Instagator.EntityRef.GetComponentInChildren<Gun>().GunName);
+        Gun Killers_Gun = Instagator.EntityRef.GetComponentInChildren<Gun>();
+        if(Killers_Gun != null)
+        {
+            KillFeedManager.instance.HandleKill(Instagator.PS_Score.PlayerName, MyPlayerState.PS_Score.PlayerName, Instagator.EntityRef.GetComponentInChildren<Gun>().GunName);
+        }
         GameManager.instance.DamageScreen.SetActive(false);
         //MyPlayerState.OnDeath();
         //you died ui screen to be called in playerstate

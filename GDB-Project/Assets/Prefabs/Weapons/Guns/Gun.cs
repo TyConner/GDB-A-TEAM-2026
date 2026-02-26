@@ -227,7 +227,15 @@ public class Gun : MonoBehaviour
     protected virtual void Start()
     {
         AmmoCur = AmmoMax;
-        OwningPlayer = transform.root.GetComponent<iOwner>().OwningPlayer();
+        if(OwningPlayer != null)
+        {
+            iOwner owner = transform.root.GetComponent<iOwner>();
+            if (owner != null)
+            {
+                OwningPlayer = owner.OwningPlayer();
+            }
+        }
+        
 
         CacheRecoilLocals();
 

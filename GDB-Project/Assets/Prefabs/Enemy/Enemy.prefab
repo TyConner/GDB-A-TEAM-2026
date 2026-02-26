@@ -3661,6 +3661,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 946da164c89608c41a99c8e3aadf955b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Animation_State_Controller
+  animator: {fileID: 8304904998154455148}
 --- !u!95 &8304904998154455148
 Animator:
   serializedVersion: 7

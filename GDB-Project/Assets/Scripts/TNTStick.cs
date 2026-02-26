@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class TNTStick : MonoBehaviour
@@ -12,24 +13,34 @@ public class TNTStick : MonoBehaviour
     public PlayerState MyOwner;
     public AudioClip explosionSound;
 
+    //void Start()
+    //{
+    //    //countdown = delay;
+
+    //}
     void Start()
     {
-        countdown = delay;
+        StartCoroutine(Fuse());
     }
 
-    private void Update()
+    IEnumerator Fuse()
     {
-        countdown -= Time.deltaTime;
-        if(countdown <= 0f && !hasExploded)
-        {
-            Explode();
-            hasExploded = true;
-        }
+        yield return new WaitForSeconds(delay);
+        Explode();
     }
+    //private void Update()
+    //{
+    //    countdown -= Time.deltaTime;
+    //    if(countdown <= 0f && !hasExploded)
+    //    {
+    //        Explode();
+    //        hasExploded = true;
+    //    }
+    //}
 
     void Explode()
     {
-        Instantiate(explosion, transform.position, transform.rotation);
+        Instantiate(explosion, transform.position, Quaternion.identity);
 
         Collider[] collidersToDestroy = Physics.OverlapSphere(transform.position, explosionRadius);
 
@@ -38,6 +49,7 @@ public class TNTStick : MonoBehaviour
         foreach (Collider nearbyObject in collidersToDestroy)
         {
             iDamage damageable = nearbyObject.transform.root.GetComponent<iDamage>();
+            //correct
             if (damageable != null)
             {
                 if (MyOwner == null)
@@ -61,15 +73,15 @@ public class TNTStick : MonoBehaviour
         Destroy(gameObject);
     }
 
-    void OnCollisionEnter(Collision collision)
-    {
-        if (hasExploded) return;
+    //void OnCollisionEnter(Collision collision)
+    //{
+    //    if (hasExploded) return;
 
-        iDamage damageable = collision.transform.root.GetComponent<iDamage>();
+    //    iDamage damageable = collision.transform.root.GetComponent<iDamage>();
 
-        if (damageable != null)
-        {
-            damageable.takeDamage(contactDamage, MyOwner);
-        }
-    }
+    //    if (damageable != null)
+    //    {
+    //        damageable.takeDamage(contactDamage, MyOwner);
+    //    }
+    //}
 }
