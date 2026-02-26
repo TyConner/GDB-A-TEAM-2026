@@ -869,7 +869,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAnd
             {
                 
                 MyPlayerState.OnDeath(Instagator, Headshot);
-                OnDeath();
+                OnDeath(Instagator);
 
 
             }

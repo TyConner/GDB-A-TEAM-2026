@@ -169,7 +169,7 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
             {
                 //change when the player can die of a headshot.
                 MyPlayerState.OnDeath(Instagator, Headshot);
-                Die();
+                Die(Instagator);
                 Debug.Log("Killed by: " + Instagator.PS_Score.PlayerName);
             }
         }
