@@ -24,6 +24,7 @@ public class Scoreboard : MonoBehaviour
     {
         GameObject newEntry = Instantiate(scoreboardEntryObject, highscoresHolderTransform);
         ScoreboardEntryUI entry = newEntry.GetComponent<ScoreboardEntryUI>();
+        entry.transform.SetAsFirstSibling();
         entry.Initialise(null);
         title = entry;
         entries.Add(entry);

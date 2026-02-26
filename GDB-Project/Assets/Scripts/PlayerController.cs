@@ -181,7 +181,12 @@ public class PlayerController : MonoBehaviour, iDamage, iOwner, iUseWeaponsAndIt
 
     void Die(PlayerState Instagator)
     {
-        Gun Killers_Gun = Instagator.EntityRef.GetComponentInChildren<Gun>();
+        Gun Killers_Gun = null;
+        if (Instagator.EntityRef != null)
+        {
+             Killers_Gun = Instagator.EntityRef.GetComponentInChildren<Gun>();
+        }
+        
         if(Killers_Gun != null)
         {
             KillFeedManager.instance.HandleKill(Instagator.PS_Score.PlayerName, MyPlayerState.PS_Score.PlayerName, Instagator.EntityRef.GetComponentInChildren<Gun>().GunName);
