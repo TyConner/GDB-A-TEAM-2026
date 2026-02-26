@@ -328,6 +328,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2771259764706495775}
+  - component: {fileID: 5124139412828987868}
+  - component: {fileID: 4695252502319160260}
   m_Layer: 0
   m_Name: Ball_R
   m_TagString: Untagged
@@ -351,6 +353,43 @@ Transform:
   - {fileID: 2768489694823536915}
   m_Father: {fileID: 2771048854236854899}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &5124139412828987868
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2765340348881281595}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.08
+  m_Height: 0.37
+  m_Direction: 0
+  m_Center: {x: -0.04, y: 0, z: 0}
+--- !u!114 &4695252502319160260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2765340348881281595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60b6cada00660e94193b934201d3d083, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FootSensor
+  Parent: {fileID: 3237819159316389645}
+  bDebug: 0
 --- !u!1 &2765371238563554667
 GameObject:
   m_ObjectHideFlags: 0
@@ -829,6 +868,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2768470889919678193}
+  - component: {fileID: 2961659956303386029}
+  - component: {fileID: 8067363315004533128}
   m_Layer: 0
   m_Name: Ball_L
   m_TagString: Untagged
@@ -852,6 +893,43 @@ Transform:
   - {fileID: 2771219119800940891}
   m_Father: {fileID: 2768458654768237167}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &2961659956303386029
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2765552551759231157}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.08
+  m_Height: 0.37
+  m_Direction: 0
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8067363315004533128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2765552551759231157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60b6cada00660e94193b934201d3d083, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FootSensor
+  Parent: {fileID: 3237819159316389645}
+  bDebug: 0
 --- !u!1 &2765559961117003169
 GameObject:
   m_ObjectHideFlags: 0
