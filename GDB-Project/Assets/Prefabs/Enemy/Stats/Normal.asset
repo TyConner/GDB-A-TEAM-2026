@@ -19,4 +19,11 @@ MonoBehaviour:
   AgentSearchPauseTime: 2
   RoamDist: 150
   RoamPauseTime: 5
-  LowHPThreshhold: 10
+  LowHPThreshhold: 60
+  FleeDist: 30
+  FleeTime: 13
+  MaxFleeCount: 3
+  FleeChance: 50
+  SafeZoneRadius: 5
+  AssistTime: 10
+  SensoryRange: 30

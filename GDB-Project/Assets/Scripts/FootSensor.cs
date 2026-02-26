@@ -6,12 +6,12 @@ public class FootSensor : MonoBehaviour
     [SerializeField] bool bDebug = false;
     private void OnTriggerEnter(Collider other)
     {
-        if (other.isTrigger || other.transform.IsChildOf(Parent.transform))
+        if (other.isTrigger || other.transform.IsChildOf(Parent.transform) || other.CompareTag("Bot") || other.CompareTag("Player"))
         {
             return;
         }
         iFootStep Instagator = transform.root.GetComponent<iFootStep>();
-        if (other.CompareTag("Ground") || other.name == "Floor" && Instagator != null)
+        if ((other.CompareTag("Ground") || other.CompareTag("Building") || other.CompareTag("Floor")) && Instagator != null)
         {
             Instagator.onStepDetected(transform.position);
             if (bDebug)
@@ -21,9 +21,9 @@ public class FootSensor : MonoBehaviour
                 
             return;
         }
-        else if( other.CompareTag("Ground") != true && Instagator != null)
+        else if( Instagator != null && !other.CompareTag("IgnoreStep"))
         {
-            Debug.LogWarning("Try to Assign Tag: (Ground) to Floor GameObject." + '\n' + "Object Detected Name: " + other.name);
+            Debug.LogWarning("Try to Assign a valid Tag: (Ground, Floor, or Building ) to GameObject." + '\n' + "Object Detected Name: " + other.name);
         }
         else if (Instagator == null)
         {

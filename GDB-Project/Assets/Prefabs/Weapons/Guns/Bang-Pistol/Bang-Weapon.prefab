@@ -120,6 +120,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &6750805723787488600
 GameObject:
@@ -176,6 +177,7 @@ MonoBehaviour:
   ReloadTime: 0.75
   FireRate: 0.5
   bRaycastBullet: 0
+  HitScanDamage: 10
   Bullet: {fileID: 0}
   BulletOrigin: {fileID: 8487074031466267853}
   ignorelayer:
@@ -183,6 +185,15 @@ MonoBehaviour:
     m_Bits: 0
   bFireCooldown: 0
   OwningPlayer: {fileID: 0}
+  recoilLocalPosOffset: {x: 0, y: 0, z: -0.06}
+  recoilLocalRotOffset: {x: -6, y: 2, z: 0}
+  recoilKickTime: 0.05
+  recoilReturnTime: 0.1
+  recoilHoldTime: 0.03
+  muzzleFlashPrefab: {fileID: 0}
+  shootSound: {fileID: 0}
+  shootVolume: 1
+  shootPitchRange: {x: 0.95, y: 1.05}
   Chance_To_Shoot: 60
   ShootDistance: 100
   ExplosionRadius: 5
@@ -200,6 +211,8 @@ MonoBehaviour:
   ExplosionVolume: 1
   EmptySound: {fileID: 8300000, guid: 8f8a46ec3daf7964a83f3ba8d48358e6, type: 3}
   EmptyVolume: 1
+  BreakSound: {fileID: 8300000, guid: 2605e00f8244d7c46b3f48e7b854fd20, type: 3}
+  BreakVolume: 1
 --- !u!1 &8020279036307259346
 GameObject:
   m_ObjectHideFlags: 0
@@ -289,4 +302,5 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}

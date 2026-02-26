@@ -1,9 +1,15 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
+using static EnemyAI;
 using static MyScore;
 public class PlayerState : MonoBehaviour
 {
     public enum PlayerType { player, bot , environment};
+    public enum PlayerPhase { Alive, Dead };
+    public PlayerPhase PS_Phase;
+
     public PlayerType PS_Type;
     public MyScore PS_Score;
 
@@ -17,8 +23,20 @@ public class PlayerState : MonoBehaviour
     public float Item_Drop_Height = 1.0f;
 
     public GameObject Item_Drop;
+    public struct DamagersInfo
+    {
+        public PlayerState Player;
+        public float Damage;
+        public float DamageTimer;
 
+    }
 
+    List<DamagersInfo> RecentDamagers = new List<DamagersInfo>();
+
+    private void Awake()
+    {
+        PS_Score = new MyScore();
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -34,14 +52,75 @@ public class PlayerState : MonoBehaviour
             entryName = gameObject.name,
             entryScore = 0
         });
+
     }
 
-    public void OnDeath()
+    private void LogRecentDamagers(PlayerState Instigator, int Amount)
+    {
+        for (int i = 0; i < RecentDamagers.Count; i++)
+        {
+            if (RecentDamagers[i].Player == Instigator)
+            {
+                RecentDamagers[i] = new DamagersInfo { Player = Instigator, Damage = RecentDamagers[i].Damage + Amount, DamageTimer = 0 };
+                return;
+            }
+        }
+    }
+
+    private void RecentDamagersTimer()
+    {
+        for (int i = 0; i < RecentDamagers.Count; i++)
+        {
+            RecentDamagers[i] = new DamagersInfo { Player = RecentDamagers[i].Player, Damage = RecentDamagers[i].Damage, DamageTimer = RecentDamagers[i].DamageTimer + Time.deltaTime };
+            if (RecentDamagers[i].DamageTimer >= 90f)
+            {
+                RecentDamagers.RemoveAt(i);
+            }
+        }
+    }
+
+    private void ClearRecentDamagers()
+    {
+                RecentDamagers.Clear();
+    }
+
+    private void AwardAssists(PlayerState Killer)
+    {
+        for (int i = 0; i < RecentDamagers.Count; i++)
+        {
+            if (RecentDamagers[i].Player != Killer)
+            {
+                RecentDamagers[i].Player.updateScore(Category.Assists, 1);
+            }
+        }
+    }
+
+    public void AwardKill(PlayerState Instigator, bool headshot)
+    {
+        if (Instigator != null && this)
+        {
+            Instigator.updateScore(Category.Kills, 1);
+            if(headshot)
+                {
+                    Instigator.updateScore(Category.Headshots, 1);
+            }
+        }
+
+    }
+
+    public void OnDamaged(PlayerState Instigator, int Amount)
+    {
+        LogRecentDamagers(Instigator, Amount);
+    }
+    public void OnDeath(PlayerState Killer, bool headshot)
     {
         
         updateScore(Category.Deaths, 1);
-        Debug.Log(PS_Type.ToString());
-        if(Item_Drop != null)
+        AwardAssists(Killer);
+        AwardKill(Killer, headshot);
+        ClearRecentDamagers();
+        //Debug.Log(PS_Type.ToString());
+        if (Item_Drop != null)
         {
             Vector3 pos = transform.position + new Vector3(0, Item_Drop_Height, 0);
             GameObject dropped_Item = Instantiate(Item_Drop, pos, Quaternion.identity);
@@ -62,7 +141,7 @@ public class PlayerState : MonoBehaviour
                 StartCoroutine(BodyCleanUp(Body));
                 break;
         }
-        
+        PS_Phase = PlayerPhase.Dead;
         RequestRespawn();
     }
     IEnumerator BodyCleanUp(GameObject Body)
@@ -87,31 +166,70 @@ public class PlayerState : MonoBehaviour
         Destroy(EntityRef);
     }
 
-
+    public void OnRespawn()
+    {
+        PS_Phase = PlayerPhase.Alive;
+    }
+    public void DropGun()
+    {
+        switch (PS_Type)
+        {
+            case PlayerType.player:
+                PlayerController pc = EntityRef.GetComponent<PlayerController>();
+                if (pc)
+                {
+                                       pc.DropGun();
+                }
+                break;
+            case PlayerType.bot:
+                EnemyAI ai = EntityRef.GetComponent<EnemyAI>();
+                if (ai)
+                {
+                    ai.DropGun();
+                }
+                break;
+        }
+    }
     public void updateScore(Category cat, int amount)
     {
         if(PS_Type != PlayerType.environment)
         {
             // if we are the envirnment we dont keep score
+            // if match is over we escape
+            if(GameMode.instance.Phase != GameMode.GamePhase.Playing)
+            {
+                return;
+            }
             PS_Score.ChangeScore(cat, amount);
             
             if (cat == Category.Kills)
             {
                 GameManager.instance.scoreboard.GetComponent<Scoreboard>().UpdateUI();
                 
-                if (PS_Type == PlayerType.player && GameMode.instance.Phase == GameMode.GamePhase.Playing)
+                if (GameMode.instance.Phase == GameMode.GamePhase.Playing)
                 {
-                    
-                    GameMode.instance.TeamScoreUpdate(PS_Score.Assigned_Team, cat, amount);
-                    if(GameMode.instance.config.ThisMatch == GameMode_Config.MatchType.FFA)
+                    switch(GameMode.instance.config.ThisMatch)
                     {
-                        GameManager.instance.updateGameGoal(PS_Score.GetScore(Category.Kills));
-                    }
-                    if (GameMode.instance.bHasReachedGoal(this))
-                    {
-                        Debug.Log(PS_Score.PlayerName + " has won!");
+                        case GameMode_Config.MatchType.TDM:
+                            GameMode.instance.TeamScoreUpdate(PS_Score.Assigned_Team, cat, amount);
+                            break;
+
+                        case GameMode_Config.MatchType.FFA:
+                                if (GameMode.instance.bHasReachedGoal(this))
+                                {
+                                    //Debug.Log(PS_Score.PlayerName + " has won!");
+                                    GameMode.instance.OnMatchOver(this);
+                            }
+                            break;
 
                     }
+                    
+                    if (PS_Type == PlayerType.player && GameMode.instance.config.ThisMatch == GameMode_Config.MatchType.FFA)
+                    {
+                        //update our players UI goal tracker if we are in FFA and we got a kill
+                        GameManager.instance.updateGameGoal(PS_Score.GetScore(Category.Kills));
+                    }
+                    
                 }
 
             }
@@ -126,6 +244,6 @@ public class PlayerState : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        RecentDamagersTimer();
     }
 }

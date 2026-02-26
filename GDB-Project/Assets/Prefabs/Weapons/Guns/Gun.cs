@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.Entities;
 using UnityEngine;
 
 public class Gun : MonoBehaviour
@@ -40,30 +41,114 @@ public class Gun : MonoBehaviour
     [SerializeField] float shootVolume = 1f;
     [SerializeField] Vector2 shootPitchRange = new Vector2(0.95f, 1.05f);
 
+    [Header("Camera Shake")]
+    [SerializeField] float cameraShakeAmplitude = 0.15f;
+    [SerializeField] float cameraShakeDuration = 0.1f;
+
+    [Header("Reload Spin")]
+    [SerializeField] bool spinOnReload = true;
+    Vector3 reloadSpinAxis = new Vector3(-1, 0, 0); // local axis
+    [SerializeField] bool reloadSpinUseEase = true;
+
+    Coroutine reloadSpinRoutine;
+
     AudioSource audioSource;
-    public void OnEquip()
+    public void OnEquip(PlayerState owner)
     {
-        GameManager.instance.updateGunUI(GunIcon, CrosshairIcon, AmmoMax, AmmoCur, GunName);
+        OwningPlayer = owner;
+        if(OwningPlayer.PS_Type != PlayerState.PlayerType.bot)
+        {
+            GameManager.instance.updateGunUI(GunIcon, CrosshairIcon, AmmoMax, AmmoCur, GunName);
+        }
+        
     }
 
     public void OnUnequip()
     {
-        GameManager.instance.ClearGunUI();
+        if (OwningPlayer.PS_Type != PlayerState.PlayerType.bot)
+        {
+            GameManager.instance.ClearGunUI();
+        }
+        OwningPlayer = null;
+        
     }
 
     public virtual void Reload()
     {
         if (bInReload) return;
+        if (spinOnReload)
+        {
+            StartReloadSpin();
+        }
         StartCoroutine(DoReload());
     }
+    void StartReloadSpin()
+    {
+        if (reloadSpinRoutine != null)
+        {
+            StopCoroutine(reloadSpinRoutine);
+        }
 
+        // Ensure baseline is current equipped pose
+        CacheRecoilLocals();
+
+        reloadSpinRoutine = StartCoroutine(CoReloadSpin());
+    }
+
+    void StopReloadSpin()
+    {
+        if (reloadSpinRoutine != null)
+        {
+            StopCoroutine(reloadSpinRoutine);
+            reloadSpinRoutine = null;
+        }
+
+        transform.localRotation = recoilStartLocalRot;
+    }
+
+    IEnumerator CoReloadSpin()
+    {
+        Vector3 axis = reloadSpinAxis;
+        if (axis.sqrMagnitude <= 0.0001f)
+        {
+            axis = Vector3.forward;
+        }
+        axis.Normalize();
+
+        float duration = Mathf.Max(0.01f, ReloadTime);
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+
+            if (reloadSpinUseEase)
+            {
+                // smoothstep ease in-out
+                t = t * t * (3f - 2f * t);
+            }
+
+            float angle = 360f * t;
+
+            transform.localRotation = recoilStartLocalRot * Quaternion.AngleAxis(angle, axis);
+
+            yield return null;
+        }
+
+        transform.localRotation = recoilStartLocalRot;
+        reloadSpinRoutine = null;
+    }
     IEnumerator DoReload()
     {
         bInReload = true;
         yield return new WaitForSeconds(ReloadTime);
         bInReload = false;
         AmmoCur = AmmoMax;
-        GameManager.instance.updateAmmoUI(AmmoMax, AmmoCur);
+        if (OwningPlayer.PS_Type != PlayerState.PlayerType.bot)
+        {
+            GameManager.instance.updateAmmoUI(AmmoMax, AmmoCur);
+        }
     }
 
     public IEnumerator FireCooldown()
@@ -81,17 +166,24 @@ public class Gun : MonoBehaviour
 
         StartCoroutine(FireCooldown());
         AmmoCur--;
-        GameManager.instance.updateAmmoUI(AmmoMax, AmmoCur);
+        if (OwningPlayer.PS_Type != PlayerState.PlayerType.bot)
+        {
+            GameManager.instance.updateAmmoUI(AmmoMax, AmmoCur);
+        }
 
         iOwner owner = Instagator.EntityRef.GetComponent<iOwner>();
         if (owner != null)
         {
+            
             Transform cam = owner.GetCameraTransform();
-
+            
             PlayRecoil();
             SpawnMuzzleFlash();
             PlayShootSound();
-
+            if (OwningPlayer.PS_Type != PlayerState.PlayerType.bot)
+            {
+                PlayCameraShake();
+            }
             Vector3 spawnPosition = cam.position + cam.forward * 0.7f;
             Quaternion spawnRotation = cam.rotation;
 
@@ -162,7 +254,7 @@ public class Gun : MonoBehaviour
         recoilStartLocalRot = transform.localRotation;
     }
 
-    void PlayRecoil()
+    public void PlayRecoil()
     {
         if (recoilRoutine != null)
         {
@@ -236,5 +328,28 @@ public class Gun : MonoBehaviour
 
         audioSource.pitch = Random.Range(shootPitchRange.x, shootPitchRange.y);
         audioSource.PlayOneShot(shootSound, shootVolume);
+    }
+
+    public void PlayCameraShake()
+    {
+        if (cameraShakeAmplitude <= 0f || cameraShakeDuration <= 0f)
+            return;
+
+        if (OwningPlayer == null)
+            return;
+
+        iOwner owner = OwningPlayer.EntityRef.GetComponent<iOwner>();
+        if (owner == null)
+            return;
+
+        Transform camTransform = owner.GetCameraTransform();
+        if (camTransform == null)
+            return;
+
+        CameraController camController = camTransform.GetComponent<CameraController>();
+        if (camController != null)
+        {
+            camController.ShakeCamera(cameraShakeAmplitude, cameraShakeDuration);
+        }
     }
 }

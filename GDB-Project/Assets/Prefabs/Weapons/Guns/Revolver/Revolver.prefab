@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Revolver
   GunIcon: {fileID: 21300000, guid: a60255d482098764684e4e585b389c93, type: 3}
-  CrosshairIcon: {fileID: 10915, guid: 0000000000000000f000000000000000, type: 0}
+  CrosshairIcon: {fileID: 21300000, guid: 674166f9b2368c24e8d4cb99ad5fc1ad, type: 3}
   GunName: Revolver
   AmmoCur: 6
   AmmoMax: 6
@@ -72,6 +72,11 @@ MonoBehaviour:
   shootSound: {fileID: 8300000, guid: 0c2ca71796061314f8f9de18e586a429, type: 3}
   shootVolume: 0.7
   shootPitchRange: {x: 0.95, y: 1.05}
+  cameraShakeAmplitude: 0.15
+  cameraShakeDuration: 0.1
+  spinOnReload: 1
+  reloadSpinAxis: {x: -1, y: 0, z: 0}
+  reloadSpinUseEase: 1
 --- !u!1 &5472822603882992901
 GameObject:
   m_ObjectHideFlags: 0

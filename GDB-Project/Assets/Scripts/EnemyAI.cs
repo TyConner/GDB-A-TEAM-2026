@@ -1,14 +1,19 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using TMPro;
 using Unity.Transforms;
 using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.UI;
 using static MyScore;
 
-public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
+public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner, iUseWeaponsAndItems, iAssist
 {
 
     [Space(2)]
@@ -39,18 +44,31 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     [SerializeField] RigBuilder Ik_Rig;
 
     [Space(2)]
-    [SerializeField] GameObject Gun;
+    [SerializeField] GameObject Weapon;
+    [Space(2)]
+    [SerializeField] Gun GunScript;
+    [Space(2)]
+    [SerializeField] Transform WeaponHoldPos;
 
     [Space(2)]
-    [SerializeField] GameObject Projectile;
+    [SerializeField] GameObject PlayerTag;
 
     [Space(2)]
-    [SerializeField] GameObject MuzzleFlash;
+    [SerializeField] TMP_Text PlayerNameField;
+
+    [Space(2)]
+    [SerializeField] Image PlayerColorIndicator;
+
+    [Space(2)]
+    public Material TeamMaterial;
 
     [Space(2)]
     [SerializeField]
     Collider[] Colliders;
-    
+
+    [Space(2)]
+    [SerializeField] SphereCollider SensoryCollider;
+
     [Space(2)]
     [Header("---------Audio Settings---------")]
     [Space(5)]
@@ -85,17 +103,13 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     //private vars
     bool isFlashingRed;
 
-    //testing
-    float shootTimer;
-    float shootRate = 1.1f;
-
     Color orig;
 
-    public enum Behaviors { Fight, Flee, Search, Assist, Roam, Dead};
+    public enum Behaviors {Fight, Flee, Search, Roam, Dead, Idle};
     public Behaviors CurrentState;
 
     Vector3 SpawningLocation;
-    struct TargetInfo{
+    public struct TargetInfo{
         public GameObject Obj;
         public Vector3 TargetLastKnownLoc;
         public Vector3 TargetDir;
@@ -115,16 +129,24 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         }
     }
 
-    int HPOrig;
-
     TargetInfo MyTarget;
+    
 
-   float SearchTimer;
+    //-----Timers-----
+
+    float SearchTimer;
    float SearchPauseTimer;
    float RoamTimer;
-
-    float StoppingDistOrig;
-
+   float FleeTimer;
+   float assistTimer;
+    // -----------------------
+   public bool bFleeing = false;
+   bool bStandGround = false;
+   int fleeCount = 0;
+   float StoppingDistOrig;
+   int HPOrig;
+   int TnTHeld;
+    int TntMax = 3;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -151,7 +173,14 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         }
        
         HPOrig = HP;
-        TurnOffCollision();
+        PlayerNameField.text = MyPlayerState.PS_Score.PlayerName;
+        PlayerColorIndicator.material = GameMode.instance.GetTeamMat(MyPlayerState.PS_Score.Assigned_Team);
+        PlayerNameField.color = PlayerColorIndicator.material.color;
+        SensoryCollider.radius = Config.get_SensoryRange();
+        DisableName();
+        //Equip our default gun
+        EquipDefaultWeapon();
+        //TurnOffCollision();
     }
 
  
@@ -163,9 +192,83 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         if (bCanPlay)
         {
             AiLogic();
+            if(CurrentState != Behaviors.Dead)
+            {
+                UpdateTagRotation();
+                
+            }
+            if(CurrentState == Behaviors.Dead)
+            {
+                DisableTag();
+            }
+        }
+        else
+        {
+            if (controller)
+            {
+                controller.SetSpeed(0, AnimationTransSpeed);
+            }
         }
        
     }
+
+    void UpdateTagRotation()
+    {
+        if (PlayerTag)
+        {
+            if (Camera.main)
+            {
+                PlayerTag.transform.rotation = Quaternion.LookRotation(PlayerTag.transform.position - Camera.main.transform.position);
+            }
+            
+        }
+    }
+
+    void DisableTag()
+    {
+        if (PlayerTag)
+        {
+            PlayerTag.SetActive(false);
+        }
+    }
+
+    void EnableTag() {         
+        if (PlayerTag)
+        {
+            PlayerTag.SetActive(true);
+        }
+    }
+    void EnableName()
+    {
+        if (PlayerTag)
+        {
+            PlayerNameField.enabled = true;
+        }
+    }
+
+    void DisableName()
+    {
+        if (PlayerTag)
+        {
+            PlayerNameField.enabled = false;
+        }
+    }
+
+    void EnableIndicator()
+    {
+        if (PlayerTag)
+        {
+            PlayerColorIndicator.enabled = true;
+        }
+    }
+    void DisableIndicator()
+    {
+        if (PlayerTag)
+        {
+            PlayerColorIndicator.enabled = false;
+        }
+    }
+
 
     void RandomCharacter()
     {
@@ -187,7 +290,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     }
    void AiLogic()
     {
-        shootTimer += Time.deltaTime;
+        //shootTimer += Time.deltaTime;
         LocoAnim();
         AssessBehavior();
         BehaviorTree(CurrentState);
@@ -196,30 +299,54 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     void AssessBehavior()
     {
-        if(CurrentState != Behaviors.Dead)
+        if(CurrentState != Behaviors.Dead && CurrentState != Behaviors.Idle)
         {
-            RoamTimer += Time.deltaTime;
-            
+            assistTimer += Time.deltaTime;
+            if (HP <= Config.get_LowHPThreshhold() && fleeCount < Config.get_MaxFleeCount() && !bStandGround && !bFleeing)
+            {
+                int roll = UnityEngine.Random.Range(0, 100);
+                if (roll <= Config.get_FleeChance())
+                {
+                    CurrentState = Behaviors.Flee;
+                    bStandGround = false;
+                    // decided to runaway stop assessment and panic.
+                    return;
+                }
+            }
+            if (fleeCount >= Config.get_MaxFleeCount())
+            {
+                bStandGround = true;
+            }
+            if (!bStandGround && bFleeing)
+            {
+                return;
+
+            }
             GameObject Threat = ReturnClosestThreat();
+            //check if they are dead?
+          
             if (Threat != null)
             {
                 MyTarget = CanSeeTarget(Threat);
                 if (MyTarget.CanSee)
                 {
+                    MyTarget.TargetTimer = 0;
                     CurrentState = Behaviors.Fight;
-                    Agent.stoppingDistance = StoppingDistOrig;
                 }
                 else
                 {
+                    MyTarget.TargetTimer += Time.deltaTime;
+                }
+                if(MyTarget.TargetTimer >= 2f)
+                {
                     CurrentState = Behaviors.Search;
-                    Agent.stoppingDistance = 0;
                 }
             }
             else
             {
-                CurrentState = Behaviors.Roam;
-                Agent.stoppingDistance = 0;
+                    CurrentState = Behaviors.Roam;
             }
+           
         }
        
     }
@@ -229,31 +356,28 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             case Behaviors.Roam:
                 {
+                    RoamTimer += Time.deltaTime; 
+                    Agent.stoppingDistance = 0;
                     if (Agent.remainingDistance < 0.01f && RoamTimer >= Config.get_RoamPauseTime())
                     {
                         RoamTimer = 0;
-                        Vector3 ranPos = UnityEngine.Random.insideUnitSphere * Config.get_RoamDist();
-                        ranPos += SpawningLocation;
-                        NavMeshHit hit;
-                        NavMesh.SamplePosition(ranPos, out hit, Config.get_RoamDist(), 1);
-                        GoTo(hit.position);
+                        NavMeshHit hit = UnitSphere_Rand(SpawningLocation, Config.get_RoamDist());
+                        if (hit.hit){ GoTo(hit.position);}
                     }
                     
                     break;
                 }
             case Behaviors.Search:
                 {
+                    Agent.stoppingDistance = StoppingDistOrig;
                     SearchTimer += Time.deltaTime;
                     SearchPauseTimer += Time.deltaTime;
-                    //print(state+ " Agent Remaining Distance: " + Agent.remainingDistance+ "Timer: " + SearchTimer);
-                    if(Agent.remainingDistance < 0.01f && SearchTimer >= Config.get_AgentSearchPauseTime())
+                    if(Agent.remainingDistance <= StoppingDistOrig && SearchTimer >= Config.get_AgentSearchPauseTime())
                     {
                         SearchPauseTimer = 0;
-                        Vector3 ranpos = UnityEngine.Random.insideUnitSphere * Config.get_AgentAlertedSearchDistance();
-                        ranpos += MyTarget.TargetLastKnownLoc;
-                        NavMeshHit hit;
-                        NavMesh.SamplePosition(ranpos, out hit, Config.get_AgentAlertedSearchDistance(), 1);
-                        GoTo(hit.position);
+                        NavMeshHit hit = UnitSphere_Rand(MyTarget.TargetLastKnownLoc, Config.get_AgentSearchDistance());
+                        if (hit.hit){ GoTo(hit.position);}
+                        
                     }
                     if(SearchTimer >= Config.get_AgentSearchTime())
                     {
@@ -264,23 +388,79 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                 }
             case Behaviors.Flee:
                 {
-                    break;
-                }
-            case Behaviors.Assist:
-                {
-                    break;
+                    
+                    Agent.stoppingDistance = 0;
+                    if(FleeTimer <= Config.get_FleeTime() && bFleeing == true)
+                    {
+                        FleeTimer += Time.deltaTime;
+                    }
+                    else
+                    {
+                        bFleeing = false;
+                        fleeCount++;
+                    }
+                    if (!bFleeing && fleeCount < Config.get_MaxFleeCount())
+                    {
+                        FleeTimer = 0;
+                        Vector3 DangerZone = new Vector3(0, 0, 0);
+                        Vector3 SafeDir = new Vector3();
+                        if (NearbyEnemyPlayers.Count > 0)
+                        {
+                            foreach (GameObject enemy in NearbyEnemyPlayers)
+                            {
+                                if (enemy)
+                                {
+                                    DangerZone += enemy.transform.position;
+                                }
+                                
+                            }
+                        }
+                        else
+                        {
+                            DangerZone = transform.position;
+                            NavMeshHit aroundme = UnitSphere_Rand(DangerZone, Config.get_SafeZoneRadius());
+                            if (aroundme.hit)
+                            {
+                                DangerZone = aroundme.position;
+                            }
+                        }
+                        SafeDir = (DangerZone - transform.position).normalized;
+                        SafeDir = SafeDir * -1;
+                        Vector3 SafeZone = new Vector3();
+                        SafeZone = (SafeDir * UnityEngine.Random.Range(Config.get_FleeDist() / 2, Config.get_FleeDist())) + transform.position;
+                        NavMeshHit hit = UnitSphere_Rand(SafeZone, Config.get_SafeZoneRadius());
+                        if (hit.hit) { GoTo(hit.position); }
+                        bFleeing = true;
+                        MyTarget.Clear();
+                    }
+                    
+                        break;
                 }
             case Behaviors.Fight:
                 {
                     if (MyTarget.Obj)
                     {
+                        //if we can call an assist then do it.
+                        if (assistTimer >= Config.get_AssitTime())
+                        {
+                            assistTimer = 0;
+                            if (NearbyAllyPlayers.Count > 0)
+                            {
+                                foreach (GameObject ally in NearbyAllyPlayers)
+                                {
+                                    iAssist Try_Call_Assist = ally.GetComponent<iAssist>();
+                                    if (Try_Call_Assist != null)
+                                    {
+                                        Try_Call_Assist.Assist(MyTarget);
+                                    }
+                                }
+                            }
+                        }
+                        //Normal Fight Logic
                         GoTo(MyTarget.TargetLastKnownLoc);
                         Agent.stoppingDistance = StoppingDistOrig;
                         faceTarget(MyTarget.Obj);
-                        if (shootTimer >= shootRate)
-                        {
-                            Shoot();
-                        }
+                        Shoot();
                     }
                     
                     break;
@@ -289,7 +469,24 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                 {
                     break;
                 }
+            case Behaviors.Idle:
+                {
+                    Agent.stoppingDistance = StoppingDistOrig;
+                    Agent.SetDestination(transform.position);
+                    controller.Idle();
+                    break;
+                }
         }
+    }
+
+    NavMeshHit UnitSphere_Rand(Vector3 pos, int radius)
+    {
+        Vector3 ranPos = UnityEngine.Random.insideUnitSphere * radius;
+        ranPos += pos;
+        NavMeshHit hit;
+        NavMesh.SamplePosition(ranPos, out hit, radius, 1);
+        return hit;
+
     }
     void faceTarget(GameObject target)
     {
@@ -298,30 +495,6 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         Quaternion rot = Quaternion.LookRotation(new Vector3(TargetPos.x, transform.position.y, TargetPos.z));
         transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * Config.get_faceTargetSpeed());
     }
-    void Shoot()
-    {
-        if (shootTimer > shootRate && Gun != null)
-        {
-            shootTimer = 0;
-
-            controller.OnShoot();
-        
-        }
-       
-    }
-    public void createBullet()
-    {
-        //called from animation event in clip
-
-        Transform pos = Gun.transform.Find("ProjectileOrigin");
-        GameObject bullet = Instantiate(Projectile, pos.position,transform.rotation);
-        GameObject flash = Instantiate(MuzzleFlash, pos);
-        bullet.GetComponent<Projectile>().MyOwner = MyPlayerState; 
-        AudioSource.PlayClipAtPoint(AudioConfig.gunshot[0], pos.position, AudioConfig.gunshot_Vol);
-        Destroy(flash, .05f);
-
-    }
-
     void initColliders()
     {
         if(Colliders.Length > 0)
@@ -356,7 +529,6 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
             Ik_Rig.Clear();
             TurnOffCollision();
             controller.OnDeath();
-            MyPlayerState.OnDeath();
             AudioSource.PlayClipAtPoint(AudioConfig.dying[UnityEngine.Random.Range(0, AudioConfig.dying.Length)], transform.position, AudioConfig.dying_Vol);
         }
 
@@ -448,6 +620,11 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             foreach (GameObject enemy in NearbyEnemyPlayers)
             {
+                PlayerState ps = enemy.GetComponent<iOwner>().OwningPlayer();
+                if (ps.PS_Phase == PlayerState.PlayerPhase.Dead)
+                {
+                    continue;
+                }
                 if (target == null)
                 {
                     target = enemy;
@@ -464,7 +641,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         }
         if (bDebug && target != null)
         {
-            Debug.Log(target.GetComponent<iOwner>().OwningPlayer().PS_Score.PlayerName);
+            //Debug.Log(target.GetComponent<iOwner>().OwningPlayer().PS_Score.PlayerName);
         }
         
         return target;
@@ -472,7 +649,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     }
     void GoTo(Vector3 Location)
     {
-        if (Agent)
+        if (Agent && CurrentState != Behaviors.Dead)
         {
 
             Agent.SetDestination(Location);
@@ -483,6 +660,15 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
     {
         if (target)
         {
+            PlayerState targetPS = target.GetComponent<iOwner>().OwningPlayer();
+            if (targetPS)
+            {
+                if (targetPS.PS_Phase == PlayerState.PlayerPhase.Dead)
+                {
+                    TargetInfo nullresult = new TargetInfo();
+                    return nullresult;
+                }
+            }
             TargetInfo info = new();
             info.TargetDir = target.transform.position - headPos.position;
             info.TargetAngleToMe = Vector3.Angle(info.TargetDir, transform.forward);
@@ -497,7 +683,7 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
             RaycastHit hit;
             if (info.TargetAngleToMe <= Config.get_FOV())
             {
-                if (Physics.Raycast(headPos.position, info.TargetDir, out hit, float.MaxValue))
+                if (Physics.Raycast(headPos.position, info.TargetDir + new Vector3 (0,.5f,0), out hit, info.TargetDir.magnitude))
                 {
                     if(hit.collider.gameObject == info.Obj || hit.collider.transform.IsChildOf(info.Obj.transform))
                     {
@@ -512,7 +698,6 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
             }
             else
             {
-                Agent.stoppingDistance = 0;
                 info.CanSee = false;
             }
                 
@@ -538,6 +723,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         if (HasOwner != null)
         {
             PlayerState otherPlayer = HasOwner.OwningPlayer();
+            if(otherPlayer == GameMode.instance.player_PS)
+            {
+                EnableName();
+            }
             if (otherPlayer != null && otherPlayer != MyPlayerState)
             {
                 cleanList();
@@ -596,8 +785,16 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         {
             return;
         }
-
-        if (NearbyEnemyPlayers.Contains(other.gameObject.transform.root.gameObject))
+        iOwner HasOwner = other.transform.root.gameObject.GetComponent<iOwner>();
+        if (HasOwner != null)
+        {
+            PlayerState otherPlayer = HasOwner.OwningPlayer();
+            if (otherPlayer == GameMode.instance.player_PS)
+            {
+                DisableName();
+            }
+        }
+            if (NearbyEnemyPlayers.Contains(other.gameObject.transform.root.gameObject))
         {
             NearbyEnemyPlayers.Remove(other.transform.root.gameObject);
         }
@@ -622,10 +819,25 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
         Config = stats;
     }
 
-    public void takeDamage(int amount, PlayerState Instagator)
+
+    public void takeDamage(int amount, PlayerState Instagator, bool Headshot)
     {
-        if (CurrentState != Behaviors.Dead) {
+        if (CurrentState == Behaviors.Dead)
+        {
+
+            return;
+
+        }
+        if(MyPlayerState.PS_Score.Assigned_Team == Team.FFA || MyPlayerState.PS_Score.Assigned_Team != Instagator.PS_Score.Assigned_Team) {
+            //not a teammate, so we take damage
             HP -= amount;
+
+            MyPlayerState.OnDamaged(Instagator, amount);
+
+            if (Instagator == GameMode.instance.player_PS)
+            {
+                GameManager.instance.playHitmarker();
+            }
 
             if (bDebug)
             {
@@ -635,6 +847,10 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
                 }
                     
             }
+            
+            //Check to see if we have been damaged by player
+            
+
             if (controller)
             {
                 controller.OnHit();
@@ -651,36 +867,16 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
             if (HP <= 0)
             {
-                if (Instagator != null && MyPlayerState)
-                {
-                    Instagator.updateScore(Category.Kills, 1);
-                    if (bDebug)
-                    {
-                        Debug.Log(MyPlayerState.PS_Score.PlayerName + " was killed by " + Instagator.PS_Score.PlayerName);
-                    }
-
-                }
-
-                OnDeath(Instagator);
+                
+                MyPlayerState.OnDeath(Instagator, Headshot);
+                OnDeath();
 
 
             }
         } 
     }
 
-    public void takeDamage(int amount, PlayerState Instigator, bool Headshot)
-    {
-        if (HP - amount <= 0)
-        {
-            Instigator.updateScore(Category.Headshots, 1);
-            takeDamage(amount, Instigator);
-        }
-        else
-        {
-            takeDamage(amount, Instigator);
-        }
-    }
-
+    
     public void onStepDetected(Vector3 Pos)
     {
         AudioSource.PlayClipAtPoint(AudioConfig.footsteps[UnityEngine.Random.Range(0, AudioConfig.footsteps.Length)], Pos, AudioConfig.footsteps_Vol);
@@ -693,6 +889,76 @@ public class EnemyAI : MonoBehaviour, iFootStep, iDamage, iOwner
 
     public Transform GetCameraTransform()
     {
-        return headPos;
+        return GunScript.transform.Find("ProjectileOrigin");
+    }
+
+    public void Shoot()
+    {
+        if (GunScript == null) { return; }
+
+        GunScript.Shoot(MyPlayerState);
+    }
+
+    public void EquipDefaultWeapon()
+    {
+      
+        Gun newGun = Instantiate(Weapon, WeaponHoldPos).GetComponent<Gun>();
+        EquipGun(newGun);
+
+    }
+    public void EquipGun(Gun newGun)
+    {
+        if(GunScript != null)
+        {
+            GunScript.OnUnequip();
+        }
+
+        GunScript = newGun;
+        GunScript.OnEquip(MyPlayerState);
+        GunScript.transform.SetParent(WeaponHoldPos);
+        GunScript.transform.localPosition = Vector3.zero;
+        GunScript.transform.localRotation = Quaternion.identity;
+        GunScript.transform.localScale = Vector3.one;
+    }
+
+    public void DropGun()
+    {
+        if (GunScript == null) return;
+
+        GunScript.OnUnequip();
+        Destroy(GunScript.gameObject);
+        GunScript = null;
+    }
+
+    public void Assist(TargetInfo Target)
+    {
+        //only if we arent fighting,fleeing, or dead.
+        if(CurrentState == Behaviors.Roam || CurrentState == Behaviors.Idle || CurrentState == Behaviors.Search)
+        {
+            //if we dont have a target assign the target to the assist target.
+            if (MyTarget.Obj == null)
+            {
+                MyTarget = Target;
+            }
+            else
+            {
+                //if we have a target compare the assist target to our current target and see which is closer and assign that one.
+                GameObject CloserObj = ClosestObject(Target.Obj, MyTarget.Obj);
+                if(CloserObj == Target.Obj)
+                {
+                    MyTarget = Target;
+                }
+            }
+        }
+    }
+
+    public void addHealth(int amount)
+    {
+        HP = Mathf.Clamp(HP + amount, 0, HPOrig);
+    }
+
+    public void AddTNT(int amount)
+    {
+        TnTHeld = Mathf.Clamp(TnTHeld + amount, 0, TntMax);
     }
 }

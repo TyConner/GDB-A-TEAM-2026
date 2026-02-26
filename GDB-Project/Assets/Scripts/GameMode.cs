@@ -22,7 +22,9 @@ public class GameMode : MonoBehaviour
     int Team_A;
     int Team_B;
     MyScore RedTeam = new();
+    [SerializeField] public Material RedMat;
     MyScore BlueTeam = new();
+    [SerializeField] public Material BlueMat;
 
     int PlayerCount;
     public GameObject Player;
@@ -58,6 +60,20 @@ public class GameMode : MonoBehaviour
             }
         }
     }
+    public Material GetTeamMat(Team team)
+    {
+        switch (team)
+        {
+            case Team.A:
+                return RedMat;
+            case Team.B:
+                return BlueMat;
+            case Team.FFA:
+                return RedMat;
+            default:
+                return null;
+        }
+    }
     private Spawner GetValidSpawner(MyScore.Team playersTeam)
     {
         int count = SpawnLocs.Count;
@@ -69,7 +85,7 @@ public class GameMode : MonoBehaviour
                 validspawns.Add(SpawnLocs[i]);
             }
         }
-        Debug.Log("valid spawners: " + validspawns.Count());
+        //Debug.Log("valid spawners: " + validspawns.Count());
 
         if (validspawns.Count > 0)
         {
@@ -136,9 +152,9 @@ public class GameMode : MonoBehaviour
         if (!config.BotsOnly) {
 
             GameObject player = Instantiate(PlayerStatePrefab);
-            PlayerState Player_PS = player.GetComponent<PlayerState>();
-            Player_PS.PS_Score.PlayerName = "Player";
-            if (Player_PS != null)
+            player_PS = player.GetComponent<PlayerState>();
+            player_PS.PS_Score.PlayerName = "Player";
+            if (player_PS != null)
             {
 
                 switch (config.ThisMatch)
@@ -146,21 +162,21 @@ public class GameMode : MonoBehaviour
                     case GameMode_Config.MatchType.TDM:
                         if (Team_A > Team_B)
                         {
-                            Player_PS.PS_Score.Assigned_Team = Team.B;
+                            player_PS.PS_Score.Assigned_Team = Team.B;
                         }
                         else
                         {
-                            Player_PS.PS_Score.Assigned_Team = Team.A;
+                            player_PS.PS_Score.Assigned_Team = Team.A;
                         }
                         break;
                     case GameMode_Config.MatchType.FFA:
                         {
-                            Player_PS.PS_Score.Assigned_Team = Team.FFA;
+                            player_PS.PS_Score.Assigned_Team = Team.FFA;
                             break;
                         }
                 }
-                player.name = Player_PS.PS_Score.PlayerName + "_PlayerState";
-                OurPlayersStates.Add(Player_PS);
+                player.name = player_PS.PS_Score.PlayerName + "_PlayerState";
+                OurPlayersStates.Add(player_PS);
             }
             PlayerCount++;
         }
@@ -202,6 +218,7 @@ public class GameMode : MonoBehaviour
                     break;
             }
         player.EntityRef.name = player.PS_Score.PlayerName;
+        player.OnRespawn();
     }
 
     public void TryRespawn(PlayerState player)
