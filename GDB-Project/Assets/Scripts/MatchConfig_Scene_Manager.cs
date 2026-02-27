@@ -10,10 +10,22 @@ public class MatchConfig_Scene_Manager : MonoBehaviour
     [SerializeField]public List<GameMode_Config> MatchConfigs;
     [SerializeField]public List<EnemyStats> EnemyStats;
 
-    [SerializeField] GameMode_Config Custom;
+    [SerializeField] GameMode_Config Custom_Template;
+
     [SerializeField] MatchConfigScreenButtons UI_EventHandler;
 
-    GameMode_Config Custom_EditableConfig;
+    public GameMode_Config Custom_EditableConfig; 
+
+    void Awake()
+    {
+        Custom_EditableConfig = ScriptableObject.CreateInstance<GameMode_Config>();
+        if (Custom_Template != null)
+        {
+            Custom_EditableConfig.CopyThis(Custom_Template);
+        }
+        
+    }
+
     public struct Config_Values
     {
 
@@ -62,6 +74,7 @@ public class MatchConfig_Scene_Manager : MonoBehaviour
             UI_EventHandler.GoalChange += Selected_Values.SetGoal;
             UI_EventHandler.BotDifficultyChanged += Selected_Values.SetAI_Index;
             UI_EventHandler.BotNumChange += Selected_Values.SetBots_Index;
+            UI_EventHandler.EventSave += Save;
         }
     }
     private void OnDisable()
@@ -79,6 +92,11 @@ public class MatchConfig_Scene_Manager : MonoBehaviour
     public EnemyStats GetEnemyStats()
     {
         return EnemyStats[Selected_Values.GetAI_Index()];
+    }
+
+    private void Save()
+    {
+
     }
 }
 
