@@ -937,7 +937,7 @@ MonoBehaviour:
   BodyCleanUpTime: 3
   player: {fileID: 0}
   playerScript: {fileID: 0}
-  FFASCORE: {fileID: 0}
+  FFASCORE: {fileID: 5517439329234249431}
   DamageScreen: {fileID: 7607730634378468936}
   HealScreen: {fileID: 8024966236423867194}
   playerCompass: {fileID: 6386192768311366300}
@@ -1748,9 +1748,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af128d38b0b4e9640a96b8894eae1d94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameMode
-  config: {fileID: 11400000, guid: bfce697600de62f4dad2922a2382eec7, type: 2}
+  config: {fileID: 11400000, guid: 62dc5ddc198027e4d85c8b5ed9e0d3ab, type: 2}
   Phase: 0
-  PlayerStatePrefab: {fileID: 87979123436986094, guid: 65faa4da448e24140bad77a55c018ecd, type: 3}
+  PlayerStatePrefab: {fileID: 87979123436986094, guid: 1035e332fbf60ce419564e280846d1a9, type: 3}
   OurPlayersStates: []
   RedMat: {fileID: 2100000, guid: b972de3879d12c84983541fd1269c273, type: 2}
   BlueMat: {fileID: 2100000, guid: 85b7a682715414a41be36713f879d49b, type: 2}
