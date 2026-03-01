@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.IO;
 using Unity.Entities;
 using UnityEngine;
 
@@ -14,7 +15,8 @@ public class MatchConfig_Scene_Manager : MonoBehaviour
 
     [SerializeField] MatchConfigScreenButtons UI_EventHandler;
 
-    public GameMode_Config Custom_EditableConfig; 
+    public GameMode_Config Custom_EditableConfig;
+    public static MatchConfig_Scene_Manager instance;
 
     void Awake()
     {
@@ -23,10 +25,11 @@ public class MatchConfig_Scene_Manager : MonoBehaviour
         {
             Custom_EditableConfig.CopyThis(Custom_Template);
         }
+        instance = this;
         
     }
 
-    public struct Config_Values
+    public class Config_Values
     {
 
         int MatchType_index;
@@ -62,41 +65,84 @@ public class MatchConfig_Scene_Manager : MonoBehaviour
 
     }
 
-    public Config_Values Selected_Values;
+    public Config_Values Match_Config_instance = new();
+    Config_Values Custom_Values = new();
+    Config_Values Defaults =new();
 
+    void MatchTypeChange(int val)
+    {
+        switch (val)
+        {
+            case 0:
+                //ffa-default
+                Un_Subscribe();
+                Match_Config_instance = Defaults;
+                Custom_EditableConfig.CopyThis(MatchConfigs[val]);
+                break;
+            case 1:
+                //tdm-default
+                Un_Subscribe();
+                Match_Config_instance = Defaults;
+                Custom_EditableConfig.CopyThis(MatchConfigs[val]);
+                break;
+            case 2:
+                //custom
+                Match_Config_instance = Custom_Values;
+                Subscribe();
+                break;
+
+        }
+    }
     private void OnEnable()
+    {
+        UI_EventHandler.MatchTypeChange += MatchTypeChange;
+        
+    }
+    private void OnDisable()
+    {
+        UI_EventHandler.MatchTypeChange -= MatchTypeChange;
+        Un_Subscribe();
+    }
+    private void Subscribe()
     {
         //bind event listeners
         if (UI_EventHandler)
         {
-            UI_EventHandler.MatchTypeChange += Selected_Values.SetMatch_Index;
-            UI_EventHandler.MatchLengthChange += Selected_Values.SetLength_Index;
-            UI_EventHandler.GoalChange += Selected_Values.SetGoal;
-            UI_EventHandler.BotDifficultyChanged += Selected_Values.SetAI_Index;
-            UI_EventHandler.BotNumChange += Selected_Values.SetBots_Index;
+            
+            UI_EventHandler.CustomMatchTypeChange += Match_Config_instance.SetMatch_Index;
+            UI_EventHandler.MatchLengthChange += Match_Config_instance.SetLength_Index;
+            UI_EventHandler.GoalChange += Match_Config_instance.SetGoal;
+            UI_EventHandler.BotDifficultyChanged += Match_Config_instance.SetAI_Index;
+            UI_EventHandler.BotNumChange += Match_Config_instance.SetBots_Index;
             UI_EventHandler.EventSave += Save;
         }
     }
-    private void OnDisable()
+    private void Un_Subscribe()
     {
         if (UI_EventHandler)
         {
-            UI_EventHandler.MatchLengthChange -= Selected_Values.SetMatch_Index;
-            UI_EventHandler.MatchLengthChange -= Selected_Values.SetLength_Index;
-            UI_EventHandler.GoalChange -= Selected_Values.SetGoal;
-            UI_EventHandler.BotDifficultyChanged -= Selected_Values.SetAI_Index;
-            UI_EventHandler.BotNumChange -= Selected_Values.SetBots_Index;
+            
+            UI_EventHandler.CustomMatchTypeChange -= Match_Config_instance.SetMatch_Index;
+            UI_EventHandler.MatchLengthChange -= Match_Config_instance.SetLength_Index;
+            UI_EventHandler.GoalChange -= Match_Config_instance.SetGoal;
+            UI_EventHandler.BotDifficultyChanged -= Match_Config_instance.SetAI_Index;
+            UI_EventHandler.BotNumChange -= Match_Config_instance.SetBots_Index;
         }
     }
 
     public EnemyStats GetEnemyStats()
     {
-        return EnemyStats[Selected_Values.GetAI_Index()];
+        return EnemyStats[Match_Config_instance.GetAI_Index()];
     }
 
     private void Save()
     {
-
+        Debug.Log($"Match Index: {Match_Config_instance.GetMatch_Index()}, Length Index: {Match_Config_instance.GetLength_Index()}, Goal Index: {Match_Config_instance.GetGoal()}, AI Index: {Match_Config_instance.GetAI_Index()}, Bots Index: {Match_Config_instance.GetBots_Index()}");
+        Custom_EditableConfig.ThisMatch = (GameMode_Config.MatchType)Match_Config_instance.GetMatch_Index();
+        Custom_EditableConfig.Difficulty = EnemyStats[Match_Config_instance.GetAI_Index()];
+        Custom_EditableConfig.MatchLength = Match_Config_instance.GetLength_Index();
+        Custom_EditableConfig.bots = Match_Config_instance.GetBots_Index();
+        Custom_EditableConfig.GameGoal = Match_Config_instance.GetGoal();
     }
 }
 

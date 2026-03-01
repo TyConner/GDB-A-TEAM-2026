@@ -1,6 +1,8 @@
 using NUnit.Framework;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
@@ -11,22 +13,66 @@ public class MatchConfig_Scene_UI_Manager : MonoBehaviour
     [SerializeField] List<GameObject> Sliders = new();
     [SerializeField] List<GameObject> DropDowns = new();
     [SerializeField] List<GameObject> Buttons = new();
-
+    [SerializeField] TMP_Text MatchLength;
+    [SerializeField] TMP_Text BotNum;
+    [SerializeField] TMP_Text MatchGoal;
+    [SerializeField] UnityEngine.UI.Slider MatchLengthSlider;
+    [SerializeField] UnityEngine.UI.Slider BotNumSlider;
+    [SerializeField] UnityEngine.UI.Slider MatchGoalSlider;
+    [SerializeField] TMP_Dropdown MatchType;
+    [SerializeField] TMP_Dropdown BotDifficulty;
+    [SerializeField] GameObject SavedPopUp;
 
     private void OnEnable()
     {
         if (EventHandler)
         {
             EventHandler.MatchTypeChange += OnCustom;
+            EventHandler.MatchLengthChange += UpdateMatchLength;
+            EventHandler.GoalChange += UpdateGameGoal;
+            EventHandler.BotNumChange += updateBotCount;
+            EventHandler.EventSave += onSave;
         }
     }
+
     private void OnDisable()
     {
         if (EventHandler)
         {
             EventHandler.MatchTypeChange -= OnCustom;
+            EventHandler.MatchLengthChange -= UpdateMatchLength;
+            EventHandler.GoalChange -= UpdateGameGoal;
+            EventHandler.BotNumChange -= updateBotCount;
+            EventHandler.EventSave -= onSave;
         }
     }
+    void onSave()
+    {
+        StartCoroutine(PopUp_Message_Saved());
+    }
+    void UpdateMatchLength(int val)
+    {
+        if (MatchLength != null) {
+            Debug.Log(val);
+            MatchLength.text = val.ToString();
+        }
+    }
+
+    void UpdateGameGoal(int val)
+    {
+        if (BotNum != null)
+        {
+            MatchGoal.text = val.ToString();
+        }
+    }
+    void updateBotCount(int val)
+    {
+        if (BotNum != null)
+        {
+            BotNum.text = val.ToString();
+        }
+    }
+
 
     private void OnCustom(int val)
     {
@@ -59,7 +105,13 @@ public class MatchConfig_Scene_UI_Manager : MonoBehaviour
             {
                 MakeInvisible(obj);
             }
+            MatchGoalSlider.value = MatchConfig_Scene_Manager.instance.Custom_EditableConfig.GameGoal;
+            BotNumSlider.value = MatchConfig_Scene_Manager.instance.Custom_EditableConfig.bots;
+            MatchLengthSlider.value = MatchConfig_Scene_Manager.instance.Custom_EditableConfig.MatchLength;
+            MatchType.value = (int)MatchConfig_Scene_Manager.instance.Custom_EditableConfig.ThisMatch;
+            BotDifficulty.value = MatchConfig_Scene_Manager.instance.EnemyStats.FindIndex(0, MatchConfig_Scene_Manager.instance.EnemyStats.Count, x=> x== MatchConfig_Scene_Manager.instance.Custom_EditableConfig.Difficulty);
         }
+
     }
 
     private void MakeVisible(GameObject obj)
@@ -102,4 +154,15 @@ public class MatchConfig_Scene_UI_Manager : MonoBehaviour
 
     }
 
+    IEnumerator PopUp_Message_Saved()
+    {
+        if(SavedPopUp.activeSelf == false)
+        {
+            SavedPopUp.SetActive(true);
+            yield return new WaitForSeconds(1f);
+            SavedPopUp.SetActive(false);
+        }
+    }
+
+    
 }

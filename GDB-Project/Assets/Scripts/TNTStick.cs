@@ -7,7 +7,7 @@ public class TNTStick : MonoBehaviour
     public float explosionRadius = 5f;
     public float explosionForce = 700f;
     float countdown;
-    bool hasExploded = false;
+    //bool hasExploded = false;
     public GameObject explosion;
     public int contactDamage = 50;
     public PlayerState MyOwner;

@@ -31,19 +31,20 @@ public class MatchConfigScreenButtons : MonoBehaviour
         EventStartGame?.Invoke();
     }
 
-    public void OnMatchLengthChange(int val)
+    public void OnMatchLengthChange(float val)
     {
-        MatchLengthChange?.Invoke(val);
+        Debug.Log(val);
+        MatchLengthChange?.Invoke((int)val);
     }
 
-    public void OnGameGoalChange(int val)
+    public void OnGameGoalChange(float val)
     {
-        GoalChange?.Invoke(val);
+        GoalChange?.Invoke((int)val);
     }
 
-    public void OnBotNumberChange(int val)
+    public void OnBotNumberChange(float val)
     {
-        BotNumChange?.Invoke(val);
+        BotNumChange?.Invoke((int)val);
     }
     public void OnMatchTypeChanged(int val)
     {
