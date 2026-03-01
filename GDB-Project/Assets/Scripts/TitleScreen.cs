@@ -2,15 +2,16 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class TitleScreen : MonoBehaviour
 {
-    public void PlayGameTDM()
+    public void Match_Config()
     {
         SceneManager.LoadSceneAsync(1);
     }
 
-    public void PlayGameFFA()
+    public void QuickPlayFFA()
     {
-        SceneManager.LoadSceneAsync(2);
+        SceneManager.LoadSceneAsync(3);
     }
+
     public void quit()
     {
 #if UNITY_EDITOR

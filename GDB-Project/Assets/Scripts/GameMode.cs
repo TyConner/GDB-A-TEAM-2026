@@ -34,10 +34,15 @@ public class GameMode : MonoBehaviour
     public PlayerState player_PS;
     public List<Spawner> SpawnLocs;
     GameObject Spectator;
+    GameMode_Config custom;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
         instance = this;
+        if(Match_Config_Instance.instance != null)
+        {
+            config = Match_Config_Instance.instance.config;
+        }
     }
     void Start()
     {

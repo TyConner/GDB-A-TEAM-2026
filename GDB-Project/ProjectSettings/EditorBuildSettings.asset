@@ -9,11 +9,17 @@ EditorBuildSettings:
     path: Assets/Scenes/TitleScreen.unity
     guid: 9d5292c5ec986bc45b2997827d1a256a
   - enabled: 1
-    path: Assets/Scenes/DustBowl (TDM).unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/Scenes/MatchConfiguration.unity
+    guid: a32b4bc2e95639541944eb093ce55cfc
+  - enabled: 1
+    path: Assets/Scenes/DustBowl.unity
+    guid: fe804f4de65b04e4b9f82623c83efc7d
   - enabled: 1
     path: Assets/Scenes/DustBowl (FFA).unity
     guid: 56d5d00b56e9d1942b9e224cfedd7abc
+  - enabled: 0
+    path: Assets/Scenes/DustBowl (TDM).unity
+    guid: 99c9720ab356a0642a771bea13969a05
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
