@@ -33,7 +33,6 @@ public class MatchConfigScreenButtons : MonoBehaviour
 
     public void OnMatchLengthChange(float val)
     {
-        Debug.Log(val);
         MatchLengthChange?.Invoke((int)val);
     }
 

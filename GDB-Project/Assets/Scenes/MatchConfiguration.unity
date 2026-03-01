@@ -2003,7 +2003,7 @@ GameObject:
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &274766670
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2011,18 +2011,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 274766669}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 682073840}
-  m_Father: {fileID: 663053596}
+  m_Father: {fileID: 1887142386}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 244, y: 231}
-  m_SizeDelta: {x: 160, y: 54.8}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -319.25, y: 138.25}
+  m_SizeDelta: {x: 160, y: 54.799988}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &274766671
 MonoBehaviour:
@@ -2644,7 +2644,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &357614487
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3318,10 +3318,10 @@ MonoBehaviour:
   m_MultiSelect: 0
   m_Options:
     m_Options:
-    - m_Text: FFA
+    - m_Text: TDM
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
-    - m_Text: TDM
+    - m_Text: FFA
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_OnValueChanged:
@@ -3850,7 +3850,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 274766670}
   - {fileID: 1477171607}
   - {fileID: 1969395250}
   - {fileID: 357614487}
@@ -3956,9 +3955,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Close
-
-'
+  m_text: Close & Exit
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6181,7 +6178,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: FFA
+  m_text: TDM
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -7539,11 +7536,16 @@ MonoBehaviour:
   - {fileID: 1938636433}
   - {fileID: 553129600}
   Buttons:
-  - {fileID: 274766669}
   - {fileID: 1477171606}
   MatchLength: {fileID: 1932773717}
   BotNum: {fileID: 1996674250}
   MatchGoal: {fileID: 903796952}
+  MatchLengthSlider: {fileID: 1330917055}
+  BotNumSlider: {fileID: 1808606760}
+  MatchGoalSlider: {fileID: 343789085}
+  MatchType: {fileID: 553129602}
+  BotDifficulty: {fileID: 1938636435}
+  SavedPopUp: {fileID: 357614486}
 --- !u!1001 &1826312917
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8234,6 +8236,7 @@ RectTransform:
   - {fileID: 495623441}
   - {fileID: 296460164}
   - {fileID: 522522357}
+  - {fileID: 274766670}
   - {fileID: 663053596}
   m_Father: {fileID: 1832877044}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -8814,7 +8817,7 @@ MonoBehaviour:
       - m_Target: {fileID: 2068404871}
         m_TargetAssemblyTypeName: MatchConfigScreenButtons, Assembly-CSharp
         m_MethodName: OnBotDifficultyChanged
-        m_Mode: 3
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -9556,7 +9559,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7959dfcdff318074099462307c33e84d, type: 2}
   Custom_Template: {fileID: 11400000, guid: 84764835e8ad7e546908b38ed074321c, type: 2}
   UI_EventHandler: {fileID: 2068404871}
-  Custom_EditableConfig: {fileID: 0}
+  UI_Manager: {fileID: 1812945924}
 --- !u!1 &2068404870
 GameObject:
   m_ObjectHideFlags: 0

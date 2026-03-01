@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using static MatchConfig_Scene_Manager;
 
 public class MatchConfig_Scene_UI_Manager : MonoBehaviour
 {
@@ -73,7 +74,23 @@ public class MatchConfig_Scene_UI_Manager : MonoBehaviour
         }
     }
 
+    public void updateUI(Config_Values config)
+    {
+        MatchGoalSlider.value = config.GetGoal();
+        UpdateGameGoal(config.GetGoal());
 
+        BotNumSlider.value = config.GetBots_Index();
+        updateBotCount(config.GetBots_Index());
+
+        MatchLengthSlider.value = config.GetLength_Index();
+        UpdateMatchLength(config.GetLength_Index());
+
+     
+        MatchType.value = config.GetMatch_Index();
+        BotDifficulty.value = config.GetAI_Index();
+
+    }
+    
     private void OnCustom(int val)
     {
         if (val == 2)
@@ -105,11 +122,6 @@ public class MatchConfig_Scene_UI_Manager : MonoBehaviour
             {
                 MakeInvisible(obj);
             }
-            MatchGoalSlider.value = MatchConfig_Scene_Manager.instance.Custom_EditableConfig.GameGoal;
-            BotNumSlider.value = MatchConfig_Scene_Manager.instance.Custom_EditableConfig.bots;
-            MatchLengthSlider.value = MatchConfig_Scene_Manager.instance.Custom_EditableConfig.MatchLength;
-            MatchType.value = (int)MatchConfig_Scene_Manager.instance.Custom_EditableConfig.ThisMatch;
-            BotDifficulty.value = MatchConfig_Scene_Manager.instance.EnemyStats.FindIndex(0, MatchConfig_Scene_Manager.instance.EnemyStats.Count, x=> x== MatchConfig_Scene_Manager.instance.Custom_EditableConfig.Difficulty);
         }
 
     }
